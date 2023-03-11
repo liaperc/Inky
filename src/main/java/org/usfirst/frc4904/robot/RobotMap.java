@@ -9,8 +9,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.subsystems.Intake;
+
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.util.Units;
@@ -21,8 +24,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonSRX;
-
+import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 import org.usfirst.frc4904.standard.subsystems.chassis.TankDrive;
+import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -48,6 +52,8 @@ public class RobotMap {
             public static final int RIGHT_DRIVE_B = 4;
             public static final int LEFT_DRIVE_A = 1;
             public static final int LEFT_DRIVE_B = 2;
+            public static final int LEFT_INTAKE = -1; //TODO: fix
+            public static final int RIGHT_INTAKE = -1; //TODO: fix
        }
 
         public static class PWM {
@@ -96,6 +102,7 @@ public class RobotMap {
         public static CANTalonEncoder leftWheelTalonEncoder;
         public static CANTalonEncoder rightWheelTalonEncoder;
         public static EncoderPair chassisTalonEncoders;
+        public static org.usfirst.frc4904.robot.subsystems.Intake intake;
         public static Motor rightWheelA;
         public static Motor rightWheelB;
         public static Motor leftWheelA;
@@ -112,6 +119,11 @@ public class RobotMap {
         public static Motor climberMotor;
         public static Climber climber;
         public static Shooter shooter;
+
+        public static CustomCANSparkMax leftMotor;
+        public static CustomCANSparkMax rightMotor;
+
+        public static SparkMaxMotorSubsystem Intake;
     }
 
     public static class NetworkTables {
@@ -165,7 +177,11 @@ public class RobotMap {
         CANTalonFX leftWheelBTalon = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B);
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B);
-
+        //intake
+        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
+        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
+        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 11, intake_left, intake_right);
+        Component.intake = new Intake(intake_motors);
         // Wheels
 //        Component.rightWheelA = new Motor("rightWheelA", false, rightWheelATalon);
 //        Component.rightWheelB = new Motor("rightWheelB", false, rightWheelBTalon);
