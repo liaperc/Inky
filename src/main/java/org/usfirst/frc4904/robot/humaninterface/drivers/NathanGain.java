@@ -1,6 +1,6 @@
 package org.usfirst.frc4904.robot.humaninterface.drivers;
 
-mport org.usfirst.frc4904.robot.RobotMap;
+import org.usfirst.frc4904.robot.RobotMap;
 
 public class NathanGain extends Driver {
 	public static final double SPEED_GAIN = 1;

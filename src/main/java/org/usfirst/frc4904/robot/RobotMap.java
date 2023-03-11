@@ -1,14 +1,16 @@
 package org.usfirst.frc4904.robot;
 
-import org.usfirst.frc4904.standard.custom.controllers.CustomJoystick;
-import org.usfirst.frc4904.standard.custom.controllers.CustomXbox;
-import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonFX;
+import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
+
+import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,16 +22,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import org.usfirst.frc4904.standard.LogKitten;
-import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonSRX;
-
-import org.usfirst.frc4904.standard.subsystems.chassis.TankDrive;
+import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
+import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
+import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
 
-import org.usfirst.frc4904.standard.subsystems.chassis.SensorDrive;
-mport org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
+import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 
 public class RobotMap {
     public static class Port {
@@ -65,15 +68,17 @@ public class RobotMap {
 
     public static class Metrics {
         public static class Chassis {
-            public static final double DIAMETER_METERS = Units.inchesToMeters(-1.0); // TODO: Check values
-            public static final double CIRCUMFERENCE_METERS = Metrics.Chassis.DIAMETER_METERS * Math.PI;
+            public static final double GEAR_RATIO = 5.0; // TODO: Check gear ratio for robot
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(-1.0); // TODO: Check values
+            public static final double WHEEL_CIRCUMFERENCE_METERS = Metrics.Chassis.WHEEL_DIAMETER_METERS * Math.PI;
             public static final double TICKS_PER_METER = Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION
-                    / Metrics.Chassis.CIRCUMFERENCE_METERS;
+                    / Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS;
             public static final double DISTANCE_FRONT_BACK = Units.inchesToMeters(-1.0); // TODO: DOUBLE CHECK DISTANCES
             public static final double DISTANCE_SIDE_SIDE = Units.inchesToMeters(-1.0); // The robot's a square
-            public static final double METERS_PER_TICK = Metrics.Chassis.CIRCUMFERENCE_METERS
-                    / Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION;
+            public static final double METERS_PER_TICK = Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS
+                    / Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION / Metrics.Chassis.GEAR_RATIO;
             public static final double TURN_CORRECTION = 0.0;
+            public static final double TRACK_WIDTH_METERS = 0; //TODO: change to actual value
         }
 
         public static class Encoders {
@@ -96,22 +101,15 @@ public class RobotMap {
         public static CANTalonEncoder leftWheelTalonEncoder;
         public static CANTalonEncoder rightWheelTalonEncoder;
         public static EncoderPair chassisTalonEncoders;
-        public static Motor rightWheelA;
-        public static Motor rightWheelB;
-        public static Motor leftWheelA;
-        public static Motor leftWheelB;
-        public static SensorDrive sensorDrive;
-        public static TankDrive chassis;
-        public static CustomPIDController drivePID;
+        
         public static NavX navx;
      
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
 
-        public static CANTalonFX climberTalon;
-        public static Motor climberMotor;
-        public static Climber climber;
-        public static Shooter shooter;
+        public static TalonMotorSubsystem leftDriveMotors;
+        public static TalonMotorSubsystem rightDriveMotors;
+        public static WestCoastDrive<TalonMotorController> Chassis;
     }
 
     public static class NetworkTables {
@@ -136,19 +134,19 @@ public class RobotMap {
 
     public static class HumanInput {
         public static class Driver {
-            public static CustomXbox xbox;
+            public static CommandXboxController xbox;
         }
 
         public static class Operator {
-            public static CustomJoystick joystick;
+            public static CustomCommandJoystick joystick;
         }
     }
 
     public RobotMap() {
         Component.navx = new NavX(SerialPort.Port.kMXP);
 
-        HumanInput.Driver.xbox = new CustomXbox(Port.HumanInput.xboxController);
-		HumanInput.Operator.joystick = new CustomJoystick(Port.HumanInput.joystick);
+        HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
+		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick);
         // UDP things
         try {
             Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
@@ -161,33 +159,19 @@ public class RobotMap {
 
         /* Drive Train */
         // TalonFX
-        CANTalonFX leftWheelATalon = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A);
-        CANTalonFX leftWheelBTalon = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B);
-        CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A);
-        CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B);
+        CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
+        CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
+        CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
+        CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
-        // Wheels
-//        Component.rightWheelA = new Motor("rightWheelA", false, rightWheelATalon);
-//        Component.rightWheelB = new Motor("rightWheelB", false, rightWheelBTalon);
-//        Component.leftWheelA = new Motor("leftWheelA", true, leftWheelATalon);
-//        Component.leftWheelB = new Motor("leftWheelB", true, leftWheelBTalon);
+        // components
+        Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
+        Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
+        Component.Chassis = new WestCoastDrive<TalonMotorController>(Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS, Component.leftDriveMotors, Component.rightDriveMotors);
 
-        // Wheel Encoders
-        Component.leftWheelTalonEncoder = new CANTalonEncoder("leftWheel", leftWheelATalon, true,
-                Metrics.Chassis.METERS_PER_TICK);
-        Component.rightWheelTalonEncoder = new CANTalonEncoder("rightWheel", rightWheelATalon, true,
-                Metrics.Chassis.METERS_PER_TICK);
-        Component.initialPose = new Pose2d(); // TODO double x, double y, rotation2d
-        Component.sensorDrive = new SensorDrive(Component.chassis, Component.leftWheelTalonEncoder,
-                Component.rightWheelTalonEncoder, Component.navx, Component.initialPose);
 
-        Component.chassisTalonEncoders = new EncoderPair(Component.leftWheelTalonEncoder,
-                Component.rightWheelTalonEncoder);
-
-        Component.chassis = new TankDrive("2022-Chassis", Component.leftWheelA, Component.leftWheelB,
-                Component.rightWheelA, Component.rightWheelB);//, Component.shifter);
-        Component.chassis.setDefaultCommand(new ChassisMove(Component.chassis, new NathanGain()));
-
+        // Wheel Encoders -- UNUSED
+        
         // NetworkTables setup
     }
 }
