@@ -9,8 +9,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.subsystems.ArmSubsystem;
+
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.util.Units;
@@ -21,8 +24,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonSRX;
-
+import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.TankDrive;
+import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -48,6 +52,10 @@ public class RobotMap {
             public static final int RIGHT_DRIVE_B = 4;
             public static final int LEFT_DRIVE_A = 1;
             public static final int LEFT_DRIVE_B = 2;
+
+            // Pivot Arm
+            public static final int LEAD_MOTOR = -1;
+            public static final int FOLLOW_MOTOR = -1;
        }
 
         public static class PWM {
@@ -104,6 +112,12 @@ public class RobotMap {
         public static TankDrive chassis;
         public static CustomPIDController drivePID;
         public static NavX navx;
+
+        // Pivot Arm Subsystem
+        public static TalonMotorSubsystem talonMotorSubsystem;
+        public static ArmSubsystem armSubsystem;
+        public static CANTalonFX leadMotor;
+        public static CANTalonFX followMotor;
      
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
@@ -189,5 +203,12 @@ public class RobotMap {
         Component.chassis.setDefaultCommand(new ChassisMove(Component.chassis, new NathanGain()));
 
         // NetworkTables setup
+
+        // Pivot Arms
+        Component.leadMotor = new CANTalonFX(Port.CANMotor.LEAD_MOTOR);
+        Component.followMotor = new CANTalonFX(Port.CANMotor.FOLLOW_MOTOR);
+        Component.talonMotorSubsystem = new TalonMotorSubsystem("Pivot Arm Subsystem", NeutralMode.Brake, 10, leadMotor, followMotor);
+        Component.armSubsystem = new ArmSubsystem(talonMotorSubsystem);
+
     }
 }
