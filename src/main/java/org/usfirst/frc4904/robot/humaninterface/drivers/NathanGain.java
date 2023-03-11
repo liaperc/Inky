@@ -1,6 +1,7 @@
 package org.usfirst.frc4904.robot.humaninterface.drivers;
 
 import org.usfirst.frc4904.robot.RobotMap;
+import org.usfirst.frc4904.standard.humaninput.Driver;
 
 public class NathanGain extends Driver {
 	public static final double SPEED_GAIN = 1;
@@ -29,17 +30,18 @@ public class NathanGain extends Driver {
 
 	@Override
 	public double getY() {
-		double rawSpeed = RobotMap.HumanInput.Driver.xbox.rt.getX() - RobotMap.HumanInput.Driver.xbox.lt.getX();
+		//TODO: new getx is 0 to 1, old may have been -1 to 1 -- fix is simple if we need it
+		double rawSpeed = RobotMap.HumanInput.Driver.xbox.getRightTriggerAxis() - RobotMap.HumanInput.Driver.xbox.getLeftTriggerAxis();
 		double speed = scaleGain(rawSpeed, NathanGain.SPEED_GAIN, NathanGain.SPEED_EXP) * NathanGain.Y_SPEED_SCALE;
-		double precisionDrive = scaleGain(RobotMap.HumanInput.Driver.xbox.rightStick.getY(), 0.08, 1.2);
+		double precisionDrive = scaleGain(RobotMap.HumanInput.Driver.xbox.getLeftY(), 0.08, 1.2);
 		double operatorDrive = scaleGain(-RobotMap.HumanInput.Operator.joystick.getAxis(1), 0.1, 1.2);
 		return speed + precisionDrive + operatorDrive;
 	}
 
 	@Override
 	public double getTurnSpeed() {
-		double rawTurnSpeed = RobotMap.HumanInput.Driver.xbox.leftStick.getX();
-		double precisionTurnSpeed = scaleGain(RobotMap.HumanInput.Driver.xbox.rightStick.getX(), 0.08, 1.2);
+		double rawTurnSpeed = RobotMap.HumanInput.Driver.xbox.getLeftX();
+		double precisionTurnSpeed = scaleGain(RobotMap.HumanInput.Driver.xbox.getRightX(), 0.08, 1.2);
 		double operatorControlTurnSpeed = scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(0), 0.2, 1.5);
 		double turnSpeed = scaleGain(rawTurnSpeed, NathanGain.TURN_GAIN, NathanGain.TURN_EXP)
 				* NathanGain.TURN_SPEED_SCALE;
