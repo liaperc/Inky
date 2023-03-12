@@ -3,6 +3,8 @@ package org.usfirst.frc4904.robot.humaninterface.drivers;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 public class NathanGain extends Driver {
 	public static final double SPEED_GAIN = 1;
 	public static final double SPEED_EXP = 2;
@@ -21,6 +23,11 @@ public class NathanGain extends Driver {
 
 	@Override
 	public void bindCommands() {
+		RobotMap.Component.chassis.setDefaultCommand(
+			RobotMap.Component.chassis.c_controlChassisVelocity(
+				() -> new ChassisSpeeds(getY(), getX(), getTurnSpeed())
+			)
+		);
 	}
 
 	@Override
@@ -41,10 +48,9 @@ public class NathanGain extends Driver {
 	@Override
 	public double getTurnSpeed() {
 		double rawTurnSpeed = RobotMap.HumanInput.Driver.xbox.getLeftX();
+		double turnSpeed = scaleGain(rawTurnSpeed, NathanGain.TURN_GAIN, NathanGain.TURN_EXP) * NathanGain.TURN_SPEED_SCALE;
 		double precisionTurnSpeed = scaleGain(RobotMap.HumanInput.Driver.xbox.getRightX(), 0.08, 1.2);
 		double operatorControlTurnSpeed = scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(0), 0.2, 1.5);
-		double turnSpeed = scaleGain(rawTurnSpeed, NathanGain.TURN_GAIN, NathanGain.TURN_EXP)
-				* NathanGain.TURN_SPEED_SCALE;
 		return turnSpeed + precisionTurnSpeed + operatorControlTurnSpeed;
 	}
 }

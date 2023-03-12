@@ -7,23 +7,19 @@ import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Map.entry;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
@@ -52,12 +48,21 @@ public class RobotMap {
             public static final int xboxController = 1;
         }
 
+        // blinky constants
+        // TODO: go to 2023 robot constants for comp
         public static class CANMotor {
-            public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
+            public static final int LEFT_DRIVE_A = 3;
+            public static final int RIGHT_DRIVE_A = 2;
+            public static final int LEFT_DRIVE_B = 5;
             public static final int RIGHT_DRIVE_B = 4;
-            public static final int LEFT_DRIVE_A = 1;
-            public static final int LEFT_DRIVE_B = 2;
-       }
+        }
+        // // 2023 robot constants
+        // public static class CANMotor {
+        //     public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
+        //     public static final int RIGHT_DRIVE_B = 4;
+        //     public static final int LEFT_DRIVE_A = 1;
+        //     public static final int LEFT_DRIVE_B = 2;
+        // }
 
         public static class PWM {
         }
@@ -73,40 +78,33 @@ public class RobotMap {
     }
 
     public static class Metrics {
+        // blinky constants
+        // TODO: go to 2023-robot constants for comp
         public static class Chassis {
-            public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
-            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
-            // public static final double WHEEL_CIRCUMFERENCE_METERS = Metrics.Chassis.WHEEL_DIAMETER_METERS * Math.PI;
-            // public static final double TICKS_PER_METER = Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION
-            //         / Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS;
-            // public static final double DISTANCE_FRONT_BACK = Units.inchesToMeters(37); // +/- 0.5 inches
-            // public static final double DISTANCE_SIDE_SIDE = Units.inchesToMeters(30);  // +/- 0.5 inches
-            // public static final double METERS_PER_TICK = Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS
-            //         / Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION / Metrics.Chassis.GEAR_RATIO;
-            // public static final double TURN_CORRECTION = 0.0;    @Deprecated // hopefully we don't need this anymore with closed-loop drivetrain 
-            public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
+            public static final double GEAR_RATIO = 69/5;
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+            public static final double TRACK_WIDTH_METERS = 0.59;
         }
 
-        // @Deprecated // SmartMotorSubsystem keeps track of this internally now
-        // public static class Encoders {
-        //     public static class TalonEncoders {
-        //         public static final double TICKS_PER_REVOLUTION = 2048.0;
-        //         public static final double REVOLUTIONS_PER_TICK = 1 / TICKS_PER_REVOLUTION;
-        //     }
+        // // 2023-robot constants
+        // public static class Chassis {
+        //     public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
+        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
+        //     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
         // }
     }
 
     public static class PID {
         public static class Drive {
             // PID constants
-            public static final double kP = 0.1;
+            public static final double kP = 0.1771 * 4; // TODO: @zbuster05 why times four??
             public static final double kI = 0;  // TODO: tune
             public static final double kD = 0;  // TODO: tune
             // feedforward constants
-            // TODO: characterize
-            public static final double kS = 0; 
-            public static final double kV = 0;
-            public static final double kA = 0;
+            // these are blinky constants from Blank-Ramsete-Test e809099
+            public static final double kS = 0.0081094; 
+            public static final double kV = 4.7873;
+            public static final double kA = 0.13655;
         }
 
         public static class Turn {
