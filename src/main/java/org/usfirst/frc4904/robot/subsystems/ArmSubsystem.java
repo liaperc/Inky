@@ -15,7 +15,7 @@ public class ArmSubsystem {
             pivotArmSubsystem.c_holdRotation(degreesFromHorizontal),
             armExtensionSubsystem.c_holdExtension(extensionLengthInches)
         );
-        cmdgrp.addRequirements(this.pivotArmSubsystem, this.armExtensionSubsystem, this);
+        cmdgrp.addRequirements(pivotArmSubsystem, armExtensionSubsystem);
         return cmdgrp;
     }
 

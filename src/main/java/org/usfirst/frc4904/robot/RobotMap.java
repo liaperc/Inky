@@ -26,6 +26,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc4904.robot.subsystems.ArmExtensionSubsystem;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.subsystems.Intake;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
@@ -38,6 +44,8 @@ import org.usfirst.frc4904.standard.LogKitten;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonSRX;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
+import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
+import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
@@ -53,6 +61,7 @@ import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 
 public class RobotMap {
+
     public static class Port {
         public static class Network {
             public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
@@ -76,6 +85,9 @@ public class RobotMap {
             public static final int FOLLOW_MOTOR = -1;
             public static final int ARM_EXTENSION_MOTOR = -1;
 
+            public static final int LEFT_INTAKE = -1; //TODO: fix
+            public static final int RIGHT_INTAKE = -1; //TODO: fix
+
         
         // // 2023 robot constants
         // public static class CANMotor {
@@ -98,7 +110,8 @@ public class RobotMap {
 
         public static class Digital {
         }
-    }
+
+       }
 
     public static class Metrics {
         // blinky constants
@@ -138,6 +151,7 @@ public class RobotMap {
         public static CANTalonEncoder leftWheelTalonEncoder;
         public static CANTalonEncoder rightWheelTalonEncoder;
         public static EncoderPair chassisTalonEncoders;
+        public static org.usfirst.frc4904.robot.subsystems.Intake intake;
         
         public static NavX navx;
 
@@ -150,6 +164,10 @@ public class RobotMap {
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
 
+        public static CustomCANSparkMax leftMotor;
+        public static CustomCANSparkMax rightMotor;
+
+        public static SparkMaxMotorSubsystem Intake;
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
         public static WestCoastDrive<TalonMotorController> chassis;
@@ -217,9 +235,16 @@ public class RobotMap {
         }
 
         // Chassis
-
-        /* Drive Train */
-        // TalonFX
+        //intake
+        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
+        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
+        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 11, intake_left, intake_right);
+        Component.intake = new Intake(intake_motors);
+        // Wheels
+//        Component.rightWheelA = new Motor("rightWheelA", false, rightWheelATalon);
+//        Component.rightWheelB = new Motor("rightWheelB", false, rightWheelBTalon);
+//        Component.leftWheelA = new Motor("leftWheelA", true, leftWheelATalon);
+//        Component.leftWheelB = new Motor("leftWheelB", true, leftWheelBTalon);
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
         CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
@@ -261,6 +286,7 @@ public class RobotMap {
         
 
         // NetworkTables setup
+
 
 
     }
