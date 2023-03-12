@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
-
+import org.usfirst.frc4904.robot.subsystems.Chassis2023;
 import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 
 public class RobotMap {
@@ -121,9 +121,7 @@ public class RobotMap {
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
 
-        public static TalonMotorSubsystem leftDriveMotors;
-        public static TalonMotorSubsystem rightDriveMotors;
-        public static WestCoastDrive<TalonMotorController> chassis;
+        public static Chassis2023 chassis;
     }
 
     public static class NetworkTables {
@@ -193,12 +191,12 @@ public class RobotMap {
         CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
         // components
-        Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
-        Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
-        Component.chassis = new WestCoastDrive<TalonMotorController>(
+        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
+        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
+        Component.chassis = new Chassis2023(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
-            Component.navx, Component.leftDriveMotors, Component.rightDriveMotors
+            Component.navx, leftDriveMotors, rightDriveMotors
         );
         Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
             PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,

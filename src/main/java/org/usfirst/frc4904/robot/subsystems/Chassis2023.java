@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
+import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.SmartMotorSubsystem;
@@ -28,12 +29,12 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Chassis2023 extends WestCoastDrive<CANTalonFX>{
+public class Chassis2023 extends WestCoastDrive<TalonMotorController>{
     public static final double RAMP_START_ANGLE = 9.0;
     public static final double RAMP_BALANCE_TOLERANCE = 4.0;
     public Chassis2023(double trackWidthMeters, double motorToWheelGearRatio, double wheelDiameterMeters,
     double drive_kP, double drive_kI, double drive_kD,
-    NavX navx, SmartMotorSubsystem<CANTalonFX> leftMotorSubsystem, SmartMotorSubsystem<CANTalonFX> rightMotorSubsystem) {
+    NavX navx, SmartMotorSubsystem<TalonMotorController> leftMotorSubsystem, SmartMotorSubsystem<TalonMotorController> rightMotorSubsystem) {
         super(trackWidthMeters, motorToWheelGearRatio, wheelDiameterMeters, drive_kP, drive_kI, drive_kD, navx, leftMotorSubsystem, rightMotorSubsystem);
     }
     public Command c_followSpline(Trajectory trajectory, double ffks, double ffkv, double ffka,
