@@ -13,6 +13,9 @@ import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 
+import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
@@ -63,6 +66,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
+        RobotMap.Component.chassis.setChassisVelocity(new ChassisSpeeds(0, 0, 1));
+        // RobotMap.Component.chassis.setWheelVoltages(new DifferentialDriveWheelVoltages(3, 3));
+        //robot jerks around when trying to go forward
+        //robot stopped responding even w/ green code light
     }
 
     @Override

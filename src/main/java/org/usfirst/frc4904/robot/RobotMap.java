@@ -97,7 +97,7 @@ public class RobotMap {
     public static class PID {
         public static class Drive {
             // PID constants
-            public static final double kP = 0.1771 * 4; // TODO: @zbuster05 why times four??
+            public static final double kP = 0.1771; // TODO: @zbuster05 why times four??
             public static final double kI = 0;  // TODO: tune
             public static final double kD = 0;  // TODO: tune
             // feedforward constants
@@ -159,7 +159,8 @@ public class RobotMap {
     public static final class Autonomous {
         public static final double RAMSETE_B = 2;
         public static final double RAMSETE_ZETA = 0.7;
-        public static final String AUTON_NAME = "center_mobility";
+        // public static final String AUTON_NAME = "center_mobility";
+        public static final String AUTON_NAME = "simple_straight";
         public static final double MAX_VEL = 6;
         public static final double MAX_ACCEL = 3;
         public static final Map<String, Command> autonEventMap = Map.ofEntries(
