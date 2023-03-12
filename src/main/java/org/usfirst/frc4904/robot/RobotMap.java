@@ -9,12 +9,9 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-<<<<<<< HEAD
 import com.revrobotics.CANSparkMax.IdleMode;
-=======
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
->>>>>>> origin/dev-drivetrain
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.subsystems.Intake;
@@ -28,16 +25,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import org.usfirst.frc4904.standard.LogKitten;
-<<<<<<< HEAD
-import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonSRX;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
-import org.usfirst.frc4904.standard.subsystems.chassis.TankDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
-=======
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
->>>>>>> origin/dev-drivetrain
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -116,38 +108,20 @@ public class RobotMap {
         public static CANTalonEncoder leftWheelTalonEncoder;
         public static CANTalonEncoder rightWheelTalonEncoder;
         public static EncoderPair chassisTalonEncoders;
-<<<<<<< HEAD
         public static org.usfirst.frc4904.robot.subsystems.Intake intake;
-        public static Motor rightWheelA;
-        public static Motor rightWheelB;
-        public static Motor leftWheelA;
-        public static Motor leftWheelB;
-        public static SensorDrive sensorDrive;
-        public static TankDrive chassis;
-        public static CustomPIDController drivePID;
-=======
         
->>>>>>> origin/dev-drivetrain
         public static NavX navx;
      
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
 
-<<<<<<< HEAD
-        public static CANTalonFX climberTalon;
-        public static Motor climberMotor;
-        public static Climber climber;
-        public static Shooter shooter;
-
         public static CustomCANSparkMax leftMotor;
         public static CustomCANSparkMax rightMotor;
 
         public static SparkMaxMotorSubsystem Intake;
-=======
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
         public static WestCoastDrive<TalonMotorController> Chassis;
->>>>>>> origin/dev-drivetrain
     }
 
     public static class NetworkTables {
@@ -194,14 +168,6 @@ public class RobotMap {
         }
 
         // Chassis
-
-        /* Drive Train */
-        // TalonFX
-<<<<<<< HEAD
-        CANTalonFX leftWheelATalon = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A);
-        CANTalonFX leftWheelBTalon = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B);
-        CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A);
-        CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B);
         //intake
         CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
         CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
@@ -212,7 +178,6 @@ public class RobotMap {
 //        Component.rightWheelB = new Motor("rightWheelB", false, rightWheelBTalon);
 //        Component.leftWheelA = new Motor("leftWheelA", true, leftWheelATalon);
 //        Component.leftWheelB = new Motor("leftWheelB", true, leftWheelBTalon);
-=======
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
         CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
@@ -222,7 +187,6 @@ public class RobotMap {
         Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
         Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
         Component.Chassis = new WestCoastDrive<TalonMotorController>(Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS, Component.leftDriveMotors, Component.rightDriveMotors);
->>>>>>> origin/dev-drivetrain
 
 
         // Wheel Encoders -- UNUSED
