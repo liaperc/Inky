@@ -37,6 +37,12 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return motor;
     }
 
+    public double getExtensionLength(double rotations) {
+        final double number_of_spool_rotations = rotations/GEARBOX_RATIO;
+        final double extensionLength = number_of_spool_rotations * SPOOL_CIRCUMFERENCE;
+        return extensionLength;
+    }
+
     public Command c_holdExtension(double extensionLengthInches) {
         final double spool_rotations = extensionLengthInches/SPOOL_CIRCUMFERENCE;
         double rotations = spool_rotations * GEARBOX_RATIO;
