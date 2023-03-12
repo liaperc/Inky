@@ -8,9 +8,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ArmSubsystem extends SubsystemBase {
+public class PivotArmSubsystem extends SubsystemBase {
     public final TalonMotorSubsystem armMotorGroup;
-    public ArmSubsystem(TalonMotorSubsystem armMotorGroup) {
+    public PivotArmSubsystem(TalonMotorSubsystem armMotorGroup) {
         this.armMotorGroup = armMotorGroup;
     }
     

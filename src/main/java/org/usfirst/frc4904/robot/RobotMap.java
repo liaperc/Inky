@@ -115,7 +115,7 @@ public class RobotMap {
 
         // Pivot Arm Subsystem
         public static TalonMotorSubsystem talonMotorSubsystem;
-        public static ArmSubsystem armSubsystem;
+        public static PivotArmSubsystem pivotArmSubsystem;
         public static CANTalonFX leadMotor;
         public static CANTalonFX followMotor;
      
@@ -208,7 +208,7 @@ public class RobotMap {
         Component.leadMotor = new CANTalonFX(Port.CANMotor.LEAD_MOTOR);
         Component.followMotor = new CANTalonFX(Port.CANMotor.FOLLOW_MOTOR);
         Component.talonMotorSubsystem = new TalonMotorSubsystem("Pivot Arm Subsystem", NeutralMode.Brake, 10, leadMotor, followMotor);
-        Component.armSubsystem = new ArmSubsystem(talonMotorSubsystem);
+        Component.pivotArmSubsystem = new pivotArmSubsystem(talonMotorSubsystem);
 
     }
 }
