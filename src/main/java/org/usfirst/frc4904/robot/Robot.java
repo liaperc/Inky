@@ -6,16 +6,23 @@
 /*----------------------------------------------------------------------------*/
 package org.usfirst.frc4904.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
+import org.usfirst.frc4904.standard.CommandRobotBase;
+
+
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
-    private RobotMap map = new RobotMap();
+    private static RobotMap map = new RobotMap();
 
     @Override
     public void initialize() {
         driverChooser.setDefaultOption(new NathanGain());
         operatorChooser.setDefaultOption(new DefaultOperator());
+        // autoChooser.setDefaultOption(RobotMap.Autonomous.autonCommand);  // zach is worried that this will get misclicked -> screw us
     }
 
     @Override
@@ -28,6 +35,11 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousInitialize() {
+        // TODO: remove; for testing only
+        RobotMap.Component.leftDriveMotors.setBrakeOnNeutral();
+        RobotMap.Component.rightDriveMotors.setBrakeOnNeutral();
+
+        RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
     }
 
     @Override
@@ -36,6 +48,13 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledInitialize() {
+        // TODO: remove; for testing only
+        new Timer().schedule(new TimerTask() { // https://stackoverflow.com/a/56225206/10372825
+            public void run() {
+                RobotMap.Component.leftDriveMotors.coast();
+                RobotMap.Component.rightDriveMotors.coast();
+            }
+        }, 2 * 1000L);  // coast motors after 2 seconds
     }
 
     @Override

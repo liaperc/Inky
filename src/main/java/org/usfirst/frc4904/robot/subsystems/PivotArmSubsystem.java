@@ -10,8 +10,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PivotArmSubsystem extends SubsystemBase {
     public final TalonMotorSubsystem armMotorGroup;
+    public final static double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
     public PivotArmSubsystem(TalonMotorSubsystem armMotorGroup) {
         this.armMotorGroup = armMotorGroup;
     }
     
+    public TalonMotorSubsystem getTalonMotorSubsystem() {
+        return armMotorGroup;
+    }
+
+    public void c_holdRotation(double degreesFromHorizontal) {
+        final double motor_rotation_per_degree = GEARBOX_RATIO/360;
+        final double rotations = degreesFromHorizontal * motor_rotation_per_degree;
+        this.getTalonMotorSubsystem().c_holdPosition(rotations);
+    }
 }
