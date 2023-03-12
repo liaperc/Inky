@@ -9,8 +9,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.subsystems.ArmExtension;
+
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.util.Units;
@@ -23,6 +26,7 @@ import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.CANTalonSRX;
 
 import org.usfirst.frc4904.standard.subsystems.chassis.TankDrive;
+import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -48,7 +52,8 @@ public class RobotMap {
             public static final int RIGHT_DRIVE_B = 4;
             public static final int LEFT_DRIVE_A = 1;
             public static final int LEFT_DRIVE_B = 2;
-       }
+            public static final int ARM_EXTENSION_MOTOR = -1;
+        }
 
         public static class PWM {
         }
@@ -57,7 +62,7 @@ public class RobotMap {
         }
 
         public static class Pneumatics {
-       	}
+        }
 
         public static class Digital {
         }
@@ -104,7 +109,7 @@ public class RobotMap {
         public static TankDrive chassis;
         public static CustomPIDController drivePID;
         public static NavX navx;
-     
+
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
 
@@ -112,6 +117,10 @@ public class RobotMap {
         public static Motor climberMotor;
         public static Climber climber;
         public static Shooter shooter;
+
+        public static CANTalonFX armExtensionMotor;
+        public static TalonMotorSubsystem talonMotorSubsystem;
+        public static ArmExtension armExtensionSubsystem;
     }
 
     public static class NetworkTables {
@@ -180,7 +189,6 @@ public class RobotMap {
         Component.initialPose = new Pose2d(); // TODO double x, double y, rotation2d
         Component.sensorDrive = new SensorDrive(Component.chassis, Component.leftWheelTalonEncoder,
                 Component.rightWheelTalonEncoder, Component.navx, Component.initialPose);
-
         Component.chassisTalonEncoders = new EncoderPair(Component.leftWheelTalonEncoder,
                 Component.rightWheelTalonEncoder);
 
@@ -188,6 +196,13 @@ public class RobotMap {
                 Component.rightWheelA, Component.rightWheelB);//, Component.shifter);
         Component.chassis.setDefaultCommand(new ChassisMove(Component.chassis, new NathanGain()));
 
+        Component.armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR);
+        Component.talonMotorSubsystem = new TalonMotorSubsystem("Arm Extension", NeutralMode.Brake, 10, Component.armExtensionMotor)
+
+        
+
         // NetworkTables setup
+
+
     }
 }

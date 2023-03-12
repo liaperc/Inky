@@ -4,13 +4,13 @@
 package org.usfirst.frc4904.robot.subsystems;
 
 import org.usfirst.frc4904.robot.RobotMap;
-import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
+import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtension extends SubsystemBase {
     
-    private final TalonMotorController motor;
+    private final TalonMotorSubsystem motor;
     private final static double EXTENSION_SPEED = 0.5;
     
     /**
@@ -18,7 +18,7 @@ public class ArmExtension extends SubsystemBase {
      *
      * @param motor the motor controller used to extend the arm
      */
-    public ArmExtension(TalonMotorController motor) {
+    public ArmExtension(TalonMotorSubsystem motor) {
         this.motor = motor;
     }
     
@@ -27,7 +27,7 @@ public class ArmExtension extends SubsystemBase {
      *
      * @return the motor controller used to extend the arm
      */
-    public TalonMotorController getMotor() {
+    public TalonMotorSubsystem getMotor() {
         return motor;
     }
 }
