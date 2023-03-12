@@ -13,6 +13,7 @@ import static java.util.Map.entry;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
@@ -97,7 +98,7 @@ public class RobotMap {
     public static class PID {
         public static class Drive {
             // PID constants
-            public static final double kP = 0.1771*4; // TODO: @zbuster05 why times four??
+            public static final double kP = 0.1771/2; // TODO: @zbuster05 why times four??
             public static final double kI = 0;  // TODO: tune
             public static final double kD = 0;  // TODO: tune
             // feedforward constants
@@ -116,7 +117,7 @@ public class RobotMap {
         public static CANTalonEncoder rightWheelTalonEncoder;
         public static EncoderPair chassisTalonEncoders;
         
-        public static NavX navx;
+        public static AHRS navx;
      
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
@@ -169,7 +170,7 @@ public class RobotMap {
 
 
     public RobotMap() {
-        Component.navx = new NavX(SerialPort.Port.kMXP);
+        Component.navx = new AHRS(SerialPort.Port.kMXP);
 
         HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
 		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick);
@@ -191,8 +192,8 @@ public class RobotMap {
         CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
         // components
-        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
-        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
+        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0,  leftWheelATalon,  leftWheelBTalon);
+        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, rightWheelATalon, rightWheelBTalon);
         Component.chassis = new Chassis2023(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
