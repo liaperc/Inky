@@ -3,6 +3,7 @@ package org.usfirst.frc4904.robot;
 import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
+import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,9 +14,11 @@ import static java.util.Map.entry;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
+import org.usfirst.frc4904.robot.subsystems.Intake;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -24,6 +27,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
+import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
@@ -55,6 +59,8 @@ public class RobotMap {
             public static final int RIGHT_DRIVE_A = 2;
             public static final int LEFT_DRIVE_B = 5;
             public static final int RIGHT_DRIVE_B = 4;
+            public static final int LEFT_INTAKE = -1; //TODO: fix
+            public static final int RIGHT_INTAKE = -1; //TODO: fix
         }
         // // 2023 robot constants
         // public static class CANMotor {
@@ -124,6 +130,8 @@ public class RobotMap {
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
         public static WestCoastDrive<TalonMotorController> chassis;
+
+        public static Intake intake;
     }
 
     public static class NetworkTables {
@@ -206,6 +214,12 @@ public class RobotMap {
             Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
             Autonomous.autonEventMap
         );
+
+        // intake
+        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
+        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
+        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 11, intake_left, intake_right);
+        Component.intake = new Intake(intake_motors);
 
 
         // Wheel Encoders -- UNUSED
