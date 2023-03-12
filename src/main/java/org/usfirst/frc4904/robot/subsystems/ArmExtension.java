@@ -6,6 +6,7 @@ package org.usfirst.frc4904.robot.subsystems;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtension extends SubsystemBase {
@@ -36,10 +37,11 @@ public class ArmExtension extends SubsystemBase {
         return motor;
     }
 
-    public double extensionToRotations(double extensionLengthInches) {
+    public Command c_holdExtension(double extensionLengthInches) {
         final double spool_rotations = extensionLengthInches/SPOOL_CIRCUMFERENCE;
         double rotations = spool_rotations * GEARBOX_RATIO;
-        return rotations;
+
+        return getMotor().c_holdPosition(rotations);
     }
 }
 
