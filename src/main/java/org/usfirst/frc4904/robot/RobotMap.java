@@ -11,8 +11,21 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+
+import org.usfirst.frc4904.robot.subsystems.ArmSubsystem;
+import org.usfirst.frc4904.robot.subsystems.PivotArmSubsystem;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+
+import org.usfirst.frc4904.robot.subsystems.ArmExtensionSubsystem;
+
 
 import edu.wpi.first.math.geometry.Pose2d;
 
@@ -22,6 +35,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import org.usfirst.frc4904.standard.LogKitten;
+
+import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonSRX;
+import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
@@ -55,7 +71,12 @@ public class RobotMap {
             public static final int RIGHT_DRIVE_A = 2;
             public static final int LEFT_DRIVE_B = 5;
             public static final int RIGHT_DRIVE_B = 4;
-        }
+
+            public static final int LEAD_MOTOR = -1;
+            public static final int FOLLOW_MOTOR = -1;
+            public static final int ARM_EXTENSION_MOTOR = -1;
+
+        
         // // 2023 robot constants
         // public static class CANMotor {
         //     public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
@@ -63,6 +84,8 @@ public class RobotMap {
         //     public static final int LEFT_DRIVE_A = 1;
         //     public static final int LEFT_DRIVE_B = 2;
         // }
+            
+        }
 
         public static class PWM {
         }
@@ -71,7 +94,7 @@ public class RobotMap {
         }
 
         public static class Pneumatics {
-       	}
+        }
 
         public static class Digital {
         }
@@ -117,6 +140,12 @@ public class RobotMap {
         public static EncoderPair chassisTalonEncoders;
         
         public static NavX navx;
+
+        // Pivot Arm Subsystem
+        public static TalonMotorSubsystem pivotTalonMotorSubsystem;
+        public static PivotArmSubsystem pivotArmSubsystem;
+        public static CANTalonFX leftLeadMotor;
+        public static CANTalonFX rightFollowMotor;
      
         public static RobotUDP robotUDP;
         public static Pose2d initialPose;
@@ -124,6 +153,10 @@ public class RobotMap {
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
         public static WestCoastDrive<TalonMotorController> chassis;
+
+        public static CANTalonFX armExtensionMotor;
+        public static TalonMotorSubsystem extensionTalonMotorSubsystem;
+        public static ArmExtensionSubsystem armExtensionSubsystem;
     }
 
     public static class NetworkTables {
@@ -212,8 +245,23 @@ public class RobotMap {
         
         // NetworkTables setup
 
+        // Pivot Arms
+        Component.leftLeadMotor = new CANTalonFX(RobotMap.Port.CANMotor.LEAD_MOTOR, InvertType.None);
+        Component.rightFollowMotor = new CANTalonFX(RobotMap.Port.CANMotor.FOLLOW_MOTOR, InvertType.OpposeMaster);
+        Component.pivotTalonMotorSubsystem = new TalonMotorSubsystem("Pivot Arm Subsystem", NeutralMode.Brake, 10, Component.leftLeadMotor, Component.rightFollowMotor);
+        Component.pivotArmSubsystem = new PivotArmSubsystem(Component.pivotTalonMotorSubsystem);
+
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing
         // - naive + scuffed ramsete tuning: https://docs.google.com/spreadsheets/d/1BIvwJ6MfLf9ByW9dcmagXFvm7HPaXY78Y4YB1L9TGPA/edit#gid=0
+
+        Component.armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR, InvertType.None);
+        Component.extensionTalonMotorSubsystem = new TalonMotorSubsystem("Arm Extension", NeutralMode.Brake, 10, Component.armExtensionMotor);
+
+        
+
+        // NetworkTables setup
+
+
     }
 }
