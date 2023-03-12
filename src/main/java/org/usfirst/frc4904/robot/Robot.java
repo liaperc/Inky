@@ -32,6 +32,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousInitialize() {
+        RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
     }
 
     @Override

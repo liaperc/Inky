@@ -7,6 +7,10 @@ import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -28,6 +32,8 @@ import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
 import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
@@ -68,29 +74,39 @@ public class RobotMap {
 
     public static class Metrics {
         public static class Chassis {
-            public static final double GEAR_RATIO = 5.0; // TODO: Check gear ratio for robot
-            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(-1.0); // TODO: Check values
-            public static final double WHEEL_CIRCUMFERENCE_METERS = Metrics.Chassis.WHEEL_DIAMETER_METERS * Math.PI;
-            public static final double TICKS_PER_METER = Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION
-                    / Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS;
-            public static final double DISTANCE_FRONT_BACK = Units.inchesToMeters(-1.0); // TODO: DOUBLE CHECK DISTANCES
-            public static final double DISTANCE_SIDE_SIDE = Units.inchesToMeters(-1.0); // The robot's a square
-            public static final double METERS_PER_TICK = Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS
-                    / Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION / Metrics.Chassis.GEAR_RATIO;
-            public static final double TURN_CORRECTION = 0.0;
-            public static final double TRACK_WIDTH_METERS = 0; //TODO: change to actual value
+            public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
+            // public static final double WHEEL_CIRCUMFERENCE_METERS = Metrics.Chassis.WHEEL_DIAMETER_METERS * Math.PI;
+            // public static final double TICKS_PER_METER = Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION
+            //         / Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS;
+            // public static final double DISTANCE_FRONT_BACK = Units.inchesToMeters(37); // +/- 0.5 inches
+            // public static final double DISTANCE_SIDE_SIDE = Units.inchesToMeters(30);  // +/- 0.5 inches
+            // public static final double METERS_PER_TICK = Metrics.Chassis.WHEEL_CIRCUMFERENCE_METERS
+            //         / Metrics.Encoders.TalonEncoders.TICKS_PER_REVOLUTION / Metrics.Chassis.GEAR_RATIO;
+            // public static final double TURN_CORRECTION = 0.0;    @Deprecated // hopefully we don't need this anymore with closed-loop drivetrain 
+            public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
         }
 
-        public static class Encoders {
-            public static class TalonEncoders {
-                public static final double TICKS_PER_REVOLUTION = 2048.0;
-                public static final double REVOLUTIONS_PER_TICK = 1 / TICKS_PER_REVOLUTION;
-            }
-        }
+        // @Deprecated // SmartMotorSubsystem keeps track of this internally now
+        // public static class Encoders {
+        //     public static class TalonEncoders {
+        //         public static final double TICKS_PER_REVOLUTION = 2048.0;
+        //         public static final double REVOLUTIONS_PER_TICK = 1 / TICKS_PER_REVOLUTION;
+        //     }
+        // }
     }
 
     public static class PID {
         public static class Drive {
+            // PID constants
+            public static final double kP = 0.1;
+            public static final double kI = 0;  // TODO: tune
+            public static final double kD = 0;  // TODO: tune
+            // feedforward constants
+            // TODO: characterize
+            public static final double kS = 0; 
+            public static final double kV = 0;
+            public static final double kA = 0;
         }
 
         public static class Turn {
@@ -109,7 +125,7 @@ public class RobotMap {
 
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
-        public static WestCoastDrive<TalonMotorController> Chassis;
+        public static WestCoastDrive<TalonMotorController> chassis;
     }
 
     public static class NetworkTables {
@@ -142,6 +158,19 @@ public class RobotMap {
         }
     }
 
+    public static final class Autonomous {
+        public static final double RAMSETE_B = 2;
+        public static final double RAMSETE_ZETA = 0.7;
+        public static final String AUTON_NAME = "center_mobility";
+        public static final double MAX_VEL = 6;
+        public static final double MAX_ACCEL = 3;
+        public static final Map<String, Command> autonEventMap = Map.ofEntries(
+            entry("logEvent", Commands.runOnce(() -> LogKitten.wtf("auton logEvent reached!")))
+        );
+        public static Command autonCommand;
+    }
+
+
     public RobotMap() {
         Component.navx = new NavX(SerialPort.Port.kMXP);
 
@@ -167,11 +196,25 @@ public class RobotMap {
         // components
         Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
         Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
-        Component.Chassis = new WestCoastDrive<TalonMotorController>(Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS, Component.leftDriveMotors, Component.rightDriveMotors);
+        Component.chassis = new WestCoastDrive<TalonMotorController>(
+            Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
+            PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
+            Component.navx, Component.leftDriveMotors, Component.rightDriveMotors
+        );
+        Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
+            PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,
+            Autonomous.RAMSETE_B, Autonomous.RAMSETE_ZETA,
+            Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
+            Autonomous.autonEventMap
+        );
 
 
         // Wheel Encoders -- UNUSED
         
         // NetworkTables setup
+
+        // links we'll need
+        // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing
+        // - naive + scuffed ramsete tuning: https://docs.google.com/spreadsheets/d/1BIvwJ6MfLf9ByW9dcmagXFvm7HPaXY78Y4YB1L9TGPA/edit#gid=0
     }
 }
