@@ -20,6 +20,12 @@ public class PivotArmSubsystem extends SubsystemBase {
         return armMotorGroup;
     }
 
+    public double getAngle(double rotations) {
+        final double degrees_per_rotation = 360/GEARBOX_RATIO;
+        final double degrees = rotations * degrees_per_rotation;
+        return degrees;
+    }
+
     public Command c_holdRotation(double degreesFromHorizontal) {
         final double motor_rotation_per_degree = GEARBOX_RATIO/360;
         final double rotations = degreesFromHorizontal * motor_rotation_per_degree;
