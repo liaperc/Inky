@@ -199,12 +199,12 @@ public class RobotMap {
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
             Component.navx, leftDriveMotors, rightDriveMotors
         );
-        Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
-            PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,
-            Autonomous.RAMSETE_B, Autonomous.RAMSETE_ZETA,
-            Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
-            Autonomous.autonEventMap
-        );
+        // Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
+        //     PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,
+        //     Autonomous.RAMSETE_B, Autonomous.RAMSETE_ZETA,
+        //     Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
+        //     Autonomous.autonEventMap
+        // );
 
 
         // Wheel Encoders -- UNUSED

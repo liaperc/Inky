@@ -8,11 +8,13 @@ package org.usfirst.frc4904.robot;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
+import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
@@ -21,6 +23,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
 // TODO implement test and sim in CommandRobotBase
@@ -48,7 +52,13 @@ public class Robot extends CommandRobotBase {
         RobotMap.Component.chassis.leftMotors.setBrakeOnNeutral();
         RobotMap.Component.chassis.rightMotors.setBrakeOnNeutral();
 
-        RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
+        // RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
+
+        // shhhhhh
+        final RobotContainer2 donttouchme = new RobotContainer2();
+        final Trajectory trajectory = donttouchme.getTrajectory("yes");
+        var command = donttouchme.getAutonomousCommand(trajectory);
+        command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
     }
 
     @Override
@@ -76,18 +86,19 @@ public class Robot extends CommandRobotBase {
         // RobotMap.Component.chassis.setWheelVoltages(new DifferentialDriveWheelVoltages(3, 3));
         //robot jerks around when trying to go forward
         //robot stopped responding even w/ green code light
-        String trajectoryJSON = "pathplanner/generatedJSON/simple_straight.wpilib.json";
-        Trajectory trajectory = new Trajectory();
-        try {
-            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-            System.out.println("v\nv\nv\nv\ntrajectory total time" + String.valueOf(trajectory.getTotalTimeSeconds()));
-        } catch (IOException ex) {
-            System.out.println("SHEEEEEESH");
-            DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-        }
-        RobotMap.Component.chassis.c_followSpline(trajectory, RobotMap.PID.Drive.kS, RobotMap.PID.Drive.kV, 
-        RobotMap.PID.Drive.kA, RobotMap.Autonomous.RAMSETE_B,RobotMap.Autonomous.RAMSETE_ZETA);
+
+        // String trajectoryJSON = "pathplanner/generatedJSON/simple_straight.wpilib.json";
+        // Trajectory trajectory = new Trajectory();
+        // try {
+        //     Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+        //     trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        //     System.out.println("v\nv\nv\nv\ntrajectory total time" + String.valueOf(trajectory.getTotalTimeSeconds()));
+        // } catch (IOException ex) {
+        //     System.out.println("SHEEEEEESH");
+        //     DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+        // }
+        // RobotMap.Component.chassis.c_followSpline(trajectory, RobotMap.PID.Drive.kS, RobotMap.PID.Drive.kV, 
+        //     RobotMap.PID.Drive.kA, RobotMap.Autonomous.RAMSETE_B,RobotMap.Autonomous.RAMSETE_ZETA);
     }
 
     @Override
