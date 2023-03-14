@@ -140,7 +140,7 @@ public class RobotMap {
             // these are blinky constants from Blank-Ramsete-Test e809099
             public static final double kS = 0.0081094; 
             public static final double kV = 4.7873;
-            public static final double kA = 0.13655;
+            public static final double kA = 0.13655;    // these should live in their own subsystem
         }
 
         public static class Turn {
@@ -255,7 +255,7 @@ public class RobotMap {
         ArmExtensionSubsystem armExtensionSubsystem = new ArmExtensionSubsystem(
             new TalonMotorSubsystem("Arm Extension Subsystem", NeutralMode.Brake, 0, armExtensionMotor),
             () -> armRotationMotors.getSensorPositionRotations() * Math.PI / 180);
-        ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors);
+        ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors, armExtensionSubsystem::getCurrentExtensionLength);
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
 
         // links we'll need
