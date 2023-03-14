@@ -62,17 +62,16 @@ public class RobotContainer2 {
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
-        public RobotContainer2() {
+        public RobotContainer2(WPI_TalonFX leftATalonFX, WPI_TalonFX leftBTalonFX, WPI_TalonFX rightATalonFX, WPI_TalonFX rightBTalonFX) {
 
                 // The driver's controller
                 // m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
                 // Configure the button bindings
-                Component.leftATalonFX = new WPI_TalonFX(Constants.DriveConstants.kLeftMotor1Port);
-                Component.leftBTalonFX = new WPI_TalonFX(Constants.DriveConstants.kLeftMotor2Port);
-
-                Component.rightATalonFX = new WPI_TalonFX(Constants.DriveConstants.kRightMotor1Port);
-                Component.rightBTalonFX = new WPI_TalonFX(Constants.DriveConstants.kRightMotor2Port);
+                Component.leftATalonFX = leftATalonFX; 
+                Component.leftBTalonFX = leftBTalonFX;
+                Component.rightATalonFX = rightATalonFX;
+                Component.rightBTalonFX = rightBTalonFX;
 
 		
 		RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast);

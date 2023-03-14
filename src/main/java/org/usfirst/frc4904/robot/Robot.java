@@ -15,9 +15,11 @@ import java.util.TimerTask;
 // import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 // import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
+import org.usfirst.frc4904.robot.seenoevil.RobotContainer2.Component;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,8 +35,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
-    // private static RobotMap map = new RobotMap();
-    private final RobotContainer2 donttouchme = new RobotContainer2();
+    private static RobotMap map = new RobotMap();
+    private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.leftWheelATalon, RobotMap.Component.leftWheelBTalon, RobotMap.Component.rightWheelATalon, RobotMap.Component.rightWheelBTalon);
 
     @Override
     public void initialize() {
