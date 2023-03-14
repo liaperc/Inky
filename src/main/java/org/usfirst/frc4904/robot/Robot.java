@@ -19,7 +19,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
-    private static RobotMap map = new RobotMap();
+    private RobotMap map = new RobotMap();
 
     @Override
     public void initialize() {
