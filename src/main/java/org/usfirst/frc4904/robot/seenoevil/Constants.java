@@ -5,6 +5,7 @@
 package org.usfirst.frc4904.robot.seenoevil;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,7 +35,7 @@ public final class Constants {
         new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final int kEncoderCPR = 2048;
-    public static final double kWheelDiameterMeters = 0.1016;
+    public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
     public static final double gearRatio = 69/5;
     //using blinky gear ratio
     public static final double kEncoderDistancePerPulse = kWheelDiameterMeters*Math.PI / kEncoderCPR / gearRatio;
