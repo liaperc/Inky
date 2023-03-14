@@ -170,7 +170,7 @@ public class RobotMap {
         public static SparkMaxMotorSubsystem Intake;
         public static TalonMotorSubsystem leftDriveMotors;
         public static TalonMotorSubsystem rightDriveMotors;
-        public static WestCoastDrive<TalonMotorController> chassis;
+        public static WestCoastDrive chassis;
 
         public static CANTalonFX armExtensionMotor;
         public static TalonMotorSubsystem extensionTalonMotorSubsystem;
@@ -240,11 +240,8 @@ public class RobotMap {
         CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
         SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 11, intake_left, intake_right);
         Component.intake = new Intake(intake_motors);
+        
         // Wheels
-//        Component.rightWheelA = new Motor("rightWheelA", false, rightWheelATalon);
-//        Component.rightWheelB = new Motor("rightWheelB", false, rightWheelBTalon);
-//        Component.leftWheelA = new Motor("leftWheelA", true, leftWheelATalon);
-//        Component.leftWheelB = new Motor("leftWheelB", true, leftWheelBTalon);
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
         CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
@@ -253,7 +250,7 @@ public class RobotMap {
         // components
         Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
         Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
-        Component.chassis = new WestCoastDrive<TalonMotorController>(
+        Component.chassis = new WestCoastDrive(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
             Component.navx, Component.leftDriveMotors, Component.rightDriveMotors
