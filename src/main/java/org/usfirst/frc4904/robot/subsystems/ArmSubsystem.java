@@ -3,9 +3,9 @@ package org.usfirst.frc4904.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 public class ArmSubsystem {
-    public final PivotArmSubsystem pivotArmSubsystem;
+    public final ArmPivotSubsystem pivotArmSubsystem;
     public final ArmExtensionSubsystem armExtensionSubsystem;
-    public ArmSubsystem(PivotArmSubsystem pivotArmSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
+    public ArmSubsystem(ArmPivotSubsystem pivotArmSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
         this.pivotArmSubsystem = pivotArmSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
     }

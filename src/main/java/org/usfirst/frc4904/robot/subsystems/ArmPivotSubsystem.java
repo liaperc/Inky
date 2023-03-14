@@ -9,10 +9,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class PivotArmSubsystem extends SubsystemBase {
+public class ArmPivotSubsystem extends SubsystemBase {
     public final TalonMotorSubsystem armMotorGroup;
     public final static double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
-    public PivotArmSubsystem(TalonMotorSubsystem armMotorGroup) {
+    public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup) {
         this.armMotorGroup = armMotorGroup;
     }
     
