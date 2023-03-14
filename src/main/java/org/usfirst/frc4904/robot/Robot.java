@@ -17,12 +17,16 @@ import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -30,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
     private static RobotMap map = new RobotMap();
+    private final RobotContainer2 donttouchme = new RobotContainer2();
 
     @Override
     public void initialize() {
@@ -49,13 +54,22 @@ public class Robot extends CommandRobotBase {
     @Override
     public void autonomousInitialize() {
         // TODO: remove; for testing only
-        RobotMap.Component.chassis.leftMotors.setBrakeOnNeutral();
-        RobotMap.Component.chassis.rightMotors.setBrakeOnNeutral();
+        // RobotMap.Component.chassis.leftMotors.setBrakeOnNeutral();
+        // RobotMap.Component.chassis.rightMotors.setBrakeOnNeutral();
+        // RobotMap.Component.chassis.leftMotors.setCoastOnNeutral();
+        // RobotMap.Component.chassis.rightMotors.setCoastOnNeutral();
 
         // RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
 
         // shhhhhh
-        final RobotContainer2 donttouchme = new RobotContainer2();
+        // RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+        // RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        // RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+        // RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        // RobotContainer2.Component.leftATalonFX.neutralOutput();
+        // RobotContainer2.Component.leftBTalonFX.neutralOutput();
+        // RobotContainer2.Component.rightATalonFX.neutralOutput();
+        // RobotContainer2.Component.rightBTalonFX.neutralOutput();
         final Trajectory trajectory = donttouchme.getTrajectory("yes");
         var command = donttouchme.getAutonomousCommand(trajectory);
         command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
@@ -63,6 +77,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousExecute() {
+        SmartDashboard.putString("pose", donttouchme.m_robotDrive.getPose().toString());
     }
 
     @Override
@@ -70,8 +85,8 @@ public class Robot extends CommandRobotBase {
         // TODO: remove; for testing only
         new Timer().schedule(new TimerTask() { // https://stackoverflow.com/a/56225206/10372825
             public void run() {
-                RobotMap.Component.chassis.leftMotors.coast();
-                RobotMap.Component.chassis.rightMotors.coast();
+                // RobotMap.Component.chassis.leftMotors.coast();
+                // RobotMap.Component.chassis.rightMotors.coast();
             }
         }, 2 * 1000L);  // coast motors after 2 seconds
     }
@@ -82,6 +97,8 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
+        // RobotMap.Component.chassis.leftMotors.coast();
+        // RobotMap.Component.chassis.rightMotors.coast();
         //RobotMap.Component.chassis.setChassisVelocity(new ChassisSpeeds(0, 0, 1));
         // RobotMap.Component.chassis.setWheelVoltages(new DifferentialDriveWheelVoltages(3, 3));
         //robot jerks around when trying to go forward

@@ -100,10 +100,12 @@ public class RobotContainer2 {
 	
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
+                RamseteController ramseteController = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
+                ramseteController.setEnabled(false);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
-			new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+                        ramseteController,
 			new SimpleMotorFeedforward(
 				DriveConstants.ksVolts,
 				DriveConstants.kvVoltSecondsPerMeter,
@@ -191,10 +193,10 @@ public class RobotContainer2 {
                             // Pass through these two interior waypoints, making an 's' curve path
                             // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist,
                             // -.15*dist)),
-                            List.of(new Translation2d(2, -2), new Translation2d(4, -2)),
+                            List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
 
                             // End 3 meters straight ahead of where we started, facing forward
-                            new Pose2d(4, 0, new Rotation2d(Math.PI / 2)),
+                            new Pose2d(2, 0, new Rotation2d(Math.PI / 2)),
                             // Pass config
                             config);
         return exampleTrajectory;
