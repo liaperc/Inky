@@ -39,10 +39,8 @@ public class Robot extends CommandRobotBase {
     @Override
     public void autonomousInitialize() {
         // TODO: remove; for testing only
-        RobotMap.Component.leftDriveMotors.setBrakeOnNeutral();
-        RobotMap.Component.rightDriveMotors.setBrakeOnNeutral();
-
-        RobotMap.Autonomous.autonCommand.schedule();    // or use this.autoChooser.addOption() for smartDashboard auton chooser?
+        RobotMap.Component.chassis.leftMotors.setBrakeOnNeutral();
+        RobotMap.Component.chassis.rightMotors.setBrakeOnNeutral();
     }
 
     @Override
@@ -54,8 +52,8 @@ public class Robot extends CommandRobotBase {
         // TODO: remove; for testing only
         new Timer().schedule(new TimerTask() { // https://stackoverflow.com/a/56225206/10372825
             public void run() {
-                RobotMap.Component.leftDriveMotors.coast();
-                RobotMap.Component.rightDriveMotors.coast();
+                RobotMap.Component.chassis.leftMotors.coast();
+                RobotMap.Component.chassis.rightMotors.coast();
             }
         }, 2 * 1000L);  // coast motors after 2 seconds
     }
