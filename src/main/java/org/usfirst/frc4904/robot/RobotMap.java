@@ -7,33 +7,19 @@ import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Map;
 
-import static java.util.Map.entry;
-
-
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import org.usfirst.frc4904.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc4904.robot.subsystems.ArmPivotSubsystem;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 
 import org.usfirst.frc4904.robot.subsystems.ArmExtensionSubsystem;
 
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.subsystems.Intake;
-
-import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
@@ -42,18 +28,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import org.usfirst.frc4904.standard.LogKitten;
 
-import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonSRX;
-import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
-import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
-import org.usfirst.frc4904.standard.custom.sensors.EncoderPair;
-import org.usfirst.frc4904.standard.custom.sensors.CANTalonEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
@@ -81,12 +60,6 @@ public class RobotMap {
             public static final int LEFT_DRIVE_B = 5;
             public static final int RIGHT_DRIVE_B = 4;
 
-            public static final int PIVOT_MOTOR_LEFT = -1;
-            public static final int PIVOT_MOTOR_RIGHT = -1;
-            public static final int ARM_EXTENSION_MOTOR = -1;
-
-            public static final int LEFT_INTAKE = -1; //TODO: fix
-            public static final int RIGHT_INTAKE = -1; //TODO: fix
 
         
         // // 2023 robot constants
@@ -96,7 +69,13 @@ public class RobotMap {
         //     public static final int LEFT_DRIVE_A = 1;
         //     public static final int LEFT_DRIVE_B = 2;
         // }
-            
+
+            public static final int PIVOT_MOTOR_LEFT = -1;
+            public static final int PIVOT_MOTOR_RIGHT = -1;
+            public static final int ARM_EXTENSION_MOTOR = -1;
+
+            public static final int LEFT_INTAKE = -1; //TODO: fix
+            public static final int RIGHT_INTAKE = -1; //TODO: fix
         }
 
         public static class PWM {
@@ -187,20 +166,6 @@ public class RobotMap {
         }
     }
 
-    public static final class Autonomous {
-        public static final double RAMSETE_B = 2;
-        public static final double RAMSETE_ZETA = 0.7;
-        // public static final String AUTON_NAME = "center_mobility";
-        public static final String AUTON_NAME = "simple_straight";
-        public static final double MAX_VEL = 6;
-        public static final double MAX_ACCEL = 3;
-        public static final Map<String, Command> autonEventMap = Map.ofEntries(
-            entry("logEvent", Commands.runOnce(() -> LogKitten.wtf("auton logEvent reached!")))
-        );
-        public static Command autonCommand;
-    }
-
-
     public RobotMap() {
         Component.navx = new NavX(SerialPort.Port.kMXP);
 
@@ -215,19 +180,11 @@ public class RobotMap {
         }
 
         // Chassis
-        //intake
-        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
-        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
-        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
-        Component.intake = new Intake(intake_motors);
-        
-        // Wheels
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
         CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
         CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
-        // components
         TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0,  leftWheelATalon,  leftWheelBTalon);
         TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, rightWheelATalon, rightWheelBTalon);
         Component.chassis = new WestCoastDrive(
@@ -235,28 +192,26 @@ public class RobotMap {
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
             Component.navx, leftDriveMotors, rightDriveMotors
         );
-        Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
-            PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,
-            Autonomous.RAMSETE_B, Autonomous.RAMSETE_ZETA,
-            Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
-            Autonomous.autonEventMap
-        );
 
-
-        // Wheel Encoders -- UNUSED
-        
-        // NetworkTables setup
-
-        // Arm Pivot
+        // Arm Subsystem
         CANTalonFX leftPivotMotor  = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_LEFT,  InvertType.None);
         CANTalonFX rightPivotMotor = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_RIGHT, InvertType.OpposeMaster);
         CANTalonFX armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR, InvertType.None);
+
         TalonMotorSubsystem armRotationMotors = new TalonMotorSubsystem("Arm Pivot Subsystem", NeutralMode.Brake, 0, leftPivotMotor, rightPivotMotor);
         ArmExtensionSubsystem armExtensionSubsystem = new ArmExtensionSubsystem(
             new TalonMotorSubsystem("Arm Extension Subsystem", NeutralMode.Brake, 0, armExtensionMotor),
             () -> armRotationMotors.getSensorPositionRotations() * Math.PI / 180);
+
         ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors, armExtensionSubsystem::getCurrentExtensionLength);
+
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
+
+        // Intake
+        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
+        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
+        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
+        Component.intake = new Intake(intake_motors);
 
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing
