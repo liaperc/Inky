@@ -6,8 +6,17 @@
 /*----------------------------------------------------------------------------*/
 package org.usfirst.frc4904.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
+import org.usfirst.frc4904.standard.CommandRobotBase;
+
+import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
+
 // TODO implement test and sim in CommandRobotBase
 public class Robot extends CommandRobotBase {
     private RobotMap map = new RobotMap();
@@ -16,6 +25,7 @@ public class Robot extends CommandRobotBase {
     public void initialize() {
         driverChooser.setDefaultOption(new NathanGain());
         operatorChooser.setDefaultOption(new DefaultOperator());
+        // autoChooser.setDefaultOption(RobotMap.Autonomous.autonCommand);  // zach is worried that this will get misclicked -> screw us
     }
 
     @Override
@@ -28,6 +38,9 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousInitialize() {
+        // TODO: remove; for testing only
+        RobotMap.Component.chassis.leftMotors.setBrakeOnNeutral();
+        RobotMap.Component.chassis.rightMotors.setBrakeOnNeutral();
     }
 
     @Override
@@ -36,6 +49,13 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledInitialize() {
+        // TODO: remove; for testing only
+        new Timer().schedule(new TimerTask() { // https://stackoverflow.com/a/56225206/10372825
+            public void run() {
+                RobotMap.Component.chassis.leftMotors.coast();
+                RobotMap.Component.chassis.rightMotors.coast();
+            }
+        }, 2 * 1000L);  // coast motors after 2 seconds
     }
 
     @Override
@@ -44,6 +64,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
+        RobotMap.Component.chassis.setChassisVelocity(new ChassisSpeeds(0, 0, 1));
+        // RobotMap.Component.chassis.setWheelVoltages(new DifferentialDriveWheelVoltages(3, 3));
+        //robot jerks around when trying to go forward
+        //robot stopped responding even w/ green code light
     }
 
     @Override

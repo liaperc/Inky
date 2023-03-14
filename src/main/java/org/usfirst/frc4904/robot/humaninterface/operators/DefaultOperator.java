@@ -1,7 +1,8 @@
 package org.usfirst.frc4904.robot.humaninterface.operators;
 
+import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
-mport org.usfirst.frc4904.standard.humaninput.Operator;
+import org.usfirst.frc4904.standard.humaninput.Operator;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
