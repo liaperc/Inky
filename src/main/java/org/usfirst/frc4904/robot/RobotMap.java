@@ -179,7 +179,11 @@ public class RobotMap {
             LogKitten.ex(ex);
         }
 
-        // Chassis
+
+        /***********************
+         * Chassis Subsystem
+        *************************/
+
         CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
         CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
@@ -193,7 +197,11 @@ public class RobotMap {
             Component.navx, leftDriveMotors, rightDriveMotors
         );
 
-        // Arm Subsystem
+
+        /***********************
+         * Arm Subsystem
+        *************************/
+
         CANTalonFX leftPivotMotor  = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_LEFT,  InvertType.None);
         CANTalonFX rightPivotMotor = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_RIGHT, InvertType.OpposeMaster);
         CANTalonFX armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR, InvertType.None);
@@ -207,7 +215,10 @@ public class RobotMap {
 
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
 
-        // Intake
+        /***********************
+         * Intake Subsystem
+        *************************/
+        
         CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
         CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
         SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
