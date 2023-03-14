@@ -9,17 +9,12 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import org.usfirst.frc4904.robot.subsystems.ArmSubsystem;
-import org.usfirst.frc4904.robot.subsystems.ArmPivotSubsystem;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
-
-
-import org.usfirst.frc4904.robot.subsystems.ArmExtensionSubsystem;
-
 import com.revrobotics.CANSparkMax.IdleMode;
 import org.usfirst.frc4904.robot.subsystems.Intake;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
