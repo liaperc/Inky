@@ -1,4 +1,4 @@
-package org.usfirst.frc4904.robot.subsystems;
+package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.function.DoubleSupplier;
 

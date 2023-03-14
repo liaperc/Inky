@@ -1,7 +1,7 @@
 // This is the subsystem for the arm extension. 
 // Code by Russell from 4904
 
-package org.usfirst.frc4904.robot.subsystems;
+package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.function.DoubleSupplier;
 
