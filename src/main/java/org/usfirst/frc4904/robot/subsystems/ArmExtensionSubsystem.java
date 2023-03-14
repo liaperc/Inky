@@ -28,17 +28,17 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public final static double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_DIAMETER; // Math.PI * SPOOL_DIAMETER
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
-    private DoubleSupplier armAngleDealer;
+    private DoubleSupplier angleDealer;
     
     /**
      * Constructs a new ArmExtension subsystem.
      *
      * @param motor the motor controller used to extend the arm
      */
-    public ArmExtensionSubsystem(TalonMotorSubsystem motor, DoubleSupplier armAngle) {
+    public ArmExtensionSubsystem(TalonMotorSubsystem motor, DoubleSupplier angleDealer) {
         this.motor = motor;
         this.feedforward = new ArmFeedforward(1, 1, -1);
-        this.armAngleDealer = armAngle;
+        this.angleDealer = angleDealer;
 
     }
     
@@ -63,7 +63,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public Command c_holdExtension(double extensionLengthInches, double maxVelocity, double maxAcceleration) {
         ezControl controller = new ezControl(1, 1, 1, 
-                                            (double position, double velocity) -> this.feedforward.calculate(armAngleDealer.getAsDouble() + Math.PI/2, velocity, 0));
+                                            (double position, double velocity) -> this.feedforward.calculate(angleDealer.getAsDouble() + Math.PI/2, velocity, 0));
         
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
                                                         new TrapezoidProfile.State(extensionLengthInches, 0), 
@@ -71,7 +71,5 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
         return new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this);
     }
-
-
 }
 

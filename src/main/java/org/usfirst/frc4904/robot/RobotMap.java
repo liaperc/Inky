@@ -238,7 +238,7 @@ public class RobotMap {
         //intake
         CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
         CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
-        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 11, intake_left, intake_right);
+        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
         Component.intake = new Intake(intake_motors);
         
         // Wheels
@@ -248,8 +248,8 @@ public class RobotMap {
         CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
         // components
-        Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 10,  leftWheelATalon,  leftWheelBTalon);
-        Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 10, rightWheelATalon, rightWheelBTalon);
+        Component.leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0,  leftWheelATalon,  leftWheelBTalon);
+        Component.rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, rightWheelATalon, rightWheelBTalon);
         Component.chassis = new WestCoastDrive(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
@@ -270,7 +270,7 @@ public class RobotMap {
         // Pivot Arms
         Component.leftLeadMotor = new CANTalonFX(RobotMap.Port.CANMotor.LEAD_MOTOR, InvertType.None);
         Component.rightFollowMotor = new CANTalonFX(RobotMap.Port.CANMotor.FOLLOW_MOTOR, InvertType.OpposeMaster);
-        Component.pivotTalonMotorSubsystem = new TalonMotorSubsystem("Pivot Arm Subsystem", NeutralMode.Brake, 10, Component.leftLeadMotor, Component.rightFollowMotor);
+        Component.pivotTalonMotorSubsystem = new TalonMotorSubsystem("Pivot Arm Subsystem", NeutralMode.Brake, 0, Component.leftLeadMotor, Component.rightFollowMotor);
         Component.pivotArmSubsystem = new PivotArmSubsystem(Component.pivotTalonMotorSubsystem);
 
         // links we'll need
@@ -278,7 +278,7 @@ public class RobotMap {
         // - naive + scuffed ramsete tuning: https://docs.google.com/spreadsheets/d/1BIvwJ6MfLf9ByW9dcmagXFvm7HPaXY78Y4YB1L9TGPA/edit#gid=0
 
         Component.armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR, InvertType.None);
-        Component.extensionTalonMotorSubsystem = new TalonMotorSubsystem("Arm Extension", NeutralMode.Brake, 10, Component.armExtensionMotor);
+        Component.extensionTalonMotorSubsystem = new TalonMotorSubsystem("Arm Extension", NeutralMode.Brake, 0, Component.armExtensionMotor);
 
         
 
