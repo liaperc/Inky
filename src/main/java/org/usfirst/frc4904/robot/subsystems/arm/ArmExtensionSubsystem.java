@@ -25,6 +25,15 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
     private DoubleSupplier angleDealer;
+   
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final double kG = 0;
+
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
     
     /**
      * Constructs a new ArmExtension subsystem.
@@ -33,9 +42,8 @@ public class ArmExtensionSubsystem extends SubsystemBase {
      */
     public ArmExtensionSubsystem(TalonMotorSubsystem motor, DoubleSupplier angleDealer) {
         this.motor = motor;
-        this.feedforward = new ArmFeedforward(1, 1, -1);
+        this.feedforward = new ArmFeedforward(kS, kG, kV);
         this.angleDealer = angleDealer;
-
     }
     
     /**
@@ -58,7 +66,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public Command c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
-        ezControl controller = new ezControl(1, 1, 1, 
+        ezControl controller = new ezControl(0, 0, 0, 
                                             (double position, double velocity) -> this.feedforward.calculate(angleDealer.getAsDouble() + Math.PI/2, velocity, 0));
         
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 

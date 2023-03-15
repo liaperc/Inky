@@ -24,11 +24,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double kS = 0;
     public static final double kV = 0;
     public static final double kA = 0;
+    
     public static final double kG_retracted = 0;
     public static final double kG_extended = 0;
 
     // TODO: tune
-    public static final double kP = 1;
+    public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
 
