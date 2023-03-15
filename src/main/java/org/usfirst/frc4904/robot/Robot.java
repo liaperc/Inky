@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
 public class Robot extends CommandRobotBase {
@@ -67,11 +68,13 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.rightBTalonFX.neutralOutput();
         final Trajectory trajectory = donttouchme.getTrajectory("straight_forward");
         // donttouchme.getTrajectory("straight_backward");
-        final Trajectory trajectory2 = donttouchme.getTrajectory("straight_backward");
+        final Trajectory trajectory2 = donttouchme.getTrajectory("turn_right");
         // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
-        var command = donttouchme.getAutonomousCommand(trajectory);
-        var command2 = donttouchme.getAutonomousCommand(trajectory2);
-        command2.andThen(command).schedule();
+        // var command = new SequentialCommandGroup(donttouchme.getAutonomousCommand(trajectory), donttouchme.getAutonomousCommand(trajectory2));
+        var commnand = donttouchme.getAutonomousCommand(trajectory2);
+        commnand.schedule();
+        // var command2 = donttouchme.getAutonomousCommand(trajectory2);
+        // command2.andThen(command).schedule();
         // command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
     }
 
@@ -94,14 +97,14 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.leftATalonFX.neutralOutput();
-        RobotContainer2.Component.leftBTalonFX.neutralOutput();
-        RobotContainer2.Component.rightATalonFX.neutralOutput();
-        RobotContainer2.Component.rightBTalonFX.neutralOutput();        
+// RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+//         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+//         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+//         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+//         RobotContainer2.Component.leftATalonFX.neutralOutput();
+//         RobotContainer2.Component.leftBTalonFX.neutralOutput();
+//         RobotContainer2.Component.rightATalonFX.neutralOutput();
+//         RobotContainer2.Component.rightBTalonFX.neutralOutput();        
         
     }
 

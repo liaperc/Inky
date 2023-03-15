@@ -98,8 +98,8 @@ public class RobotContainer2 {
                 )),
                 entry("turn_right", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
-                        List.of(new Translation2d(0.5, -0.5)),
-                        new Pose2d(1, 1, new Rotation2d(Math.PI/2)),
+                        List.of(),
+                        new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
                         trajectoryConfig
                 ))
         );
@@ -159,10 +159,12 @@ public class RobotContainer2 {
 	
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
+                RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
+                EEEE.setEnabled(true);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
-			new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+			EEEE,
 			new SimpleMotorFeedforward(
 				DriveConstants.ksVolts,
 				DriveConstants.kvVoltSecondsPerMeter,
@@ -177,22 +179,15 @@ public class RobotContainer2 {
 	
 		// Reset odometry to the starting pose of the trajectory.
 		Pose2d initialPose = trajectory.getInitialPose();
-		m_robotDrive.resetOdometry(initialPose);
 		SmartDashboard.putString("initial pose", initialPose.toString());
 		// return new Gaming(m_robotDrive);
 		// Run path following command, then stop at the end.
 		// return Commands.run(() -> m_robotDrive.tankDriveVolts(1, 1), m_robotDrive);
 		//return Commands.runOnce(() -> m_robotDrive.arcadeDrive(0.5, 0), m_robotDrive);
 		//return Commands.runOnce(() -> Component.testTalon.setVoltage(6));
-		return ramseteCommand
-			.andThen(() -> m_robotDrive.tankDriveVolts(0, 0))
-			.andThen((new CommandBase(){}).withTimeout(2))
-			.andThen(Commands.runOnce(() -> {
-				RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast);
-				RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast);
-				RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast);
-				RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast);
-		}));
+		return Commands.runOnce(() -> 		m_robotDrive.resetOdometry(initialPose)
+                                ) .andThen(                ramseteCommand)
+			.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
 	}
 
     /**
