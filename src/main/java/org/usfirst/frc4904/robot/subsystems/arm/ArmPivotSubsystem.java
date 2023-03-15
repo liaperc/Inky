@@ -64,13 +64,13 @@ public class ArmPivotSubsystem extends SubsystemBase {
         slackyEncoder.zeroSlackDirection(true);
     }
 
-    public double motorRevsToAngle(double revs) {
+    public static double motorRevsToAngle(double revs) {
         final double degrees_per_rotation = 360/GEARBOX_RATIO;
         final double degrees = revs * degrees_per_rotation;
         return degrees;
     }
 
-    public double angleToMotorRevs(double angle) {
+    public static double angleToMotorRevs(double angle) {
         return angle / (360/GEARBOX_RATIO);
     }
 
