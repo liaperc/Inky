@@ -211,6 +211,9 @@ public class RobotMap {
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
 
         armPivotSubsystem.initializeEncoderPositions();
+        // TODO: rotate the arm up into frame-perimeter rest
+        // TODO: armExtensionSubsystem.zeroSensors();
+
         /***********************
          * Intake Subsystem
         *************************/

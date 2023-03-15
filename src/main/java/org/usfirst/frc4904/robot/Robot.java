@@ -30,7 +30,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
-        RobotMap.Component.arm.armPivotSubsystem.c_feedforwardTest(() -> 0);
+        RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(
+            () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) / 4
+        ).schedule();
+
     }
 
     @Override

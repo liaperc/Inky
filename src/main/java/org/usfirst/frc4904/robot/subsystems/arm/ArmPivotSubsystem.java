@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmPivotSubsystem extends SubsystemBase {
-    public static final double INITIAL_ARM_ANGLE = -37.25;
+    public static final double INITIAL_ARM_ANGLE = -38;
     public static final double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
     public static final double GEARBOX_SLACK_DEGREES = 6;
     public static final double MAX_EXTENSION = 39.5;
@@ -56,7 +56,10 @@ public class ArmPivotSubsystem extends SubsystemBase {
         return slackyEncoder.getRealPosition();
     }
 
-    public void zeroSensors() {
+    /**
+     * Expects sensors to be zeroed at forward hard-stop.
+     */
+    public void initializeEncoderPositions() {
         armMotorGroup.zeroSensors(angleToMotorRevs(INITIAL_ARM_ANGLE));
         slackyEncoder.zeroSlackDirection(true);
     }
@@ -71,12 +74,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
         return angle / (360/GEARBOX_RATIO);
     }
 
-    public Command c_feedforwardTest(DoubleSupplier doublDealer) {
+    public Command c_controlAngularVelocity(DoubleSupplier revPerSecDealer) {
         return this.run(() -> {
             var ff = this.feedforward.calculate(
                 extensionDealer.getAsDouble()/MAX_EXTENSION,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
-                doublDealer.getAsDouble(),
+                Units.rotationsPerMinuteToRadiansPerSecond(revPerSecDealer.getAsDouble() * 60),
                 0
             );
             SmartDashboard.putNumber("feedforward", ff);
