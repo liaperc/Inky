@@ -30,6 +30,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
+        RobotMap.Component.arm.armPivotSubsystem.c_feedforwardTest(() -> 0);
     }
 
     @Override

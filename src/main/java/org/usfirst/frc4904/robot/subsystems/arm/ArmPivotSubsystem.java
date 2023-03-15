@@ -11,6 +11,8 @@ import org.usfirst.frc4904.standard.subsystems.motor.TelescopingArmPivotFeedForw
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,16 +22,15 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double MAX_EXTENSION = 39.5;
     public static final double MIN_EXTENSION = 0;
 
-    // TODO: tune
     public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
+    public static final double kV = 0.86;
+    public static final double kA = 0.01;
     
-    public static final double kG_retracted = 0;
-    public static final double kG_extended = 0;
+    public static final double kG_retracted = 0.43;
+    public static final double kG_extended = 1.08;
 
     // TODO: tune
-    public static final double kP = 0;
+    public static final double kP = 0.1;
     public static final double kI = 0;
     public static final double kD = 0;
 
@@ -58,6 +59,19 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
     public double angleToMotorRevs(double angle) {
         return angle / (360/GEARBOX_RATIO);
+    }
+
+    public Command c_feedforwardTest(DoubleSupplier doublDealer) {
+        return this.run(() -> {
+            var ff = this.feedforward.calculate(
+                extensionDealer.getAsDouble()/MAX_EXTENSION,
+                Units.degreesToRadians(getCurrentAngleDegrees()),
+                doublDealer.getAsDouble(),
+                0
+            );
+            SmartDashboard.putNumber("feedforward", ff);
+            this.armMotorGroup.setVoltage(ff);
+        });
     }
 
     public Command c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {
