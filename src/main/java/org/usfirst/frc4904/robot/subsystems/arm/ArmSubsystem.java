@@ -45,6 +45,7 @@ public class ArmSubsystem extends SubsystemBase {
             firstCommand,
             new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand)
         );
+        cmdgrp.addRequirements(this);
         return cmdgrp;
     }
 
