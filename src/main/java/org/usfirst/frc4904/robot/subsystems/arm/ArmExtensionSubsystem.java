@@ -21,19 +21,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ArmExtensionSubsystem extends SubsystemBase {
     
     private final TalonMotorSubsystem motor;
-    private final static double EXTENSION_SPEED = 0.5;
-    private final static double SPOOL_DIAMETER = Units.inchesToMeters(1);
+    private final static double SPOOL_DIAMETER = Units.inchesToMeters(0.75);
     public final static double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_DIAMETER; // Math.PI * SPOOL_DIAMETER
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
     private DoubleSupplier angleDealer;
    
+    // TODO: recharacterize
     public static final double kS = 0;
     public static final double kV = 0;
     public static final double kA = 0;
     public static final double kG = 0;
 
-    public static final double kP = 0;
+    // TODO: tune
+    public static final double kP = 0.1;
     public static final double kI = 0;
     public static final double kD = 0;
     

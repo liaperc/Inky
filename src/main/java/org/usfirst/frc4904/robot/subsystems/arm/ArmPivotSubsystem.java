@@ -3,7 +3,6 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 import java.util.function.DoubleSupplier;
 
 import org.opencv.core.Mat.Tuple2;
-import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;

@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 // import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 // import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
@@ -43,6 +45,8 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void initialize() {
+        driverChooser.setDefaultOption(new NathanGain());
+        operatorChooser.setDefaultOption(new DefaultOperator()); 
         // TODO Auto-generated method stub
         
     }

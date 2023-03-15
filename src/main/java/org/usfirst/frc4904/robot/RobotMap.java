@@ -126,6 +126,7 @@ public class RobotMap {
     }
 
     public static class Component {
+        // expose these for robotcontainer2
         public static CANTalonFX frontLeftWheelTalon;
         public static CANTalonFX frontRightWheelTalon;
         public static CANTalonFX backLeftWheelTalon;
