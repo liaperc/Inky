@@ -66,7 +66,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public Command c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
-        ezControl controller = new ezControl(0, 0, 0, 
+        ezControl controller = new ezControl(kP, kI, kD, 
                                             (double position, double velocity) -> this.feedforward.calculate(angleDealer.getAsDouble() + Math.PI/2, velocity, 0));
         
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
