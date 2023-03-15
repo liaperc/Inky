@@ -65,9 +65,14 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.leftBTalonFX.neutralOutput();
         RobotContainer2.Component.rightATalonFX.neutralOutput();
         RobotContainer2.Component.rightBTalonFX.neutralOutput();
-        final Trajectory trajectory = donttouchme.getTrajectory("yes");
+        final Trajectory trajectory = donttouchme.getTrajectory("straight_forward");
+        // donttouchme.getTrajectory("straight_backward");
+        final Trajectory trajectory2 = donttouchme.getTrajectory("straight_backward");
+        // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
         var command = donttouchme.getAutonomousCommand(trajectory);
-        command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
+        var command2 = donttouchme.getAutonomousCommand(trajectory2);
+        command2.andThen(command).schedule();
+        // command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
     }
 
     @Override
@@ -89,8 +94,14 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-        // TODO Auto-generated method stub
-        
+RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftATalonFX.neutralOutput();
+        RobotContainer2.Component.leftBTalonFX.neutralOutput();
+        RobotContainer2.Component.rightATalonFX.neutralOutput();
+        RobotContainer2.Component.rightBTalonFX.neutralOutput();        
         
     }
 

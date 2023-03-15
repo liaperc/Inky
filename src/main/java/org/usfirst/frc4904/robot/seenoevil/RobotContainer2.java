@@ -4,6 +4,8 @@
 
 package org.usfirst.frc4904.robot.seenoevil;
 
+import static java.util.Map.entry;    
+
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,7 +46,63 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
  */
 
 public class RobotContainer2 {
-        private static Map<String, Trajectory> trajectories;
+        private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+                        AutoConstants.kMaxSpeedMetersPerSecond,
+                        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                        // Add kinematics to ensure max speed is actually obeyed
+                        .setKinematics(DriveConstants.kDriveKinematics)
+                        // Apply the voltage constraint
+                        .addConstraint(new DifferentialDriveVoltageConstraint(
+                        new SimpleMotorFeedforward(
+                                DriveConstants.ksVolts,
+                                DriveConstants.kvVoltSecondsPerMeter,
+                                DriveConstants.kaVoltSecondsSquaredPerMeter),
+                        DriveConstants.kDriveKinematics,
+                        10));
+        private static TrajectoryConfig trajectoryConfigReversed = new TrajectoryConfig(
+                AutoConstants.kMaxSpeedMetersPerSecond,
+                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                .setKinematics(DriveConstants.kDriveKinematics)
+                .addConstraint(new DifferentialDriveVoltageConstraint(
+                        new SimpleMotorFeedforward(
+                                DriveConstants.ksVolts,
+                                DriveConstants.kvVoltSecondsPerMeter,
+                                DriveConstants.kaVoltSecondsSquaredPerMeter),
+                        DriveConstants.kDriveKinematics,
+                        10))
+                .setReversed(true);
+
+        private static Map<String, Trajectory> trajectories = Map.ofEntries(
+                entry("sickle", TrajectoryGenerator.generateTrajectory(
+                        // Start at the origin facing the +X direction
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        // Pass through these two interior waypoints, making an 's' curve path
+                        // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist, -.15*dist)),
+                        List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
+        
+                        // End 3 meters straight ahead of where we started, facing forward
+                        new Pose2d(2, 0, new Rotation2d(Math.PI/2)),
+                        trajectoryConfig)
+                ),
+                entry("straight_forward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(new Translation2d(1, 0)),
+                        new Pose2d(2, 0, new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("straight_backward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
+                        List.of(new Translation2d(1, 0)),
+                        new Pose2d(2, 0, new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
+                )),
+                entry("turn_right", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(new Translation2d(0.5, -0.5)),
+                        new Pose2d(1, 1, new Rotation2d(Math.PI/2)),
+                        trajectoryConfig
+                ))
+        );
 
         public static class Component {
                 public static WPI_TalonFX leftATalonFX;
@@ -100,12 +159,10 @@ public class RobotContainer2 {
 	
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
-                RamseteController ramseteController = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-                // ramseteController.setEnabled(false);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
-                        ramseteController,
+			new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
 			new SimpleMotorFeedforward(
 				DriveConstants.ksVolts,
 				DriveConstants.kvVoltSecondsPerMeter,
@@ -163,42 +220,8 @@ public class RobotContainer2 {
         //     DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
         // }
 
-
-
-
-            // Create a voltage constraint to ensure we don't accelerate too fast
-            var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-                            new SimpleMotorFeedforward(
-                                            DriveConstants.ksVolts,
-                                            DriveConstants.kvVoltSecondsPerMeter,
-                                            DriveConstants.kaVoltSecondsSquaredPerMeter),
-                            DriveConstants.kDriveKinematics,
-                            10);
-
-            // Create config for trajectory
-            TrajectoryConfig config = new TrajectoryConfig(
-                            AutoConstants.kMaxSpeedMetersPerSecond,
-                            AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                            // Add kinematics to ensure max speed is actually obeyed
-                            .setKinematics(DriveConstants.kDriveKinematics)
-                            // Apply the voltage constraint
-                            .addConstraint(autoVoltageConstraint);
-
-            final double dist = 1;
-
-            // An example trajectory to follow. All units in meters.
-            Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                            // Start at the origin facing the +X direction
-                            new Pose2d(0, 0, new Rotation2d(0)),
-                            // Pass through these two interior waypoints, making an 's' curve path
-                            // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist,
-                            // -.15*dist)),
-                            List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
-
-                            // End 3 meters straight ahead of where we started, facing forward
-                            new Pose2d(2, 0, new Rotation2d(Math.PI / 2)),
-                            // Pass config
-                            config);
-        return exampleTrajectory;
+                            
+        // return exampleTrajectory;
+        return trajectories.get(trajectoryName);
     }
 }
