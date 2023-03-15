@@ -37,8 +37,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
 public class Robot extends CommandRobotBase {
-    private static RobotMap map = new RobotMap();
-    private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.leftWheelATalon, RobotMap.Component.leftWheelBTalon, RobotMap.Component.rightWheelATalon, RobotMap.Component.rightWheelBTalon);
+    private final RobotMap map = new RobotMap();
+    private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.frontLeftWheelTalon, RobotMap.Component.backLeftWheelTalon, RobotMap.Component.frontRightWheelTalon, RobotMap.Component.backRightWheelTalon);
 
 
     @Override
@@ -88,8 +88,6 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledInitialize() {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
