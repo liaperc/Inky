@@ -5,9 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ArmSubsystem {
+public class ArmSubsystem extends SubsystemBase {
     public final ArmPivotSubsystem pivotArmSubsystem;
     public final ArmExtensionSubsystem armExtensionSubsystem;
 
@@ -44,7 +45,6 @@ public class ArmSubsystem {
             firstCommand,
             new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand)
         );
-        cmdgrp.addRequirements(pivotArmSubsystem, armExtensionSubsystem);
         return cmdgrp;
     }
 
