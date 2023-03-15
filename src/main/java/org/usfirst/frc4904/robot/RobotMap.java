@@ -204,11 +204,16 @@ public class RobotMap {
         TalonMotorSubsystem armRotationMotors = new TalonMotorSubsystem("Arm Pivot Subsystem", NeutralMode.Brake, 0, leftPivotMotor, rightPivotMotor);
         ArmExtensionSubsystem armExtensionSubsystem = new ArmExtensionSubsystem(
             new TalonMotorSubsystem("Arm Extension Subsystem", NeutralMode.Brake, 0, armExtensionMotor),
-            () -> armRotationMotors.getSensorPositionRotations() * Math.PI / 180);
+            () -> ArmPivotSubsystem.motorRevsToAngle(armRotationMotors.getSensorPositionRotations())
+        );
 
         ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors, armExtensionSubsystem::getCurrentExtensionLength);
 
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
+
+        armPivotSubsystem.initializeEncoderPositions();
+        // TODO: rotate the arm up into frame-perimeter rest
+        // TODO: armExtensionSubsystem.zeroSensors();
 
         /***********************
          * Intake Subsystem

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class ArmSubsystem extends SubsystemBase {
-    public final ArmPivotSubsystem pivotArmSubsystem;
+    public final ArmPivotSubsystem armPivotSubsystem;
     public final ArmExtensionSubsystem armExtensionSubsystem;
 
     public static final double MAX_VELOCITY_EXTENSION = 0;
@@ -18,8 +18,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_PIVOT = 0;
     public static final double MAX_ACCEL_PIVOT = 0;
 
-    public ArmSubsystem(ArmPivotSubsystem pivotArmSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
-        this.pivotArmSubsystem = pivotArmSubsystem;
+    public ArmSubsystem(ArmPivotSubsystem armPivotSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
+        this.armPivotSubsystem = armPivotSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
 
@@ -28,7 +28,7 @@ public class ArmSubsystem extends SubsystemBase {
         Command secondCommand;
         double wait;
 
-        Pair<Command, Double> pivotMovement = pivotArmSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
+        Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
         Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthInches, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
 
         if ((extensionLengthInches - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
