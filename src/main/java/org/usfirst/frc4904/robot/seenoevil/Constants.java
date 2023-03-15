@@ -22,42 +22,59 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static final class DriveConstants {
     // TODO: change to 2023 drivetrain / get from robotmap
+
     // public static final double kTrackwidthMeters = RobotMap.Metrics.Chassis.TRACK_WIDTH_METERS; //blinky's track width
-    public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
-    public static final double gearRatio = 69/5;
+    // public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
+    // public static final double gearRatio = 69/5;
 
+    // public static final double ksVolts = 0.0081094; //old is 0.27395 
+    // public static final double kvVoltSecondsPerMeter = 4.7873; //was consistent between the two
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.13655; //old is 0.25289
+    // public static final double kPDriveVel = 0.1771; //old is 0.049489
+    
+  
 
-
-    public static final int kLeftMotor1Port = 3;
-    public static final int kLeftMotor2Port = 5;
-    public static final int kRightMotor1Port = 2;
-    public static final int kRightMotor2Port = 4;
+    // BLINKY:
     public static final double kTrackwidthMeters = 0.59; //blinky's track width
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
     public static final double gearRatio = 69/5;
-
-
-
-
-    public static final int[] kLeftEncoderPorts = new int[] {kLeftMotor1Port, kLeftMotor2Port};
-    public static final int[] kRightEncoderPorts = new int[] {kRightMotor1Port, kRightMotor2Port};
-    public static final boolean kLeftEncoderReversed = true;
-    public static final boolean kRightEncoderReversed = false;
-
-    // public static final double kTrackwidthMeters = 0.50367; //blinky's track width
-    public static final DifferentialDriveKinematics kDriveKinematics =
-        new DifferentialDriveKinematics(kTrackwidthMeters);
-
-    public static final int kEncoderCPR = 2048;
-    //using blinky gear ratio
-    public static final double kEncoderDistancePerPulse = kWheelDiameterMeters*Math.PI / kEncoderCPR / gearRatio;
-        // Assumes the encoders are directly mounted on the wheel shafts
-        // (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR / 17;
 
     public static final double ksVolts = 0.0081094; //old is 0.27395 
     public static final double kvVoltSecondsPerMeter = 4.7873; //was consistent between the two
     public static final double kaVoltSecondsSquaredPerMeter = 0.13655; //old is 0.25289
     public static final double kPDriveVel = 0.1771; //old is 0.049489
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // INVARIANT
+    public static final int kEncoderCPR = 2048;
+
+    public static final boolean kLeftEncoderReversed = true;
+    public static final boolean kRightEncoderReversed = false;
+
+    //using blinky gear ratio
+    public static final double kEncoderDistancePerPulse = kWheelDiameterMeters*Math.PI / kEncoderCPR / gearRatio;
+    // public static final double kTrackwidthMeters = 0.50367; //blinky's track width
+    public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+
+    
+    
+        // Assumes the encoders are directly mounted on the wheel shafts
+        // (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR / 17;
+
+    
   }
 
   public static final class AutoConstants {
