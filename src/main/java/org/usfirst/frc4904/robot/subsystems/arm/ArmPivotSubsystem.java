@@ -9,6 +9,7 @@ import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.motor.TelescopingArmPivotFeedForward;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,7 +61,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
         return angle / (360/GEARBOX_RATIO);
     }
 
-    public Command c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {
+    public Pair<Command, Double> c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {
         ezControl controller = new ezControl(
             kP, kI, kD,
             (position, velocityRadPerSec) -> this.feedforward.calculate(
@@ -77,7 +78,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             new TrapezoidProfile.State(getCurrentAngleDegrees(), 0)
         );
 
-        return new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
-                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this);
+        return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
+                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
     }
 }

@@ -19,8 +19,8 @@ public class ArmSubsystem {
 
     public ParallelCommandGroup c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
         var cmdgrp = new ParallelCommandGroup(
-            pivotArmSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT),
-            armExtensionSubsystem.c_holdExtension(extensionLengthInches, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION)
+            pivotArmSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT).getFirst(),
+            armExtensionSubsystem.c_holdExtension(extensionLengthInches, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION).getFirst()
         );
         cmdgrp.addRequirements(pivotArmSubsystem, armExtensionSubsystem);
         return cmdgrp;
