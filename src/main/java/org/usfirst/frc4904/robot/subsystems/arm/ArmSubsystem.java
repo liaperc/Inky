@@ -42,7 +42,7 @@ public class ArmSubsystem {
 
         var cmdgrp = new ParallelCommandGroup(
             firstCommand,
-            new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand);
+            new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand)
         );
         cmdgrp.addRequirements(pivotArmSubsystem, armExtensionSubsystem);
         return cmdgrp;
