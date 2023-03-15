@@ -210,6 +210,7 @@ public class RobotMap {
 
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
 
+        armPivotSubsystem.initializeEncoderPositions();
         /***********************
          * Intake Subsystem
         *************************/

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ArmPivotSubsystem extends SubsystemBase {
     public static final double INITIAL_ARM_ANGLE = -37.25;
     public static final double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
+    public static final double GEARBOX_SLACK_DEGREES = 6;
     public static final double MAX_EXTENSION = 39.5;
     public static final double MIN_EXTENSION = 0;
 
@@ -37,18 +38,27 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public final TalonMotorSubsystem armMotorGroup;
     public final TelescopingArmPivotFeedForward feedforward;
     public final DoubleSupplier extensionDealer;
+    private final EncoderWithSlack slackyEncoder;
+
     public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealer) {
         this.armMotorGroup = armMotorGroup;
         this.extensionDealer = extensionDealer;
         this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS, kV, kA);
+        this.slackyEncoder = new EncoderWithSlack(
+            GEARBOX_SLACK_DEGREES,
+            armMotorGroup::getSensorPositionRotations,
+            Units.rotationsToDegrees(1/GEARBOX_RATIO),
+            true
+        );
     }
 
     public double getCurrentAngleDegrees() {
-        return motorRevsToAngle(armMotorGroup.getSensorPositionRotations());
+        return slackyEncoder.getRealPosition();
     }
 
     public void zeroSensors() {
         armMotorGroup.zeroSensors(angleToMotorRevs(INITIAL_ARM_ANGLE));
+        slackyEncoder.zeroSlackDirection(true);
     }
 
     public double motorRevsToAngle(double revs) {
