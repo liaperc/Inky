@@ -13,6 +13,7 @@ import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
@@ -30,6 +31,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
+        RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
     }
 
     @Override
