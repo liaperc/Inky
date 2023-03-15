@@ -10,6 +10,7 @@ import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -66,7 +67,6 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return extensionLength;
     }
 
-
     public Command c_controlVelocity(DoubleSupplier metersPerSecondSupplier) {
         return this.run(() -> {
             var ff = this.feedforward.calculate(
@@ -78,7 +78,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         });
     }
 
-    public Command c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
+    public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
         ezControl controller = new ezControl(kP, kI, kD, 
                                             (double position, double velocity) -> this.feedforward.calculate(
                                                 Units.degreesToRadians(angleDealer.getAsDouble()) + Math.PI/2,
@@ -90,7 +90,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                                                         new TrapezoidProfile.State(extensionLengthMeters, 0), 
                                                         new TrapezoidProfile.State(getCurrentExtensionLength(), 0));
 
-        return new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this);
+        return new Pair<Command, Double>(new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
     }
 }
 

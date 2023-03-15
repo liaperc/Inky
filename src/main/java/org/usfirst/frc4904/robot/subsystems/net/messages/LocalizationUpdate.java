@@ -3,7 +3,7 @@ package org.usfirst.frc4904.robot.subsystems.net.messages;
 import java.io.IOException;
 
 import org.msgpack.core.MessageUnpacker;
-import org.usfirst.frc4904.standard.LogKitten;
+// import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.subsystems.net.message.Unpackable;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

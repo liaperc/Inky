@@ -6,7 +6,7 @@ import java.net.SocketAddress;
 import org.msgpack.core.MessageUnpacker;
 import org.usfirst.frc4904.robot.subsystems.net.messages.LocalizationUpdate;
 import org.usfirst.frc4904.robot.subsystems.net.messages.OdometryUpdate;
-import org.usfirst.frc4904.standard.LogKitten;
+// import org.usfirst.frc4904.standard.LogKitten;
 import org.usfirst.frc4904.standard.subsystems.net.UDPSocket;
 
 public class RobotUDP extends UDPSocket {
@@ -31,7 +31,7 @@ public class RobotUDP extends UDPSocket {
             return;
         }
 
-        LogKitten.w("Received message from unexpected address: " + address);
+        // LogKitten.w("Received message from unexpected address: " + address);
     }
 
     public void updateOdometry(OdometryUpdate update) {
@@ -40,7 +40,8 @@ public class RobotUDP extends UDPSocket {
         try {
             send(localizationAddr, update);
         } catch (IOException ex) {
-            LogKitten.ex(ex);
+            ex.printStackTrace();
+            // LogKitten.ex(ex);
         }
     }
 
