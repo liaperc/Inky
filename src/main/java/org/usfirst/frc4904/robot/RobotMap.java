@@ -37,10 +37,10 @@ import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 public class RobotMap {
 
     public static class Port {
-        public static class Network {
-            public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
-            public static SocketAddress LOCALIZATION_ADDRESS = new InetSocketAddress("10.49.04.10", 4321);
-        }
+        // public static class Network {
+        //     public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
+        //     public static SocketAddress LOCALIZATION_ADDRESS = new InetSocketAddress("10.49.04.10", 4321);
+        // }
 
         public static class HumanInput {
             public static final int joystick = 0;
@@ -124,7 +124,7 @@ public class RobotMap {
     public static class Component {
         public static NavX navx;
 
-        public static RobotUDP robotUDP;
+        // public static RobotUDP robotUDP;
 
         public static WestCoastDrive chassis;
         public static ArmSubsystem arm;
@@ -166,13 +166,13 @@ public class RobotMap {
 
         HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
 		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick);
-        // UDP things
-        try {
-            Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
-        } catch (IOException ex) {
-            LogKitten.f("Failed to initialize UDP subsystem");
-            LogKitten.ex(ex);
-        }
+        // // UDP things
+        // try {
+        //     Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
+        // } catch (IOException ex) {
+        //     LogKitten.f("Failed to initialize UDP subsystem");
+        //     LogKitten.ex(ex);
+        // }
 
 
         /***********************

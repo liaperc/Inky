@@ -6,6 +6,12 @@ public class ArmSubsystem {
     public final ArmPivotSubsystem pivotArmSubsystem;
     public final ArmExtensionSubsystem armExtensionSubsystem;
 
+    public static final double MAX_VELOCITY_EXTENSION = 0;
+    public static final double MAX_ACCEL_EXTENSION = 0;
+    
+    public static final double MAX_VELOCITY_PIVOT = 0;
+    public static final double MAX_ACCEL_PIVOT = 0;
+
     public ArmSubsystem(ArmPivotSubsystem pivotArmSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
         this.pivotArmSubsystem = pivotArmSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
@@ -13,8 +19,8 @@ public class ArmSubsystem {
 
     public ParallelCommandGroup c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
         var cmdgrp = new ParallelCommandGroup(
-            pivotArmSubsystem.c_holdRotation(degreesFromHorizontal, -1, -1),
-            armExtensionSubsystem.c_holdExtension(extensionLengthInches, -1, -1)
+            pivotArmSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT),
+            armExtensionSubsystem.c_holdExtension(extensionLengthInches, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION)
         );
         cmdgrp.addRequirements(pivotArmSubsystem, armExtensionSubsystem);
         return cmdgrp;
