@@ -16,6 +16,7 @@ import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -28,6 +29,8 @@ import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
@@ -191,6 +194,8 @@ public class RobotMap {
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
             Component.navx, leftDriveMotors, rightDriveMotors
         );
+
+        Component.chassis.setDefaultCommand(Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
 
 
         /***********************
