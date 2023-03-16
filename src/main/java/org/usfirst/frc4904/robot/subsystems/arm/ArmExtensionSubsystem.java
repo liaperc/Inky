@@ -91,7 +91,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                                                         new TrapezoidProfile.State(extensionLengthMeters, 0), 
                                                         new TrapezoidProfile.State(getCurrentExtensionLength(), 0));
 
-        return new Pair<Command, Double>(new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
+        return new Pair<Command, Double>(new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor), profile.totalTime());
     }
 }
 

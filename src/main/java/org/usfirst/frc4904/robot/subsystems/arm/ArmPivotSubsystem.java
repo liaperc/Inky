@@ -96,7 +96,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             kP, kI, kD,
             (position, velocityRadPerSec) -> this.feedforward.calculate(
                 extensionDealer.getAsDouble()/MAX_EXTENSION,
-                getCurrentAngleDegrees() * Math.PI/180,
+                position,   // or could use Units.degreesToRadians(getCurrentAngleDegrees()),
                 velocityRadPerSec,
                 0
             )
@@ -111,10 +111,10 @@ public class ArmPivotSubsystem extends SubsystemBase {
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
         return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, (volts) -> {
-                    this.armMotorGroup.setVoltage(volts);
-                    // this.armMotorGroup.leadMotor.setVoltage(volts);
-                    // for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
+                    // this.armMotorGroup.setVoltage(volts);
+                    this.armMotorGroup.leadMotor.setVoltage(volts);
+                    for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
                 },
-                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
+                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, armMotorGroup), profile.totalTime());
     }
 }
