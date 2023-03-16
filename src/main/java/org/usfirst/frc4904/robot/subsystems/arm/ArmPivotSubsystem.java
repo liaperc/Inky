@@ -107,6 +107,6 @@ public class ArmPivotSubsystem extends SubsystemBase {
         );
 
         return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
-                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
+                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, armMotorGroup), profile.totalTime());
     }
 }
