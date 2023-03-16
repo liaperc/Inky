@@ -32,7 +32,6 @@ public class NathanGain extends Driver {
 
 	@Override
 	public double getY() {
-		//TODO: new getx is 0 to 1, old may have been -1 to 1 -- fix is simple if we need it
 		double rawSpeed = RobotMap.HumanInput.Driver.xbox.getRightTriggerAxis() - RobotMap.HumanInput.Driver.xbox.getLeftTriggerAxis();
 		double speed = scaleGain(rawSpeed, NathanGain.SPEED_GAIN, NathanGain.SPEED_EXP) * NathanGain.Y_SPEED_SCALE;
 		double precisionDrive = scaleGain(RobotMap.HumanInput.Driver.xbox.getLeftY(), 0.08, 1.2);

@@ -55,18 +55,12 @@ public class RobotMap {
         }
 
         // // blinky constants
-        // // TODO: go to 2023 robot constants for comp
-        // public static class CANMotor {
-        //     public static final int LEFT_DRIVE_A = 3;
-        //     public static final int RIGHT_DRIVE_A = 2;
-        //     public static final int LEFT_DRIVE_B = 5;
-        //     public static final int RIGHT_DRIVE_B = 4;
 
 
         
         // 2023 robot constants
         public static class CANMotor {
-            public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
+            public static final int RIGHT_DRIVE_A = 3;
             public static final int RIGHT_DRIVE_B = 4;
             public static final int LEFT_DRIVE_A = 1;
             public static final int LEFT_DRIVE_B = 2;
@@ -75,6 +69,7 @@ public class RobotMap {
             public static final int PIVOT_MOTOR_RIGHT = 12;
             public static final int ARM_EXTENSION_MOTOR = 14;
 
+            // TODO: the intake
             // public static final int LEFT_INTAKE = 21;
             // public static final int RIGHT_INTAKE = 22;
         }
@@ -95,7 +90,6 @@ public class RobotMap {
 
     public static class Metrics {
         // blinky constants
-        // TODO: go to 2023-robot constants for comp
         // public static class Chassis {
         //     public static final double GEAR_RATIO = 69/5;
         //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);

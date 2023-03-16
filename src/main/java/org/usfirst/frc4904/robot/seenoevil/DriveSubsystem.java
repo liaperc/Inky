@@ -65,8 +65,7 @@ private final Imblueeeeeee m_rightEncoder =
     "leftWheel", RobotContainer2.Component.rightATalonFX, false, DriveConstants.kEncoderDistancePerPulse, FeedbackDevice.IntegratedSensor);
 
   // The gyro sensor 
-  // private final AHRS m_gyro = new AHRS(SerialPort.Port.kMXP); //TODO: might break
-  public final AHRS m_gyro = new AHRS(I2C.Port.kMXP); //TODO: might break
+  public final AHRS m_gyro = new AHRS(I2C.Port.kMXP);
 
 
   // Odometry class for tracking robot pose
