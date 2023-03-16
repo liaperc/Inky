@@ -204,8 +204,6 @@ public class RobotMap {
             Component.navx, leftDriveMotors, rightDriveMotors
         );
 
-        Component.chassis.setDefaultCommand(Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
-
 
         /***********************
          * Arm Subsystem
