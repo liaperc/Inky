@@ -65,14 +65,15 @@ private final Imblueeeeeee m_rightEncoder =
     "leftWheel", RobotContainer2.Component.rightATalonFX, false, DriveConstants.kEncoderDistancePerPulse, FeedbackDevice.IntegratedSensor);
 
   // The gyro sensor 
-  public final AHRS m_gyro = new AHRS(I2C.Port.kMXP);
+  public final AHRS m_gyro;
 
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  public DriveSubsystem(AHRS navx) {
+    m_gyro = navx;
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.

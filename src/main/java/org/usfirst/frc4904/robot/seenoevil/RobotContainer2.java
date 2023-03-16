@@ -34,6 +34,7 @@ import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -121,7 +122,7 @@ public class RobotContainer2 {
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
-        public RobotContainer2(WPI_TalonFX leftATalonFX, WPI_TalonFX leftBTalonFX, WPI_TalonFX rightATalonFX, WPI_TalonFX rightBTalonFX) {
+        public RobotContainer2(WPI_TalonFX leftATalonFX, WPI_TalonFX leftBTalonFX, WPI_TalonFX rightATalonFX, WPI_TalonFX rightBTalonFX, AHRS navx) {
 
                 // The driver's controller
                 // m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -142,7 +143,7 @@ public class RobotContainer2 {
                 // Component.leftATalonFX.setInverted(true);
                 // Component.leftBTalonFX.setInverted(true);
 
-                this.m_robotDrive = new DriveSubsystem();
+                this.m_robotDrive = new DriveSubsystem(navx);
 
                 // Configure default commands
                 // Set the default drive command to split-stick arcade drive
