@@ -33,10 +33,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 
 public class Robot extends CommandRobotBase {
@@ -48,14 +44,10 @@ public class Robot extends CommandRobotBase {
     public void initialize() {
         driverChooser.setDefaultOption(new NathanGain());
         operatorChooser.setDefaultOption(new DefaultOperator()); 
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void teleopInitialize() {
-        // TODO Auto-generated method stub
-        
         RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 60, 60);
         // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0).schedule();
         // RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
@@ -65,7 +57,6 @@ public class Robot extends CommandRobotBase {
     public void teleopExecute() {
         // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
 
-        // TODO Auto-generated method stub
         
     }
 
@@ -75,10 +66,7 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.leftATalonFX.neutralOutput();
-        RobotContainer2.Component.leftBTalonFX.neutralOutput();
-        RobotContainer2.Component.rightATalonFX.neutralOutput();
-        RobotContainer2.Component.rightBTalonFX.neutralOutput();
+
         final Trajectory backward = donttouchme.getTrajectory("straight_backward");
         // donttouchme.getTrajectory("straight_backward");
         final Trajectory forward = donttouchme.getTrajectory("straight_forward");
@@ -102,8 +90,6 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledExecute() {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
