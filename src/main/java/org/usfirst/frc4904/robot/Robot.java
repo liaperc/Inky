@@ -56,11 +56,15 @@ public class Robot extends CommandRobotBase {
     public void teleopInitialize() {
         // TODO Auto-generated method stub
         
-        RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
+        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 60, 60);
+        // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0).schedule();
+        // RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
     }
 
     @Override
     public void teleopExecute() {
+        // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
+
         // TODO Auto-generated method stub
         
     }

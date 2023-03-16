@@ -84,7 +84,10 @@ public class ArmPivotSubsystem extends SubsystemBase {
                 0
             );
             SmartDashboard.putNumber("feedforward", ff);
-            this.armMotorGroup.setVoltage(ff);
+            for (var motor: this.armMotorGroup.followMotors) {
+                motor.setVoltage(ff);
+            }
+            this.armMotorGroup.leadMotor.setVoltage(ff);
         });
     }
 
@@ -105,7 +108,13 @@ public class ArmPivotSubsystem extends SubsystemBase {
             new TrapezoidProfile.State(getCurrentAngleDegrees(), 0)
         );
 
-        return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
+        // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
+        //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
+        return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, (volts) -> {
+                    this.armMotorGroup.setVoltage(volts);
+                    // this.armMotorGroup.leadMotor.setVoltage(volts);
+                    // for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
+                },
                 (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
     }
 }
