@@ -75,12 +75,12 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.leftBTalonFX.neutralOutput();
         RobotContainer2.Component.rightATalonFX.neutralOutput();
         RobotContainer2.Component.rightBTalonFX.neutralOutput();
-        final Trajectory trajectory = donttouchme.getTrajectory("straight_forward");
+        final Trajectory backward = donttouchme.getTrajectory("straight_backward");
         // donttouchme.getTrajectory("straight_backward");
-        final Trajectory trajectory2 = donttouchme.getTrajectory("turn_right");
+        final Trajectory forward = donttouchme.getTrajectory("straight_forward");
         // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
         // var command = new SequentialCommandGroup(donttouchme.getAutonomousCommand(trajectory), donttouchme.getAutonomousCommand(trajectory2));
-        var commnand = donttouchme.getAutonomousCommand(trajectory2);
+        var commnand = donttouchme.getAutonomousCommand(backward);
         commnand.schedule();
         // var command2 = donttouchme.getAutonomousCommand(trajectory2);
         // command2.andThen(command).schedule();
@@ -117,8 +117,8 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testExecute() {
-        // TODO Auto-generated method stub
-        
+        RobotMap.Component.chassis.testFeedForward(0.5);
+        SmartDashboard.putNumber("backward vel ", RobotMap.Component.chassis.leftMotors.leadMotor.getSelectedSensorVelocity(0) /2048 / RobotMap.Metrics.Chassis.GEAR_RATIO * RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS*Math.PI);
     }
 
     @Override

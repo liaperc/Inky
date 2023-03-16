@@ -23,11 +23,6 @@ public class NathanGain extends Driver {
 
 	@Override
 	public void bindCommands() {
-		RobotMap.Component.chassis.setDefaultCommand(
-			RobotMap.Component.chassis.c_controlChassisVelocity(
-				() -> new ChassisSpeeds(getY(), getX(), getTurnSpeed())
-			)
-		);
 	}
 
 	@Override

@@ -159,7 +159,7 @@ public class RobotContainer2 {
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
                 RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-                EEEE.setEnabled(true);
+                EEEE.setEnabled(false);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
@@ -170,21 +170,21 @@ public class RobotContainer2 {
 				DriveConstants.kaVoltSecondsSquaredPerMeter),
 			DriveConstants.kDriveKinematics,
 			m_robotDrive::getWheelSpeeds,
-			new PIDController(DriveConstants.kPDriveVel*4, 0, 0),
-			new PIDController(DriveConstants.kPDriveVel*4, 0, 0),
+			new PIDController(DriveConstants.kPDriveVel, 0, 0),
+			new PIDController(DriveConstants.kPDriveVel, 0, 0),
 			// RamseteCommand passes volts to the callback
 			m_robotDrive::tankDriveVolts,
 			m_robotDrive);
 	
 		// Reset odometry to the starting pose of the trajectory.
-		Pose2d initialPose = trajectory.getInitialPose();
-		SmartDashboard.putString("initial pose", initialPose.toString());
+		// Pose2d initialPose = trajectory.getInitialPose();
+		// SmartDashboard.putString("initial pose", initialPose.toString());
 		// return new Gaming(m_robotDrive);
 		// Run path following command, then stop at the end.
 		// return Commands.run(() -> m_robotDrive.tankDriveVolts(1, 1), m_robotDrive);
 		//return Commands.runOnce(() -> m_robotDrive.arcadeDrive(0.5, 0), m_robotDrive);
 		//return Commands.runOnce(() -> Component.testTalon.setVoltage(6));
-		return Commands.runOnce(() -> 		m_robotDrive.resetOdometry(initialPose)
+		return Commands.runOnce(() -> 		m_robotDrive.resetOdometry(trajectory.getInitialPose())
                                 ) .andThen(                ramseteCommand)
 			.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
 	}

@@ -54,30 +54,29 @@ public class RobotMap {
             public static final int xboxController = 1;
         }
 
-        // blinky constants
-        // TODO: go to 2023 robot constants for comp
-        public static class CANMotor {
-            public static final int LEFT_DRIVE_A = 3;
-            public static final int RIGHT_DRIVE_A = 2;
-            public static final int LEFT_DRIVE_B = 5;
-            public static final int RIGHT_DRIVE_B = 4;
+        // // blinky constants
+        // // TODO: go to 2023 robot constants for comp
+        // public static class CANMotor {
+        //     public static final int LEFT_DRIVE_A = 3;
+        //     public static final int RIGHT_DRIVE_A = 2;
+        //     public static final int LEFT_DRIVE_B = 5;
+        //     public static final int RIGHT_DRIVE_B = 4;
 
 
         
-        // // 2023 robot constants
-        // public static class CANMotor {
-        //     public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
-        //     public static final int RIGHT_DRIVE_B = 4;
-        //     public static final int LEFT_DRIVE_A = 1;
-        //     public static final int LEFT_DRIVE_B = 2;
-        // }
+        // 2023 robot constants
+        public static class CANMotor {
+            public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
+            public static final int RIGHT_DRIVE_B = 4;
+            public static final int LEFT_DRIVE_A = 1;
+            public static final int LEFT_DRIVE_B = 2;
 
-            public static final int PIVOT_MOTOR_LEFT = -1;
-            public static final int PIVOT_MOTOR_RIGHT = -1;
-            public static final int ARM_EXTENSION_MOTOR = -1;
+            public static final int PIVOT_MOTOR_LEFT = 11;
+            public static final int PIVOT_MOTOR_RIGHT = 12;
+            public static final int ARM_EXTENSION_MOTOR = 14;
 
-            public static final int LEFT_INTAKE = -1; //TODO: fix
-            public static final int RIGHT_INTAKE = -1; //TODO: fix
+            // public static final int LEFT_INTAKE = 21;
+            // public static final int RIGHT_INTAKE = 22;
         }
 
         public static class PWM {
@@ -97,31 +96,31 @@ public class RobotMap {
     public static class Metrics {
         // blinky constants
         // TODO: go to 2023-robot constants for comp
-        public static class Chassis {
-            public static final double GEAR_RATIO = 69/5;
-            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
-            public static final double TRACK_WIDTH_METERS = 0.59;
-        }
+        // public static class Chassis {
+        //     public static final double GEAR_RATIO = 69/5;
+        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+        //     public static final double TRACK_WIDTH_METERS = 0.59;
+        // }
 
         // // 2023-robot constants
-        // public static class Chassis {
-        //     public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
-        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
-        //     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
-        // }
+        public static class Chassis {
+            public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
+            public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
+        }
     }
 
     public static class PID {
         public static class Drive {
             // PID constants
-            public static final double kP = 0.1771/2; // TODO: @zbuster05 why times four??
+            public static final double kP = 1.5;
             public static final double kI = 0;  // TODO: tune
             public static final double kD = 0;  // TODO: tune
             // feedforward constants
-            // these are blinky constants from Blank-Ramsete-Test e809099
-            public static final double kS = 0.0081094; 
-            public static final double kV = 4.7873;
-            public static final double kA = 0.13655;    // these should live in their own subsystem
+            // these are blinky constants from sysid on new drivetrain wednesday before 
+            public static final double kS = 0.025236; 
+            public static final double kV = 3.0683;
+            public static final double kA = 0.7358;
         }
 
         public static class Turn {
@@ -194,11 +193,11 @@ public class RobotMap {
 
         Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
-        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
-        Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
+        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
+        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
 
         TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
-        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.frontLeftWheelTalon);
+        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
         Component.chassis = new WestCoastDrive(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
@@ -240,10 +239,10 @@ public class RobotMap {
          * Intake Subsystem
         *************************/
         
-        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
-        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
-        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
-        Component.intake = new Intake(intake_motors);
+        // CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
+        // CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
+        // SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
+        // Component.intake = new Intake(intake_motors);
 
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing

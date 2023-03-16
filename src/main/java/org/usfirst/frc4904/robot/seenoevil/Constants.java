@@ -23,26 +23,27 @@ public final class Constants {
   public static final class DriveConstants {
     // TODO: change to 2023 drivetrain / get from robotmap
 
-    // public static final double kTrackwidthMeters = RobotMap.Metrics.Chassis.TRACK_WIDTH_METERS; //blinky's track width
-    // public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
+    public static final double kTrackwidthMeters = RobotMap.Metrics.Chassis.TRACK_WIDTH_METERS; //blinky's track width
+    public static final double kWheelDiameterMeters = RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS;
+    public static final double gearRatio = RobotMap.Metrics.Chassis.GEAR_RATIO;
+
+    public static final double ksVolts = RobotMap.PID.Drive.kS; //old is 0.27395 
+    public static final double kvVoltSecondsPerMeter = RobotMap.PID.Drive.kV; //was consistent between the two
+    public static final double kaVoltSecondsSquaredPerMeter = RobotMap.PID.Drive.kA; //old is 0.25289
+    // public static final double kPDriveVel = RobotMap.PID.Drive.kP; //old is 0.049489
+    public static final double kPDriveVel = 0; //old is 0.049489
+    
+  
+
+    // BLINKY:
+    // public static final double kTrackwidthMeters = 0.59; //blinky's track width
+    // public static final double kWheelDiameterMeters = Units.inchesToMeters(5);
     // public static final double gearRatio = 69/5;
 
     // public static final double ksVolts = 0.0081094; //old is 0.27395 
     // public static final double kvVoltSecondsPerMeter = 4.7873; //was consistent between the two
     // public static final double kaVoltSecondsSquaredPerMeter = 0.13655; //old is 0.25289
     // public static final double kPDriveVel = 0.1771; //old is 0.049489
-    
-  
-
-    // BLINKY:
-    public static final double kTrackwidthMeters = 0.59; //blinky's track width
-    public static final double kWheelDiameterMeters = Units.inchesToMeters(3.85);
-    public static final double gearRatio = 69/5;
-
-    public static final double ksVolts = 0.0081094; //old is 0.27395 
-    public static final double kvVoltSecondsPerMeter = 4.7873; //was consistent between the two
-    public static final double kaVoltSecondsSquaredPerMeter = 0.13655; //old is 0.25289
-    public static final double kPDriveVel = 0.1771; //old is 0.049489
 
 
 
@@ -83,6 +84,6 @@ public final class Constants {
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
-    public static final double kRamseteZeta = 0.1;
+    public static final double kRamseteZeta = 0.7;
   }
 }
