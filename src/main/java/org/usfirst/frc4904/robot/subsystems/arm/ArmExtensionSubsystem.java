@@ -82,7 +82,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
         ezControl controller = new ezControl(kP, kI, kD, 
                                             (double position, double velocity) -> this.feedforward.calculate(
-                                                Units.degreesToRadians(angleDealer.getAsDouble()) + Math.PI/2,
+                                                Units.degreesToRadians(angleDealer.getAsDouble()) - Math.PI/2,
                                                 velocity,
                                                 0
                                             ));
