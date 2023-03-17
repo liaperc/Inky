@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.opencv.core.Mat.Tuple2;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
         cones.put(3, new Pair<>(31,38));
     }
     public static final HashMap<Integer, Pair<Integer, Integer>> cubes = new HashMap<Integer, Pair<Integer, Integer>>();
-    static{
+    static {
         cubes.put(1, new Pair<>(-33,0));
         cubes.put(2, new Pair<>(14,6));
         cubes.put(3, new Pair<>(22,28));
@@ -44,18 +45,21 @@ public class ArmSubsystem extends SubsystemBase {
         this.armPivotSubsystem = armPivotSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
-    public ParallelCommandGroup c_angleCubes(int shelf) {
+
+    public Command c_angleCubes(int shelf) {
         int degreesFromHorizontal = cubes.get(shelf).getFirst();
         int extensionLengthInches = cubes.get(shelf).getSecond();
+
+        if (NathanGain.isFlippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
+        }
+
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
     public ParallelRaceGroup placeCube(int shelf, boolean Reversed) {
-        int degreesFromHorizontal;
+        int degreesFromHorizontal = cubes.get(shelf).getFirst();
         if (Reversed) {
-            degreesFromHorizontal = 180 - cubes.get(shelf).getFirst();
-        }
-        else {
-            degreesFromHorizontal = cubes.get(shelf).getFirst();
+            degreesFromHorizontal = (cubes.get(shelf).getFirst() * -1) + 180;
         }
         int extensionLengthInches = cubes.get(shelf).getSecond();
 
@@ -63,9 +67,14 @@ public class ArmSubsystem extends SubsystemBase {
         .alongWith(new WaitCommand(1).andThen(RobotMap.Component.intake.c_holdVoltage(-Intake.DEFAULT_INTAKE_VOLTS))
         )).withTimeout(5); //TODO: change timeout
     }
-    public ParallelCommandGroup c_angleCones(int shelf) {
+    public Command c_angleCones(int shelf) {
         int degreesFromHorizontal = cones.get(shelf).getFirst();
         int extensionLengthInches = cones.get(shelf).getSecond();
+        
+        if (NathanGain.isFlippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
+        }
+
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
 

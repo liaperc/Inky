@@ -37,6 +37,31 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double kI = 0.01;
     public static final double kD = 0;
 
+
+
+
+    // // constants for big sprocket, assuming it's 4x the little sprocket
+    // public static final double GEARBOX_RATIO = 48 * 4; // 192:1, 192 rotations of motor = 360 degrees
+    // public static final double GEARBOX_SLACK_DEGREES = 6;    // todo
+    // public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
+    // public static final double MIN_EXTENSION = 0;
+
+    // public static final double kS = 0;
+    // public static final double kV = 3.45;
+    // public static final double kA = 0.01;
+    
+    // public static final double kG_retracted = 0.10;
+    // public static final double kG_extended = 0.27;
+
+    // // TODO: tune
+    // public static final double kP = 0.04;
+    // public static final double kI = 0.01;
+    // public static final double kD = 0;
+
+
+
+
+
     public final TalonMotorSubsystem armMotorGroup;
     public final TelescopingArmPivotFeedForward feedforward;
     public final DoubleSupplier extensionDealer;

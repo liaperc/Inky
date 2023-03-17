@@ -122,9 +122,7 @@ public class Robot extends CommandRobotBase {
     @Override
     public void testInitialize() {
         // RobotMap.HumanInput.Operator.joystick.button1.onTrue(RobotMap.Component.intake.c_holdVoltage(4));
-        RobotMap.HumanInput.Operator.joystick.button1.onTrue(Commands.run(() -> System.out.println("henoteuhnotheuntoheu")));
 
-        RobotMap.HumanInput.Operator.joystick.button1.onFalse(RobotMap.Component.intake.c_holdVoltage(0));
 
 // RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
