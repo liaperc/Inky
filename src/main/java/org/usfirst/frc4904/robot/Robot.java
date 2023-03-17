@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
@@ -158,6 +159,7 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotMap.Component.arm.armPivotSubsystem.initializeEncoderPositions();
 //         RobotContainer2.Component.leftATalonFX.neutralOutput();
 //         RobotContainer2.Component.leftBTalonFX.neutralOutput();
 //         RobotContainer2.Component.rightATalonFX.neutralOutput();
@@ -167,6 +169,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testExecute() {
+        RobotMap.Component.arm.armExtensionSubsystem.initializeEncoderPositions(0);
         RobotMap.Component.intake.setVoltage(5);
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Intake current left", RobotMap.Component.intake.leftMotors.leadMotor.getOutputCurrent());
