@@ -52,7 +52,7 @@ public class Robot extends CommandRobotBase {
     public void teleopInitialize() {
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
         // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
-        gaming.schedule();
+        // gaming.schedule();
 
         // Command gaming2 = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0);
         // gaming2.schedule();

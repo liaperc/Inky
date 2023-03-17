@@ -19,9 +19,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
-    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION = 48;
-    public static final double ADDITIONAL_LENGTH = 0; // TODO get this value
+    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION = Units.inchesToMeters(48);
+    public static final double ADDITIONAL_LENGTH = Units.inchesToMeters(30.71);
 
+    public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
+    public static final double MIN_EXTENSION = 0;
     private final TalonMotorSubsystem motor;
     private final static double SPOOL_DIAMETER = Units.inchesToMeters(0.75);
     public final static double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_DIAMETER; // Math.PI * SPOOL_DIAMETER
@@ -62,6 +64,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public void initializeEncoderPositions(double meters) {
         this.motor.zeroSensors(extensionLengthToRevs(meters));
+        motor.configSoftwareLimits(extensionLengthToRevs(MAX_EXTENSION), extensionLengthToRevs(MIN_EXTENSION));
     }
 
     public double getCurrentExtensionLength() {

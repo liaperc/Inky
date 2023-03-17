@@ -173,8 +173,7 @@ public class RobotMap {
         Component.navx = new AHRS(SerialPort.Port.kMXP);
 
         HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
-		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick);
-        HumanInput.Operator.joystick.setDeadzone(0.1);
+		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick, 0.1);
         // // UDP things
         // try {
         //     Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
@@ -189,9 +188,9 @@ public class RobotMap {
         *************************/
 
         Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
-        Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
+        Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
         Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
-        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
+        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.InvertMotorOutput);
 
         TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
         TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
