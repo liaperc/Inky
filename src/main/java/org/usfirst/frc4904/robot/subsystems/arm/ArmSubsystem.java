@@ -47,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
         int extensionLengthInches = cubes.get(shelf).getSecond();
 
         if (NathanGain.isFlippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) - 180;
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
         int extensionLengthInches = cones.get(shelf).getSecond();
         
         if (NathanGain.isFlippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) - 180;
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
