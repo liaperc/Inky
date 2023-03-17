@@ -23,8 +23,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
     // constants for small sprocket
     // public static final double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
     // public static final double GEARBOX_SLACK_DEGREES = 6;
-    // public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
-    // public static final double MIN_EXTENSION = 0;
+    // public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
+    // public static final double MIN_EXTENSION_M = 0;
 
     // public static final double kS = 0;
     // public static final double kV = 0.86;
@@ -44,8 +44,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
     // constants for big sprocket, assuming it's 4x the little sprocket
     public static final double GEARBOX_RATIO = 48 * 4; // 192:1, 192 rotations of motor = 360 degrees
     public static final double GEARBOX_SLACK_DEGREES = 6;    // todo
-    public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
-    public static final double MIN_EXTENSION = 0;
+    public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
+    public static final double MIN_EXTENSION_M = 0;
 
     public static final double kS = 0;
     public static final double kV = 3.45;
@@ -68,9 +68,9 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public final DoubleSupplier extensionDealerMeters;
     private final EncoderWithSlack slackyEncoder;
 
-    public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerInches) {
+    public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerMeters) {
         this.armMotorGroup = armMotorGroup;
-        this.extensionDealerMeters = () -> Units.inchesToMeters(extensionDealerInches.getAsDouble());
+        this.extensionDealerMeters = () -> extensionDealerMeters.getAsDouble();
         this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS, kV, kA);
         this.slackyEncoder = new EncoderWithSlack(
             GEARBOX_SLACK_DEGREES,
@@ -109,7 +109,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public Command c_controlAngularVelocity(DoubleSupplier degPerSecDealer) {
         var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
-                extensionDealerMeters.getAsDouble()/MAX_EXTENSION,
+                extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
                 Units.rotationsPerMinuteToRadiansPerSecond(Units.degreesToRotations(degPerSecDealer.getAsDouble()) * 60),
                 0
@@ -130,7 +130,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
                 double brr =  this.feedforward.calculate(
-                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION, // TODO test if worky
+                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M, // TODO test if worky
                     Units.degreesToRadians(getCurrentAngleDegrees()),
                     Units.degreesToRadians(velocityDegPerSec),
                     0
