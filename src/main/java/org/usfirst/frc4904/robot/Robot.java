@@ -78,7 +78,6 @@ public class Robot extends CommandRobotBase {
     public void teleopExecute() {
         // operator controller override
 
-        System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
         final DoubleSupplier extension_getter = () -> {
             final int EXTEND_FORWARD_BUTTON = 5;

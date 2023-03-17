@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmPivotSubsystem extends SubsystemBase {
-    public static final double HARD_STOP_ARM_ANGLE = -38; // TODO make it stow angle
-    public static final double HARD_STOP_BACK = 180 - HARD_STOP_ARM_ANGLE; // TODO make it stow angle
+    public static final double HARD_STOP_ARM_ANGLE = -38;
+    public static final double HARD_STOP_BACK = (HARD_STOP_ARM_ANGLE* -1) + 180; 
 
 
     // constants for small sprocket
