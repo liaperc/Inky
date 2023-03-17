@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 package org.usfirst.frc4904.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 
 public class Robot extends CommandRobotBase {
@@ -33,21 +35,28 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void initialize() {
-        driverChooser.setDefaultOption(new NathanGain());
-        operatorChooser.setDefaultOption(new DefaultOperator()); 
+        // removed because we are doing operators manually
+        // driverChooser.setDefaultOption(new NathanGain());
+        // operatorChooser.setDefaultOption(new DefaultOperator()); 
     }
 
     @Override
     public void teleopInitialize() {
         final double TURN_MULTIPLIER = 0.5;
-        var cmd = RobotMap.Component.chassis.c_controlWheelVoltages(
-                () -> new DifferentialDriveWheelVoltages(
-                    (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
-                    (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
+        RobotMap.Component.chassis.setDefaultCommand(
+            nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
+                RobotMap.Component.chassis.c_controlWheelVoltages(
+                    () -> new DifferentialDriveWheelVoltages(
+                        (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
+                        (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
+        ))));
+
+        RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
+            RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         ));
-        cmd.setName("chassis - Teleop_Default - c_controlWheelVoltages");
-        
-        RobotMap.Component.chassis.setDefaultCommand(cmd);
+
+
+
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
         // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
         // gaming.schedule();
@@ -65,7 +74,17 @@ public class Robot extends CommandRobotBase {
 
         System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
-        final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(2) / 4;
+        final DoubleSupplier extension_getter = () -> {
+            final int EXTEND_FORWARD_BUTTON = 5;
+            final int EXTEND_BACKWARD_BUTTON = 3;
+            final BooleanSupplier GOING_FORWARD  = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_FORWARD_BUTTON);
+            final BooleanSupplier GOING_BACKWARD = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_BACKWARD_BUTTON);
+            final double EXTEND_SPEED_MPS = 0.2;
+            if (GOING_FORWARD.getAsBoolean() && GOING_BACKWARD.getAsBoolean()) { return 0; }
+            if (GOING_FORWARD.getAsBoolean()) return EXTEND_SPEED_MPS;
+            if (GOING_BACKWARD.getAsBoolean()) return -EXTEND_SPEED_MPS;
+            return 0;
+        };
 
         if (pivot_getter.getAsDouble() != 0) {
             var cmd = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble);
