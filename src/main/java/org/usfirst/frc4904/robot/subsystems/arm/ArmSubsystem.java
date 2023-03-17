@@ -63,12 +63,12 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm position - home (down)");
         return cmd;
     }
-    public Command c_posIntakeGround(boolean flippy) {
+    public Command c_posIntakeGround() {
         var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeGround"), NathanGain.isFlippy);
         cmd.setName("arm position - ground intake");
         return cmd;
     }
-    public Command c_posIntakeShelf(boolean flippy) {
+    public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
         var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeShelf"), NathanGain.isFlippy);
         cmd.setName("arm position - pre shelf intake");
@@ -87,10 +87,10 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm - c_angleCubes - " + shelf);
         return cmd;
     }
-    public Command placeCube(int shelf, boolean reversed) {
+    public Command placeCube(int shelf) {
         double degreesFromHorizontal = cubes.get(shelf).getFirst();
-        if (reversed) {
-            degreesFromHorizontal = (cubes.get(shelf).getFirst() * -1) + 180;
+        if (NathanGain.isFlippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
         double extensionLengthMeters= cubes.get(shelf).getSecond();
 
