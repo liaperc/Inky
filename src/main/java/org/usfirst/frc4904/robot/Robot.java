@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 
 public class Robot extends CommandRobotBase {
@@ -56,14 +57,20 @@ public class Robot extends CommandRobotBase {
     @Override
     public void teleopInitialize() {
         final double TURN_MULTIPLIER = 0.5;
-        var cmd = RobotMap.Component.chassis.c_controlWheelVoltages(
-                () -> new DifferentialDriveWheelVoltages(
-                    (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
-                    (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
+        RobotMap.Component.chassis.setDefaultCommand(
+            nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
+                RobotMap.Component.chassis.c_controlWheelVoltages(
+                    () -> new DifferentialDriveWheelVoltages(
+                        (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
+                        (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
+        ))));
+
+        RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
+            RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         ));
-        cmd.setName("chassis - Teleop_Default - c_controlWheelVoltages");
-        
-        RobotMap.Component.chassis.setDefaultCommand(cmd);
+
+
+
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
         // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
         // gaming.schedule();
