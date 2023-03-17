@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
         cones.put(3, new Pair<>(31,38));
     }
     public static final HashMap<Integer, Pair<Integer, Integer>> cubes = new HashMap<Integer, Pair<Integer, Integer>>();
-    static{
+    static {
         cubes.put(1, new Pair<>(-33,0));
         cubes.put(2, new Pair<>(14,6));
         cubes.put(3, new Pair<>(22,28));
@@ -42,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
 
-    public ParallelCommandGroup c_angleCubes(int shelf) {
+    public Command c_angleCubes(int shelf) {
         int degreesFromHorizontal = cubes.get(shelf).getFirst();
         int extensionLengthInches = cubes.get(shelf).getSecond();
 
@@ -52,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
-    public ParallelCommandGroup c_angleCones(int shelf) {
+    public Command c_angleCones(int shelf) {
         int degreesFromHorizontal = cones.get(shelf).getFirst();
         int extensionLengthInches = cones.get(shelf).getSecond();
         

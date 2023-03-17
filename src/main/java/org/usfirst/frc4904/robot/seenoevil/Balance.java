@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
+
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
@@ -43,18 +45,16 @@ public class Balance extends CommandBase {
     private boolean onRamp = false;
     private boolean balanced = false;
     private double max_velocity;
-    private boolean ACCELmode = false;
-    private DifferentialDriveWheelSpeeds prevWheelSpeed;
     private static double s_setpoint;
 
     private boolean logging = true;
-    public Balance(AHRS gyro, SimpleMotorFeedforward feedforward, PIDController left, PIDController right, Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts, double maxAccel, double maxVelocity, Subsystem... requirements) {
+    public Balance(AHRS gyro, Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts, double maxAccel, double maxVelocity, Subsystem... requirements) {
         addRequirements(requirements);
         this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxAccel, 0), new TrapezoidProfile.State(maxVelocity, maxAccel), new TrapezoidProfile.State(0, 0));
         this.s_setpoint = max_velocity;
-        this.feedforward = feedforward;
-        this.closedLeft = left;
-        this.closedRight = right;
+        this.feedforward = new SimpleMotorFeedforward(Constants.DriveConstants.ksVolts, Constants.DriveConstants.kvVoltSecondsPerMeter, Constants.DriveConstants.kaVoltSecondsSquaredPerMeter);
+        this.closedLeft = new PIDController(DriveConstants.kPDriveVel, 0.01, 0);
+        this.closedRight = new PIDController(DriveConstants.kPDriveVel, 0.01, 0);
         this.gyro = gyro;
         this.max_velocity = maxVelocity;
 
@@ -84,7 +84,6 @@ public class Balance extends CommandBase {
         if (Math.abs(gyro.getPitch()) > RAMP_START_ANGLE && !onRamp) {
             onRamp = true;
         }
-        prevWheelSpeed = currentWheelspeeds;
     }
 
     @Override
