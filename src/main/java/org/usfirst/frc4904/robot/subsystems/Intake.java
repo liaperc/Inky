@@ -13,7 +13,8 @@ public class Intake extends SubsystemBase {
     public Intake (SparkMaxMotorSubsystem leftMotor, SparkMaxMotorSubsystem rightMotor){ //motors has leftmotor and rightmotot
         leftMotors = leftMotor;
         rightMotors = rightMotor;
-        
+
+        //TODO: fix current limits
         rightMotors.leadMotor.setSmartCurrentLimit(55);
         leftMotors.leadMotor.setSmartCurrentLimit(55);
     }
