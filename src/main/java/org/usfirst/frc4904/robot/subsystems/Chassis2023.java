@@ -1,35 +1,16 @@
 package org.usfirst.frc4904.robot.subsystems;
 
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
-import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
-import org.usfirst.frc4904.standard.custom.motorcontrollers.TalonMotorController;
-import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
-import org.usfirst.frc4904.standard.subsystems.motor.SmartMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
+//FIXME: unused
 public class Chassis2023 extends WestCoastDrive {
     public static final double RAMP_START_ANGLE = 9.0;
     public static final double RAMP_BALANCE_TOLERANCE = 4.0;

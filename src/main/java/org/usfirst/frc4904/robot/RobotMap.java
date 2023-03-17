@@ -4,15 +4,9 @@ import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -22,7 +16,6 @@ import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -35,15 +28,7 @@ import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import org.usfirst.frc4904.standard.custom.sensors.NavX;
-import org.usfirst.frc4904.robot.subsystems.Chassis2023;
-import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
-
-import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;;
 
 public class RobotMap {
 

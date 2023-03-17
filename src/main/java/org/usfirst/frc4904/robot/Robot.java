@@ -6,36 +6,21 @@
 /*----------------------------------------------------------------------------*/
 package org.usfirst.frc4904.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import org.usfirst.frc4904.standard.humaninput.Operator;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
-import org.usfirst.frc4904.robot.seenoevil.RobotContainer2.Component;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import static org.usfirst.frc4904.robot.Utils.nameCommand;
@@ -50,8 +35,9 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void initialize() {
-        driverChooser.setDefaultOption(new NathanGain());
-        operatorChooser.setDefaultOption(new DefaultOperator()); 
+        // removed because we are doing operators manually
+        // driverChooser.setDefaultOption(new NathanGain());
+        // operatorChooser.setDefaultOption(new DefaultOperator()); 
     }
 
     @Override
