@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
-    
+    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION = 48;
+    public static final double ADDITIONAL_LENGTH = 0; // TODO get this value
+
     private final TalonMotorSubsystem motor;
     private final static double SPOOL_DIAMETER = Units.inchesToMeters(0.75);
     public final static double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_DIAMETER; // Math.PI * SPOOL_DIAMETER
@@ -66,6 +68,16 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return revsToExtensionLength(motor.getSensorPositionRotations());
     }
 
+    public void setVoltageSafely(double voltage) {
+        if (java.lang.Math.cos(Units.degreesToRadians(angleDealer.getAsDouble())) * (getCurrentExtensionLength() + ADDITIONAL_LENGTH) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION  && voltage > 0) {
+            System.err.println("WE DO NOT LIKE GAMING");
+            this.motor.setVoltage(0);
+            return;
+        };
+
+        this.motor.setVoltage(voltage);
+    }
+
     public double revsToExtensionLength(double rotations) {
         final double number_of_spool_rotations = rotations/GEARBOX_RATIO;
         final double extensionLength = number_of_spool_rotations * SPOOL_CIRCUMFERENCE;
@@ -83,7 +95,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                 metersPerSecondSupplier.getAsDouble()
             );
             SmartDashboard.putNumber("arm extension ff", ff);
-            motor.setVoltage(ff);
+            setVoltageSafely(ff);
         });
     }
 
