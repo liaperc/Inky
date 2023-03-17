@@ -21,19 +21,24 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_PIVOT = 0;
     public static final double MAX_ACCEL_PIVOT = 0;
 
-    HashMap<Integer, Pair<Integer, Integer>> cubes = new HashMap<Integer, Pair<Integer, Integer>>();
     
-    HashMap<Integer, Pair<Integer, Integer>> cones = new HashMap<Integer, Pair<Integer, Integer>>();
+    public static final HashMap<Integer, Pair<Integer, Integer>> cones = new HashMap<Integer, Pair<Integer, Integer>>();
+    static {
+        cones.put(1, new Pair<>(-19,0));
+        cones.put(2, new Pair<>(29,18));
+        cones.put(3, new Pair<>(31,38));
+    }
+    public static final HashMap<Integer, Pair<Integer, Integer>> cubes = new HashMap<Integer, Pair<Integer, Integer>>();
+    static{
+        cubes.put(1, new Pair<>(-33,0));
+        cubes.put(2, new Pair<>(14,6));
+        cubes.put(3, new Pair<>(22,28));
+    }
+
 
     public ArmSubsystem(ArmPivotSubsystem armPivotSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
         this.armPivotSubsystem = armPivotSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
-        this.cubes.put(1, new Pair<>(-33,0));
-        this.cubes.put(2, new Pair<>(14,6));
-        this.cubes.put(3, new Pair<>(22,28));
-        this.cones.put(1, new Pair<>(-19,0));
-        this.cones.put(2, new Pair<>(29,18));
-        this.cones.put(3, new Pair<>(31,38));
     }
     public ParallelCommandGroup c_angleCubes(int shelf) {
         int degreesFromHorizontal = cubes.get(shelf).getFirst();
