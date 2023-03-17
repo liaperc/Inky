@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -23,15 +24,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
+import org.usfirst.frc4904.standard.custom.sensors.NavX;
+import org.usfirst.frc4904.robot.Robot;
+import org.usfirst.frc4904.robot.RobotMap;
+import org.usfirst.frc4904.robot.seenoevil.Balance;
+
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -102,6 +114,18 @@ public class RobotContainer2 {
                         List.of(),
                         new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
                         trajectoryConfig
+                )),
+                entry("past_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(4, 0, new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
+                        List.of(),
+                        new Pose2d(1, 0, new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
                 ))
         );
 
@@ -217,4 +241,47 @@ public class RobotContainer2 {
         // return exampleTrajectory;
         return trajectories.get(trajectoryName);
     }
+
+    public Command BalanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
+        var command = new SequentialCommandGroup(     
+                //1. Position arm to place gamepiece
+                RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+                ,
+            new ParallelCommandGroup(
+                //3. Retract arm
+                RobotMap.Component.arm.c_resetAngleBottom(0),
+                new SequentialCommandGroup(
+                    new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
+                    //4. Drive forward past ramp
+                    getAutonomousCommand(getTrajectory("past_ramp")),
+
+                    //5. Drive back to get partially on ramp
+                    getAutonomousCommand(getTrajectory("back_to_ramp"))
+                )
+            ),
+            new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+            //6. balance code here
+        );
+        
+        return command;
+        }
+
+        public Command NotBalanceAuton(){
+            var command = new SequentialCommandGroup(     
+                    //1. Position arm to place gamepiece
+                    RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+                    ,
+                new ParallelCommandGroup(
+                    //3. Retract arm
+                    RobotMap.Component.arm.c_resetAngleBottom(0),
+                    new SequentialCommandGroup(
+                        new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
+                        //4. Drive forward past ramp
+                        getAutonomousCommand(getTrajectory("past_ramp"))
+                    )
+                )
+            );
+            
+            return command;
+            }
 }
