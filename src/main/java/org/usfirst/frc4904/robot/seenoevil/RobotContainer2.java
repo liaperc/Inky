@@ -245,11 +245,11 @@ public class RobotContainer2 {
     public Command BalanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
         var command = new SequentialCommandGroup(     
                 //1. Position arm to place gamepiece
-                RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+                RobotMap.Component.arm.placeCube(3, true) //TODO: set actual timeout
                 ,
             new ParallelCommandGroup(
                 //3. Retract arm
-                RobotMap.Component.arm.c_resetAngleBottom(0),
+                RobotMap.Component.arm.c_resetAngleBottom(),
                 new SequentialCommandGroup(
                     new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                     //4. Drive forward past ramp
@@ -273,7 +273,7 @@ public class RobotContainer2 {
                     ,
                 new ParallelCommandGroup(
                     //3. Retract arm
-                    RobotMap.Component.arm.c_resetAngleBottom(0),
+                    RobotMap.Component.arm.c_resetAngleBottom(),
                     new SequentialCommandGroup(
                         new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                         //4. Drive forward past ramp

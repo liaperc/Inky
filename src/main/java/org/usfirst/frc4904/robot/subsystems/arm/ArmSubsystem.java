@@ -82,7 +82,7 @@ public class ArmSubsystem extends SubsystemBase {
         return cmd;
     }
 
-    public ParallelCommandGroup c_resetAngleBottom(int shelf) {
+    public ParallelCommandGroup c_resetAngleBottom() {
         return c_holdArmPose(-38, 0);
     }
 
