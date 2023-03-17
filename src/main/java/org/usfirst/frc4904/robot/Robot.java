@@ -55,14 +55,14 @@ public class Robot extends CommandRobotBase {
     @Override
     public void teleopInitialize() {
         final double TURN_MULTIPLIER = 0.5;
-        RobotMap.Component.chassis.setDefaultCommand(
-            RobotMap.Component.chassis.c_controlWheelVoltages(
+        var cmd = RobotMap.Component.chassis.c_controlWheelVoltages(
                 () -> new DifferentialDriveWheelVoltages(
                     (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
                     (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
-                )
-            )
-        );
+        ));
+        cmd.setName("chassis - Teleop_Default - c_controlWheelVoltages");
+        
+        RobotMap.Component.chassis.setDefaultCommand(cmd);
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
         // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
         // gaming.schedule();
@@ -83,13 +83,17 @@ public class Robot extends CommandRobotBase {
         final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(2) / 4;
 
         if (pivot_getter.getAsDouble() != 0) {
-            RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble).schedule();
+            var cmd = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble);
+            cmd.setName("arm - Teleop - c_controlAngularVelocity");
+            cmd.schedule();
         }
         if (extension_getter.getAsDouble() != 0) {
-            RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(extension_getter::getAsDouble).schedule();
+            var cmd = RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(extension_getter::getAsDouble);
+            cmd.setName("arm - Teleop - c_controlVelocity");
+            cmd.schedule();
         }
         
-
+        SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         // System.out.println("gyro " + RobotMap.Component.navx.getAngle());
         // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);

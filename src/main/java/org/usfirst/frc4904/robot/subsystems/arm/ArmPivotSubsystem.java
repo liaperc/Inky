@@ -120,6 +120,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             this.armMotorGroup.leadMotor.setVoltage(ff);
         });
         cmd.addRequirements(armMotorGroup);
+        cmd.setName("arm - c_controlAngularVelocity");
         return cmd;
     }
 
@@ -143,24 +144,25 @@ public class ArmPivotSubsystem extends SubsystemBase {
             new TrapezoidProfile.State(degreesFromHorizontal, 0),
             new TrapezoidProfile.State(getCurrentAngleDegrees(), 0)
         );
-
+        var cmd = new ezMotion(
+            controller,
+            () -> this.getCurrentAngleDegrees(),
+            (volts) -> {
+                // this.armMotorGroup.setVoltage(volts); // FIXME : use motorgroup setvoltage
+                SmartDashboard.putNumber("Arm Volts", volts);
+                this.armMotorGroup.leadMotor.setVoltage(volts);
+                for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
+            },
+            (double t) -> {
+                SmartDashboard.putNumber("deg setpoint", profile.calculate(t).position);
+                SmartDashboard.putNumber("deg velocity", profile.calculate(t).velocity);
+                return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
+            },
+        this, armMotorGroup);
+        cmd.setName("arm - c_holdRotation");
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
         return new Pair<Command,Double>(
-            new ezMotion(
-                controller,
-                () -> this.getCurrentAngleDegrees(),
-                (volts) -> {
-                    // this.armMotorGroup.setVoltage(volts); // FIXME : use motorgroup setvoltage
-                    SmartDashboard.putNumber("Arm Volts", volts);
-                    this.armMotorGroup.leadMotor.setVoltage(volts);
-                    for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
-                },
-                (double t) -> {
-                    SmartDashboard.putNumber("deg setpoint", profile.calculate(t).position);
-                    SmartDashboard.putNumber("deg velocity", profile.calculate(t).velocity);
-                    return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
-                },
-            this, armMotorGroup), profile.totalTime());
+            cmd, profile.totalTime());
     }
 }

@@ -13,6 +13,10 @@ public class Intake extends SubsystemBase {
     public Intake (SparkMaxMotorSubsystem leftMotor, SparkMaxMotorSubsystem rightMotor){ //motors has leftmotor and rightmotot
         leftMotors = leftMotor;
         rightMotors = rightMotor;
+
+        //TODO: fix current limits
+        rightMotors.leadMotor.setSmartCurrentLimit(55);
+        leftMotors.leadMotor.setSmartCurrentLimit(55);
     }
     public void setVoltage(double voltage) {
         leftMotors.setVoltage(voltage);
@@ -29,6 +33,8 @@ public class Intake extends SubsystemBase {
     }
 
     public Command c_holdVoltageDefault() {
-        return Commands.run(() -> setVoltage(DEFAULT_INTAKE_VOLTS), leftMotors, rightMotors);
+        var cmd = Commands.run(() -> setVoltage(DEFAULT_INTAKE_VOLTS), leftMotors, rightMotors);
+        cmd.setName("Intake - c_holdVoltageDefault");
+        return cmd;
     }
 }

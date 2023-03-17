@@ -43,6 +43,8 @@ import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.robot.subsystems.Chassis2023;
 import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 
+import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;;
+
 public class RobotMap {
 
     public static class Port {
@@ -103,6 +105,8 @@ public class RobotMap {
             public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
             public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
             public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
+            public static final double CHASSIS_LENGTH = Units.inchesToMeters(37); // +/- 0.5 inches
+
         }
     }
 
@@ -237,7 +241,7 @@ public class RobotMap {
         SparkMaxMotorSubsystem intake_right = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, MotorType.kBrushless, true));
 
         Component.intake = new Intake(intake_left, intake_right);
-
+                
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing
         // - naive + scuffed ramsete tuning: https://docs.google.com/spreadsheets/d/1BIvwJ6MfLf9ByW9dcmagXFvm7HPaXY78Y4YB1L9TGPA/edit#gid=0

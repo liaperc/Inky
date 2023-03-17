@@ -25,7 +25,6 @@ public final class Constants {
     public static final double kTrackwidthMeters = RobotMap.Metrics.Chassis.TRACK_WIDTH_METERS; //blinky's track width
     public static final double kWheelDiameterMeters = RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS;
     public static final double gearRatio = RobotMap.Metrics.Chassis.GEAR_RATIO;
-
     public static final double ksVolts = RobotMap.PID.Drive.kS; //old is 0.27395 
     public static final double kvVoltSecondsPerMeter = RobotMap.PID.Drive.kV; //was consistent between the two
     public static final double kaVoltSecondsSquaredPerMeter = RobotMap.PID.Drive.kA; //old is 0.25289
