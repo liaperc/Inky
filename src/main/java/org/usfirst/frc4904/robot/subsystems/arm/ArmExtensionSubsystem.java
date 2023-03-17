@@ -19,17 +19,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
-    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION = Units.inchesToMeters(48);
-    public static final double ADDITIONAL_LENGTH = Units.inchesToMeters(30.71);
+    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M = Units.inchesToMeters(48);
+    public static final double ADDITIONAL_LENGTH_M = Units.inchesToMeters(30.71);
 
-    public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
-    public static final double MIN_EXTENSION = 0;
+    public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
+    public static final double MIN_EXTENSION_M = 0;
     private final TalonMotorSubsystem motor;
-    private final static double SPOOL_DIAMETER = Units.inchesToMeters(0.75);
-    public final static double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_DIAMETER; // Math.PI * SPOOL_DIAMETER
+    private final static double SPOOL_DIAMETER_M = Units.inchesToMeters(0.75);
+    public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * SPOOL_DIAMETER_M; // Math.PI * SPOOL_DIAMETER
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
-    private DoubleSupplier angleDealer;
+    private DoubleSupplier angleDealer_DEG;
    
     // TODO: recharacterize -- current values may be incorrect
     public static final double kS = 0.21679;
@@ -50,7 +50,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public ArmExtensionSubsystem(TalonMotorSubsystem motor, DoubleSupplier angleDegreesDealer) {
         this.motor = motor;
         this.feedforward = new ArmFeedforward(kS, kG, kV);
-        this.angleDealer = angleDegreesDealer;
+        this.angleDealer_DEG = angleDegreesDealer;
     }
     
     /**
@@ -64,15 +64,15 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public void initializeEncoderPositions(double meters) {
         this.motor.zeroSensors(extensionLengthToRevs(meters));
-        motor.configSoftwareLimits(extensionLengthToRevs(MAX_EXTENSION), extensionLengthToRevs(MIN_EXTENSION));
+        motor.configSoftwareLimits(extensionLengthToRevs(MAX_EXTENSION_M), extensionLengthToRevs(MIN_EXTENSION_M));
     }
 
-    public double getCurrentExtensionLengthInches() {
-        return Units.metersToInches(revsToExtensionLength(motor.getSensorPositionRotations()));
+    public double getCurrentExtensionLength() {
+        return revsToExtensionLength(motor.getSensorPositionRotations());
     }
 
     public void setVoltageSafely(double voltage) {
-        if (java.lang.Math.cos(Units.degreesToRadians(angleDealer.getAsDouble())) * (getCurrentExtensionLength() + ADDITIONAL_LENGTH) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION  && voltage > 0) {
+        if ((java.lang.Math.cos(Units.degreesToRadians(angleDealer_DEG.getAsDouble())) * (getCurrentExtensionLength()) + ADDITIONAL_LENGTH_M) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M  && voltage > 0) {
             System.err.println("WE DO NOT LIKE GAMING");
             this.motor.setVoltage(0);
             return;
@@ -83,18 +83,18 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public double revsToExtensionLength(double rotations) {
         final double number_of_spool_rotations = rotations/GEARBOX_RATIO;
-        final double extensionLength = number_of_spool_rotations * SPOOL_CIRCUMFERENCE;
-        return extensionLength;
+        final double extensionLength_M = number_of_spool_rotations * SPOOL_CIRCUMFERENCE_M;
+        return extensionLength_M;
     }
 
     public double extensionLengthToRevs(double extension_meters) {
-        return extension_meters / SPOOL_CIRCUMFERENCE * GEARBOX_RATIO;
+        return extension_meters / SPOOL_CIRCUMFERENCE_M * GEARBOX_RATIO;
     }
 
     public Command c_controlVelocity(DoubleSupplier metersPerSecondSupplier) {
         var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
-                Units.degreesToRadians(this.angleDealer.getAsDouble()),
+                Units.degreesToRadians(this.angleDealer_DEG.getAsDouble()),
                 metersPerSecondSupplier.getAsDouble()
             );
             SmartDashboard.putNumber("arm extension ff", ff);
@@ -109,7 +109,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
         ezControl controller = new ezControl(kP, kI, kD, 
                                             (double position, double velocity) -> this.feedforward.calculate(
-                                                Units.degreesToRadians(angleDealer.getAsDouble()) - Math.PI/2,
+                                                Units.degreesToRadians(angleDealer_DEG.getAsDouble()) - Math.PI/2,
                                                 velocity,
                                                 0
                                             ));
