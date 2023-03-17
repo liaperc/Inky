@@ -25,6 +25,10 @@ public class DefaultOperator extends Operator {
 		RobotMap.HumanInput.Operator.joystick.button2.onTrue(RobotMap.Component.intake.c_holdVoltage(4));
         RobotMap.HumanInput.Operator.joystick.button2.onFalse(RobotMap.Component.intake.c_holdVoltage(0));
 
+		// Outtake
+		RobotMap.HumanInput.Operator.joystick.button1.onTrue(RobotMap.Component.intake.c_holdVoltage(-4));
+        RobotMap.HumanInput.Operator.joystick.button1.onFalse(RobotMap.Component.intake.c_holdVoltage(0));
+
 		// Flippy button
 		RobotMap.HumanInput.Operator.joystick.button12.onTrue(new InstantCommand(
 			() -> {
