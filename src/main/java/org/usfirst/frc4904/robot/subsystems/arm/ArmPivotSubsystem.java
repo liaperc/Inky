@@ -42,17 +42,17 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
 
     // constants for big sprocket, assuming it's 4x the little sprocket
-    public static final double GEARBOX_RATIO = 48 * 4; // 192:1, 192 rotations of motor = 360 degrees
+    public static final double GEARBOX_RATIO = 48 * 60/26; // big sprocket
     public static final double GEARBOX_SLACK_DEGREES = 6;    // todo
     public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION_M = 0;
 
     public static final double kS = 0;
-    public static final double kV = 3.45;
-    public static final double kA = 0.01;
+    public static final double kV = 1.98;
+    public static final double kA = 0.03;
     
-    public static final double kG_retracted = 0.10;
-    public static final double kG_extended = 0.32;
+    public static final double kG_retracted = 0.18;
+    public static final double kG_extended = 0.56;
 
     // TODO: tune
     public static final double kP = 0.04;
