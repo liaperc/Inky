@@ -23,15 +23,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import java.util.List;
 import java.util.Map;
 
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
+import org.usfirst.frc4904.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -102,6 +107,18 @@ public class RobotContainer2 {
                         List.of(),
                         new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
                         trajectoryConfig
+                )),
+                entry("past_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(4, 0, new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(1, 0, new Rotation2d(0)),
+                        trajectoryConfigReversed
                 ))
         );
 
@@ -216,5 +233,59 @@ public class RobotContainer2 {
                             
         // return exampleTrajectory;
         return trajectories.get(trajectoryName);
+    }
+
+    public Command BalanceAuton(){
+        var command = new SequentialCommandGroup(     
+            new ParallelCommandGroup(
+                //1. Position arm to place gamepiece
+                RobotMap.Component.arm.c_angleCubes(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
+                new SequentialCommandGroup(
+                    new WaitCommand(1), //TODO: set wait time for arm to finish?
+                    // 2. Deposit gamepiece (spin for 0.5 seconds)
+                    RobotMap.Component.intake.c_holdVoltageDefault().withTimeout(.5) //TODO: fix, this just uses default intake volts. Also add wait command?
+                )
+            ),
+            new ParallelCommandGroup(
+                //3. Retract arm
+                RobotMap.Component.arm.c_angleCones(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
+                new SequentialCommandGroup(
+                    new WaitCommand(.5), //TODO: set wait time to allow arm to get started before moving?
+                    //4. Drive forward past ramp
+                    getAutonomousCommand(getTrajectory("past_ramp")),
+
+                    //5. Drive back to get partially on ramp
+                    getAutonomousCommand(getTrajectory("back_to_ramp"))
+                )
+            )
+            //6. balance code here
+        );
+        
+        return command;
+        }
+
+    public Command NotBalanceAuton(){
+        var command = new SequentialCommandGroup(     
+            new ParallelCommandGroup(
+                //1. Position arm to place gamepiece
+                RobotMap.Component.arm.c_angleCubes(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
+                new SequentialCommandGroup(
+                    new WaitCommand(1), //TODO: set wait time for arm to finish?
+                    // 2. Deposit gamepiece (spin for 0.5 seconds)
+                    RobotMap.Component.intake.c_holdVoltageDefault().withTimeout(.5) //TODO: fix, this just uses default intake volts. Also add wait command?
+                )
+            ),
+            new ParallelCommandGroup(
+                //3. Retract arm
+                RobotMap.Component.arm.c_angleCones(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
+                new SequentialCommandGroup(
+                    new WaitCommand(.5), //TODO: set wait time to allow arm to get started before moving?
+                    //4. Drive forward past ramp
+                    getAutonomousCommand(getTrajectory("past_ramp"))
+                )
+            )
+        );
+        
+        return command;
     }
 }
