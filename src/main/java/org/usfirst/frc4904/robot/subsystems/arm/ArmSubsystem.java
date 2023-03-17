@@ -63,7 +63,7 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
 
-    public ParallelCommandGroup c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
         Command firstCommand;
         Command secondCommand;
         double wait;
@@ -81,14 +81,18 @@ public class ArmSubsystem extends SubsystemBase {
             secondCommand = pivotMovement.getFirst();
         }
 
-        var cmdgrp = new ParallelCommandGroup(
-            firstCommand,
-            new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand)
-        );
+        return this.runOnce(() -> {
+            firstCommand.schedule();
+            // (Commands.run(() -> System.out.println(
+            //     "1: " + String.valueOf(firstCommand.isScheduled())
+            // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
+            // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
+            // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
+            //     ))).schedule();
+            (new SequentialCommandGroup(new WaitCommand(0.1), secondCommand)).schedule();
+// ((new WaitCommand(1)).andThen(secondCommand)).schedule();
+        // secondCommand.schedule();
         
-        cmdgrp.addRequirements(this);
-        return cmdgrp;
+        }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
     }
-
-
 }

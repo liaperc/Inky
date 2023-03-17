@@ -64,11 +64,8 @@ public class Robot extends CommandRobotBase {
             )
         );
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
-        Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(
-            10,
-            150,
-            200).getFirst();
-        gaming.schedule();
+        // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
+        // gaming.schedule();
 
         // Command gaming2 = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0);
         // gaming2.schedule();
@@ -83,7 +80,7 @@ public class Robot extends CommandRobotBase {
 
         System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
-        final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(3) / 4;
+        final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(2) / 4;
 
         if (pivot_getter.getAsDouble() != 0) {
             RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble).schedule();
@@ -97,6 +94,7 @@ public class Robot extends CommandRobotBase {
         // System.out.println("gyro " + RobotMap.Component.navx.getAngle());
         // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
 
+        RobotMap.HumanInput.Operator.joystick.button1.whileTrue(Commands.runOnce(() -> System.out.println("henoteuhnotheuntoheu")));
         
     }
 
@@ -134,9 +132,6 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-        // RobotMap.HumanInput.Operator.joystick.button1.onTrue(RobotMap.Component.intake.c_holdVoltage(4));
-
-
 // RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 

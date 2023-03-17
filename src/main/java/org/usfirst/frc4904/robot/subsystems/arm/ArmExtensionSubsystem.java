@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
+    public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION = Units.inchesToMeters(48);
+    public static final double ADDITIONAL_LENGTH = Units.inchesToMeters(30.71);
+
     public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION = 0;
     private final TalonMotorSubsystem motor;
@@ -68,6 +71,16 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return revsToExtensionLength(motor.getSensorPositionRotations());
     }
 
+    public void setVoltageSafely(double voltage) {
+        if (java.lang.Math.cos(Units.degreesToRadians(angleDealer.getAsDouble())) * (getCurrentExtensionLength() + ADDITIONAL_LENGTH) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION  && voltage > 0) {
+            System.err.println("WE DO NOT LIKE GAMING");
+            this.motor.setVoltage(0);
+            return;
+        };
+
+        this.motor.setVoltage(voltage);
+    }
+
     public double revsToExtensionLength(double rotations) {
         final double number_of_spool_rotations = rotations/GEARBOX_RATIO;
         final double extensionLength = number_of_spool_rotations * SPOOL_CIRCUMFERENCE;
@@ -79,14 +92,17 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public Command c_controlVelocity(DoubleSupplier metersPerSecondSupplier) {
-        return this.run(() -> {
+        var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
                 Units.degreesToRadians(this.angleDealer.getAsDouble()),
                 metersPerSecondSupplier.getAsDouble()
             );
             SmartDashboard.putNumber("arm extension ff", ff);
-            motor.setVoltage(ff);
+            setVoltageSafely(ff);
         });
+        cmd.setName("c_controlVelocity");
+        cmd.addRequirements(motor);
+        return cmd;
     }
 
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
