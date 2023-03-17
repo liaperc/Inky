@@ -42,6 +42,11 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+
         final double TURN_MULTIPLIER = 0.5;
         RobotMap.Component.chassis.setDefaultCommand(
             nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
@@ -137,6 +142,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledInitialize() {
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
     }
 
     @Override
@@ -145,10 +154,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-// RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.leftATalonFX.neutralOutput();
 //         RobotContainer2.Component.leftBTalonFX.neutralOutput();
 //         RobotContainer2.Component.rightATalonFX.neutralOutput();
