@@ -37,6 +37,22 @@ public class DefaultOperator extends Operator {
 				NathanGain.isFlippy = !NathanGain.isFlippy;
 			}
 		));
+		//TODO: flip?
+		// position + place cube
+		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.placeCube(3, false));
+		RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.placeCube(2, false));
+		RobotMap.HumanInput.Operator.joystick.button11.onTrue(RobotMap.Component.arm.placeCube(1, false));
+		
+		//position cone
+		RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.c_angleCones(3));
+		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_angleCones(3));
+		RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.c_angleCones(3));
+
+		//shelf intake
+		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf(false));
+		
+		//ground intake
+		RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround(false));
 
 
         // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(
