@@ -242,7 +242,7 @@ public class RobotContainer2 {
         return trajectories.get(trajectoryName);
     }
 
-    public Command BalanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
+    public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
         var command = new SequentialCommandGroup(     
                 //1. Position arm to place gamepiece
                 RobotMap.Component.arm.placeCube(3, true) //TODO: set actual timeout
@@ -266,7 +266,7 @@ public class RobotContainer2 {
         return command;
         }
 
-        public Command NotBalanceAuton(){
+        public Command notBalanceAuton(){
             var command = new SequentialCommandGroup(     
                     //1. Position arm to place gamepiece
                     RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout

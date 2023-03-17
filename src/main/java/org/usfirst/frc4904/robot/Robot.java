@@ -99,7 +99,12 @@ public class Robot extends CommandRobotBase {
         final Trajectory forward = donttouchme.getTrajectory("straight_forward");
         // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
         // var command = new SequentialCommandGroup(donttouchme.getAutonomousCommand(trajectory), donttouchme.getAutonomousCommand(trajectory2));
-        var commnand = donttouchme.getAutonomousCommand(backward);
+        
+        
+        //various autons, comment in what you want
+        //var commnand = donttouchme.getAutonomousCommand(backward);
+        // var commnand = donttouchme.notBalanceAuton();
+        var commnand = donttouchme.balanceAuton(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         commnand.schedule();
         // var command2 = donttouchme.getAutonomousCommand(trajectory2);
         // command2.andThen(command).schedule();
