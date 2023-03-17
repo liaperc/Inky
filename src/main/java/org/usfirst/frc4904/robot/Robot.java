@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.usfirst.frc4904.standard.humaninput.Operator;
@@ -80,7 +81,17 @@ public class Robot extends CommandRobotBase {
 
         System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
-        final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(2) / 4;
+        final DoubleSupplier extension_getter = () -> {
+            final int EXTEND_FORWARD_BUTTON = 5;
+            final int EXTEND_BACKWARD_BUTTON = 3;
+            final BooleanSupplier GOING_FORWARD  = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_FORWARD_BUTTON);
+            final BooleanSupplier GOING_BACKWARD = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_BACKWARD_BUTTON);
+            final double EXTEND_SPEED_MPS = 0.2;
+            if (GOING_FORWARD.getAsBoolean() && GOING_BACKWARD.getAsBoolean()) { return 0; }
+            if (GOING_FORWARD.getAsBoolean()) return EXTEND_SPEED_MPS;
+            if (GOING_BACKWARD.getAsBoolean()) return -EXTEND_SPEED_MPS;
+            return 0;
+        };
 
         if (pivot_getter.getAsDouble() != 0) {
             var cmd = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble);
