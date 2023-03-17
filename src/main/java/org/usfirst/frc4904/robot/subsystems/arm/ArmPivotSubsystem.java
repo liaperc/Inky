@@ -64,12 +64,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
     public final TalonMotorSubsystem armMotorGroup;
     public final TelescopingArmPivotFeedForward feedforward;
-    public final DoubleSupplier extensionDealer;
+    public final DoubleSupplier extensionDealerMeters;
     private final EncoderWithSlack slackyEncoder;
 
-    public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealer) {
+    public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerInches) {
         this.armMotorGroup = armMotorGroup;
-        this.extensionDealer = extensionDealer;
+        this.extensionDealerMeters = () -> Units.inchesToMeters(extensionDealerInches.getAsDouble());
         this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS, kV, kA);
         this.slackyEncoder = new EncoderWithSlack(
             GEARBOX_SLACK_DEGREES,
@@ -108,7 +108,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public Command c_controlAngularVelocity(DoubleSupplier degPerSecDealer) {
         var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
-                1,//extensionDealer.getAsDouble()/MAX_EXTENSION,
+                extensionDealerMeters.getAsDouble()/MAX_EXTENSION,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
                 Units.rotationsPerMinuteToRadiansPerSecond(Units.degreesToRotations(degPerSecDealer.getAsDouble()) * 60),
                 0
@@ -129,7 +129,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
                 double brr =  this.feedforward.calculate(
-                    extensionDealer.getAsDouble()/MAX_EXTENSION, // TODO test if worky
+                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION, // TODO test if worky
                     Units.degreesToRadians(getCurrentAngleDegrees()),
                     Units.degreesToRadians(velocityDegPerSec),
                     0

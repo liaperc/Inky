@@ -67,8 +67,8 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         motor.configSoftwareLimits(extensionLengthToRevs(MAX_EXTENSION), extensionLengthToRevs(MIN_EXTENSION));
     }
 
-    public double getCurrentExtensionLength() {
-        return revsToExtensionLength(motor.getSensorPositionRotations());
+    public double getCurrentExtensionLengthInches() {
+        return Units.metersToInches(revsToExtensionLength(motor.getSensorPositionRotations()));
     }
 
     public void setVoltageSafely(double voltage) {
