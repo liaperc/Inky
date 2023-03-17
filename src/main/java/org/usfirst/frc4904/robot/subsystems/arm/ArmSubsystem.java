@@ -3,6 +3,7 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 import java.util.HashMap;
 
 import org.opencv.core.Mat.Tuple2;
+import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,14 +41,25 @@ public class ArmSubsystem extends SubsystemBase {
         this.armPivotSubsystem = armPivotSubsystem;
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
+
     public ParallelCommandGroup c_angleCubes(int shelf) {
         int degreesFromHorizontal = cubes.get(shelf).getFirst();
         int extensionLengthInches = cubes.get(shelf).getSecond();
+
+        if (NathanGain.isFlippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) - 180;
+        }
+
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
     public ParallelCommandGroup c_angleCones(int shelf) {
         int degreesFromHorizontal = cones.get(shelf).getFirst();
         int extensionLengthInches = cones.get(shelf).getSecond();
+        
+        if (NathanGain.isFlippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) - 180;
+        }
+
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
 
