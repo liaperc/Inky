@@ -31,15 +31,15 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     private final ArmFeedforward feedforward;
     private DoubleSupplier angleDealer;
    
-    // TODO: recharacterize
-    public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
-    public static final double kG = 0;
+    // TODO: recharacterize -- current values may be incorrect
+    public static final double kS = 0.21679;
+    public static final double kV = 8.2054;
+    public static final double kA = 0.17697;
+    public static final double kG = 0.26169;
 
     // TODO: tune
-    public static final double kP = 0.1;
-    public static final double kI = 0;
+    public static final double kP = 0.01;
+    public static final double kI = 0.001;
     public static final double kD = 0;
     
     /**
@@ -98,6 +98,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                 metersPerSecondSupplier.getAsDouble()
             );
             SmartDashboard.putNumber("arm extension ff", ff);
+            SmartDashboard.putNumber("extension velocity", revsToExtensionLength(motor.getSensorVelocityRPM()));
             setVoltageSafely(ff);
         });
         cmd.setName("arm - c_controlVelocity");
