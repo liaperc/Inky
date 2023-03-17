@@ -56,9 +56,9 @@ public class ArmSubsystem extends SubsystemBase {
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
-    public ParallelRaceGroup placeCube(int shelf, boolean Reversed) {
+    public ParallelRaceGroup placeCube(int shelf, boolean reversed) {
         int degreesFromHorizontal = cubes.get(shelf).getFirst();
-        if (Reversed) {
+        if (reversed) {
             degreesFromHorizontal = (cubes.get(shelf).getFirst() * -1) + 180;
         }
         int extensionLengthInches = cubes.get(shelf).getSecond();

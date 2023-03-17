@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -33,10 +34,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
+import org.usfirst.frc4904.standard.custom.sensors.NavX;
+import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
+import org.usfirst.frc4904.robot.seenoevil.Balance;
+
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -235,7 +242,7 @@ public class RobotContainer2 {
         return trajectories.get(trajectoryName);
     }
 
-    public Command BalanceAuton(){
+    public Command BalanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
         var command = new SequentialCommandGroup(     
                 //1. Position arm to place gamepiece
                 RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
@@ -251,7 +258,8 @@ public class RobotContainer2 {
                     //5. Drive back to get partially on ramp
                     getAutonomousCommand(getTrajectory("back_to_ramp"))
                 )
-            )
+            ),
+            new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
             //6. balance code here
         );
         
