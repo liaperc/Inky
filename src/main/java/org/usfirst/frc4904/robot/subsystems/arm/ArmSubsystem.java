@@ -3,14 +3,18 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 import java.util.HashMap;
 
 import org.opencv.core.Mat.Tuple2;
+import org.usfirst.frc4904.robot.RobotMap;
+import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 
 public class ArmSubsystem extends SubsystemBase {
     public final ArmPivotSubsystem armPivotSubsystem;
@@ -54,6 +58,17 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm - c_angleCubes - " + shelf);
         return cmd;
     }
+    public ParallelRaceGroup placeCube(int shelf, boolean reversed) {
+        int degreesFromHorizontal = cubes.get(shelf).getFirst();
+        if (reversed) {
+            degreesFromHorizontal = (cubes.get(shelf).getFirst() * -1) + 180;
+        }
+        int extensionLengthInches = cubes.get(shelf).getSecond();
+
+        return (c_holdArmPose(degreesFromHorizontal, extensionLengthInches)
+        .alongWith(new WaitCommand(1).andThen(RobotMap.Component.intake.c_holdVoltage(-Intake.DEFAULT_INTAKE_VOLTS))
+        )).withTimeout(5); //TODO: change timeout
+    }
     public Command c_angleCones(int shelf) {
         int degreesFromHorizontal = cones.get(shelf).getFirst();
         int extensionLengthInches = cones.get(shelf).getSecond();
@@ -67,7 +82,12 @@ public class ArmSubsystem extends SubsystemBase {
         return cmd;
     }
 
-    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
+    public ParallelCommandGroup c_resetAngleBottom(int shelf) {
+        return c_holdArmPose(-38, 0);
+    }
+
+
+    public ParallelCommandGroup c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
         Command firstCommand;
         Command secondCommand;
         double wait;
