@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmPivotSubsystem extends SubsystemBase {
-    public static final double HARD_STOP_ARM_ANGLE = -38; // TODO make it stow angle
-    public static final double HARD_STOP_BACK = 180 - HARD_STOP_ARM_ANGLE; // TODO make it stow angle
+    public static final double HARD_STOP_ARM_ANGLE = -38;
+    public static final double HARD_STOP_BACK = (HARD_STOP_ARM_ANGLE* -1) + 180; 
 
     public static final double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
     public static final double GEARBOX_SLACK_DEGREES = 6;
