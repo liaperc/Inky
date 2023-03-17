@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.standard.CommandRobotBase;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
@@ -42,6 +43,11 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+
         final double TURN_MULTIPLIER = 0.5;
         RobotMap.Component.chassis.setDefaultCommand(
             nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
@@ -72,7 +78,6 @@ public class Robot extends CommandRobotBase {
     public void teleopExecute() {
         // operator controller override
 
-        System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
         final DoubleSupplier extension_getter = () -> {
             final int EXTEND_FORWARD_BUTTON = 5;
@@ -118,7 +123,12 @@ public class Robot extends CommandRobotBase {
         final Trajectory forward = donttouchme.getTrajectory("straight_forward");
         // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
         // var command = new SequentialCommandGroup(donttouchme.getAutonomousCommand(trajectory), donttouchme.getAutonomousCommand(trajectory2));
-        var commnand = donttouchme.getAutonomousCommand(backward);
+        
+        
+        //various autons, comment in what you want
+        //var commnand = donttouchme.getAutonomousCommand(backward);
+        // var commnand = donttouchme.notBalanceAuton();
+        var commnand = donttouchme.balanceAuton(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         commnand.schedule();
         // var command2 = donttouchme.getAutonomousCommand(trajectory2);
         // command2.andThen(command).schedule();
@@ -132,6 +142,10 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void disabledInitialize() {
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
     }
 
     @Override
@@ -140,10 +154,11 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-// RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
-//         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        RobotMap.Component.arm.armPivotSubsystem.initializeEncoderPositions();
 //         RobotContainer2.Component.leftATalonFX.neutralOutput();
 //         RobotContainer2.Component.leftBTalonFX.neutralOutput();
 //         RobotContainer2.Component.rightATalonFX.neutralOutput();
@@ -153,6 +168,7 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testExecute() {
+        RobotMap.Component.arm.armExtensionSubsystem.initializeEncoderPositions(0);
         RobotMap.Component.intake.setVoltage(5);
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Intake current left", RobotMap.Component.intake.leftMotors.leadMotor.getOutputCurrent());

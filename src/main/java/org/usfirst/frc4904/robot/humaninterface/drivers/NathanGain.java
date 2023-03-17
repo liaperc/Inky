@@ -3,9 +3,7 @@ package org.usfirst.frc4904.robot.humaninterface.drivers;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class NathanGain extends Driver {
 	public static boolean isFlippy = false;

@@ -2,15 +2,13 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.HashMap;
 
-import org.opencv.core.Mat.Tuple2;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
