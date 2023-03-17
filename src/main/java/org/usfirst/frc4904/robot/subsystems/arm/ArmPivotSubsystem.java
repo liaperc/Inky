@@ -78,7 +78,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
 
     public Command c_controlAngularVelocity(DoubleSupplier degPerSecDealer) {
-        return this.run(() -> {
+        var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
                 1,//extensionDealer.getAsDouble()/MAX_EXTENSION,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
@@ -91,6 +91,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
             }
             this.armMotorGroup.leadMotor.setVoltage(ff);
         });
+        cmd.addRequirements(armMotorGroup);
+        return cmd;
     }
 
     public Pair<Command, Double> c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {

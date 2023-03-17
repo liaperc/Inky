@@ -89,7 +89,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public Command c_controlVelocity(DoubleSupplier metersPerSecondSupplier) {
-        return this.run(() -> {
+        var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
                 Units.degreesToRadians(this.angleDealer.getAsDouble()),
                 metersPerSecondSupplier.getAsDouble()
@@ -97,6 +97,9 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("arm extension ff", ff);
             setVoltageSafely(ff);
         });
+        cmd.setName("c_controlVelocity");
+        cmd.addRequirements(motor);
+        return cmd;
     }
 
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
