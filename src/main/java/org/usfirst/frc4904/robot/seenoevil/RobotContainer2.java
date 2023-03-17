@@ -242,7 +242,7 @@ public class RobotContainer2 {
                 ,
             new ParallelCommandGroup(
                 //3. Retract arm
-                RobotMap.Component.arm.c_resetAngleBottom(0).withTimeout(5),
+                RobotMap.Component.arm.c_resetAngleBottom(0),
                 new SequentialCommandGroup(
                     new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                     //4. Drive forward past ramp
@@ -265,7 +265,7 @@ public class RobotContainer2 {
                     ,
                 new ParallelCommandGroup(
                     //3. Retract arm
-                    RobotMap.Component.arm.c_resetAngleBottom(0).withTimeout(5),
+                    RobotMap.Component.arm.c_resetAngleBottom(0),
                     new SequentialCommandGroup(
                         new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                         //4. Drive forward past ramp
