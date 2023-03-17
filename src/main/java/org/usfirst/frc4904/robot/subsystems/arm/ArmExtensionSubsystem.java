@@ -100,7 +100,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             SmartDashboard.putNumber("arm extension ff", ff);
             setVoltageSafely(ff);
         });
-        cmd.setName("c_controlVelocity");
+        cmd.setName("arm - c_controlVelocity");
         cmd.addRequirements(motor);
         return cmd;
     }
@@ -116,8 +116,9 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
                                                         new TrapezoidProfile.State(extensionLengthMeters, 0), 
                                                         new TrapezoidProfile.State(getCurrentExtensionLength(), 0));
-
-        return new Pair<Command, Double>(new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor), profile.totalTime());
+        var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
+        cmd.setName("arm - c_holdExtension");
+        return new Pair<Command, Double>(cmd, profile.totalTime());
     }
 }
 

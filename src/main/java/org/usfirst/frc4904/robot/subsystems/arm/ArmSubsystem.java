@@ -50,7 +50,9 @@ public class ArmSubsystem extends SubsystemBase {
             degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
 
-        return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
+        var cmd = c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
+        cmd.setName("arm - c_angleCubes - " + shelf);
+        return cmd;
     }
     public Command c_angleCones(int shelf) {
         int degreesFromHorizontal = cones.get(shelf).getFirst();
@@ -60,7 +62,9 @@ public class ArmSubsystem extends SubsystemBase {
             degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
 
-        return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
+        var cmd = c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
+        cmd.setName("arm - c_angleCones - " + shelf);
+        return cmd;
     }
 
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthInches) {
@@ -80,19 +84,19 @@ public class ArmSubsystem extends SubsystemBase {
             wait = extensionMovement.getSecond();
             secondCommand = pivotMovement.getFirst();
         }
-
-        return this.runOnce(() -> {
-            firstCommand.schedule();
-            // (Commands.run(() -> System.out.println(
-            //     "1: " + String.valueOf(firstCommand.isScheduled())
-            // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
-            // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
-            // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
-            //     ))).schedule();
-            (new SequentialCommandGroup(new WaitCommand(0.1), secondCommand)).schedule();
-// ((new WaitCommand(1)).andThen(secondCommand)).schedule();
-        // secondCommand.schedule();
-        
+        var cmd = this.runOnce(() -> {
+                    firstCommand.schedule();
+                    // (Commands.run(() -> System.out.println(
+                    //     "1: " + String.valueOf(firstCommand.isScheduled())
+                    // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
+                    // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
+                    // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
+                    //     ))).schedule();
+                    (new SequentialCommandGroup(new WaitCommand(0.1), secondCommand)).schedule();
+        // ((new WaitCommand(1)).andThen(secondCommand)).schedule();
+        // secondCommand.schedule();      
         }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
+        cmd.setName("arm - c_holdArmPose");
+        return cmd;
     }
 }

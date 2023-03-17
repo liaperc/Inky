@@ -29,6 +29,8 @@ public class Intake extends SubsystemBase {
     }
 
     public Command c_holdVoltageDefault() {
-        return Commands.run(() -> setVoltage(DEFAULT_INTAKE_VOLTS), leftMotors, rightMotors);
+        var cmd = Commands.run(() -> setVoltage(DEFAULT_INTAKE_VOLTS), leftMotors, rightMotors);
+        cmd.setName("Intake - c_holdVoltageDefault");
+        return cmd;
     }
 }
