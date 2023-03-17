@@ -9,7 +9,6 @@ import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.motor.TelescopingArmPivotFeedForward;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
