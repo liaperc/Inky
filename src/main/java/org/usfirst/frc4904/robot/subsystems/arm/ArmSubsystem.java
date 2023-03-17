@@ -23,17 +23,25 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_ACCEL_PIVOT = 200;
 
     
-    public static final HashMap<Integer, Pair<Integer, Integer>> cones = new HashMap<Integer, Pair<Integer, Integer>>();
+    public static final HashMap<Integer, Pair<Double, Double>> cones = new HashMap<>();
     static {
-        cones.put(1, new Pair<>(-19,0));
-        cones.put(2, new Pair<>(29,18));
-        cones.put(3, new Pair<>(31,38));
+        cones.put(1, new Pair<>(-19.,0.));
+        cones.put(2, new Pair<>(29.,18.));
+        cones.put(3, new Pair<>(31.,38.));
     }
-    public static final HashMap<Integer, Pair<Integer, Integer>> cubes = new HashMap<Integer, Pair<Integer, Integer>>();
+    public static final HashMap<Integer, Pair<Double, Double>> cubes = new HashMap<Integer, Pair<Double, Double>>();
     static {
-        cubes.put(1, new Pair<>(-33,0));
-        cubes.put(2, new Pair<>(14,6));
-        cubes.put(3, new Pair<>(22,28));
+        cubes.put(1, new Pair<>(-33.,0.));
+        cubes.put(2, new Pair<>(14.,6.));
+        cubes.put(3, new Pair<>(22.,28.));
+    }
+
+    public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
+    static {
+        // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0
+        otherPositions.put("homeUp", new Pair<>(70., 0.)); // TODO: get number @thomasrimer
+        otherPositions.put("homeDown", new Pair<>(-37., 0.));
+        otherPositions.put("intakeGround", new Pair<>(-37., 4.));
     }
 
 
@@ -42,9 +50,31 @@ public class ArmSubsystem extends SubsystemBase {
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
 
+    public Command c_posReturnToHomeUp(boolean flippy) {
+        var cmd = c_holdArmPoseFlippy(otherPositions.get("homeUp"), NathanGain.isFlippy);
+        cmd.setName("arm position - home (up)");
+        return cmd;
+    }
+    public Command c_posReturnToHomeDown(boolean flippy) {
+        var cmd = c_holdArmPoseFlippy(otherPositions.get("homeDown"), NathanGain.isFlippy);
+        cmd.setName("arm position - home (down)");
+        return cmd;
+    }
+    public Command c_posIntakeGround(boolean flippy) {
+        var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeGround"), NathanGain.isFlippy);
+        cmd.setName("arm position - ground intake");
+        return cmd;
+    }
+    public Command c_posIntakeShelf(boolean flippy) {
+        // TODO: back up 14 inches
+        var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeShelf"), NathanGain.isFlippy);
+        cmd.setName("arm position - pre shelf intake");
+        return cmd;
+    }
+
     public Command c_angleCubes(int shelf) {
-        int degreesFromHorizontal = cubes.get(shelf).getFirst();
-        int extensionLengthInches = cubes.get(shelf).getSecond();
+        var degreesFromHorizontal = cubes.get(shelf).getFirst();
+        var extensionLengthInches = cubes.get(shelf).getSecond();
 
         if (NathanGain.isFlippy) {
             degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
@@ -53,12 +83,21 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
     public Command c_angleCones(int shelf) {
-        int degreesFromHorizontal = cones.get(shelf).getFirst();
-        int extensionLengthInches = cones.get(shelf).getSecond();
+        var degreesFromHorizontal = cones.get(shelf).getFirst();
+        var extensionLengthInches = cones.get(shelf).getSecond();
         
         if (NathanGain.isFlippy) {
             degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
         }
+
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
+    }
+
+    public Command c_holdArmPoseFlippy(Pair<Double, Double> angleAndExtensionInches, boolean flippy) {
+        var degreesFromHorizontal = angleAndExtensionInches.getFirst();
+        var extensionLengthInches = angleAndExtensionInches.getSecond();
+
+        if (flippy) degreesFromHorizontal = 180 - degreesFromHorizontal;
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthInches);
     }
@@ -89,7 +128,7 @@ public class ArmSubsystem extends SubsystemBase {
             // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
             // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
             //     ))).schedule();
-            (new SequentialCommandGroup(new WaitCommand(0.1), secondCommand)).schedule();
+            (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
 // ((new WaitCommand(1)).andThen(secondCommand)).schedule();
         // secondCommand.schedule();
         
