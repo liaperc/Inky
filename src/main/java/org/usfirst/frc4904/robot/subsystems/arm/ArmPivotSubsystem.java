@@ -51,7 +51,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     // public static final double kA = 0.01;
     
     // public static final double kG_retracted = 0.10;
-    // public static final double kG_extended = 0.27;
+    // public static final double kG_extended = 0.32;
 
     // // TODO: tune
     // public static final double kP = 0.04;
