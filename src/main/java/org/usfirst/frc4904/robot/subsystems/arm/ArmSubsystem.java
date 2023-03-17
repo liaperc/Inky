@@ -87,6 +87,20 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm - c_angleCubes - " + shelf);
         return cmd;
     }
+    //for auton
+    public Command placeCube(int shelf, boolean flippy) {
+        double degreesFromHorizontal = cubes.get(shelf).getFirst();
+        if (flippy) {
+            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
+        }
+        double extensionLengthMeters= cubes.get(shelf).getSecond();
+
+        return (
+            c_holdArmPose(degreesFromHorizontal, extensionLengthMeters)
+            .alongWith(new WaitCommand(1).andThen(RobotMap.Component.intake.c_holdVoltage(-Intake.DEFAULT_INTAKE_VOLTS))
+        )).withTimeout(5); //TODO: change timeout
+    }
+    //for buttons
     public Command placeCube(int shelf) {
         double degreesFromHorizontal = cubes.get(shelf).getFirst();
         if (NathanGain.isFlippy) {
