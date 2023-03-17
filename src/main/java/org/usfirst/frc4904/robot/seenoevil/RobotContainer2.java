@@ -115,9 +115,9 @@ public class RobotContainer2 {
                         trajectoryConfig
                 )),
                 entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(0)),
+                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
                         List.of(),
-                        new Pose2d(1, 0, new Rotation2d(0)),
+                        new Pose2d(1, 0, new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
                 ))
         );
@@ -237,20 +237,14 @@ public class RobotContainer2 {
 
     public Command BalanceAuton(){
         var command = new SequentialCommandGroup(     
-            new ParallelCommandGroup(
                 //1. Position arm to place gamepiece
-                RobotMap.Component.arm.c_angleCubes(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
-                new SequentialCommandGroup(
-                    new WaitCommand(1), //TODO: set wait time for arm to finish?
-                    // 2. Deposit gamepiece (spin for 0.5 seconds)
-                    RobotMap.Component.intake.c_holdVoltageDefault().withTimeout(.5) //TODO: fix, this just uses default intake volts. Also add wait command?
-                )
-            ),
+                RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+                ,
             new ParallelCommandGroup(
                 //3. Retract arm
-                RobotMap.Component.arm.c_angleCones(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
+                RobotMap.Component.arm.c_resetAngleBottom(0).withTimeout(5),
                 new SequentialCommandGroup(
-                    new WaitCommand(.5), //TODO: set wait time to allow arm to get started before moving?
+                    new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                     //4. Drive forward past ramp
                     getAutonomousCommand(getTrajectory("past_ramp")),
 
@@ -264,28 +258,22 @@ public class RobotContainer2 {
         return command;
         }
 
-    public Command NotBalanceAuton(){
-        var command = new SequentialCommandGroup(     
-            new ParallelCommandGroup(
-                //1. Position arm to place gamepiece
-                RobotMap.Component.arm.c_angleCubes(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
-                new SequentialCommandGroup(
-                    new WaitCommand(1), //TODO: set wait time for arm to finish?
-                    // 2. Deposit gamepiece (spin for 0.5 seconds)
-                    RobotMap.Component.intake.c_holdVoltageDefault().withTimeout(.5) //TODO: fix, this just uses default intake volts. Also add wait command?
+        public Command NotBalanceAuton(){
+            var command = new SequentialCommandGroup(     
+                    //1. Position arm to place gamepiece
+                    RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+                    ,
+                new ParallelCommandGroup(
+                    //3. Retract arm
+                    RobotMap.Component.arm.c_resetAngleBottom(0).withTimeout(5),
+                    new SequentialCommandGroup(
+                        new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
+                        //4. Drive forward past ramp
+                        getAutonomousCommand(getTrajectory("past_ramp"))
+                    )
                 )
-            ),
-            new ParallelCommandGroup(
-                //3. Retract arm
-                RobotMap.Component.arm.c_angleCones(1).withTimeout(5), //TODO: placeholder, set actual thing, fix timings
-                new SequentialCommandGroup(
-                    new WaitCommand(.5), //TODO: set wait time to allow arm to get started before moving?
-                    //4. Drive forward past ramp
-                    getAutonomousCommand(getTrajectory("past_ramp"))
-                )
-            )
-        );
-        
-        return command;
-    }
+            );
+            
+            return command;
+            }
 }
