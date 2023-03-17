@@ -14,8 +14,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_EXTENSION = 0;
     public static final double MAX_ACCEL_EXTENSION = 0;
     
-    public static final double MAX_VELOCITY_PIVOT = 0;
-    public static final double MAX_ACCEL_PIVOT = 0;
+    public static final double MAX_VELOCITY_PIVOT = 150;
+    public static final double MAX_ACCEL_PIVOT = 200;
 
     public ArmSubsystem(ArmPivotSubsystem armPivotSubsystem, ArmExtensionSubsystem armExtensionSubsystem) {
         this.armPivotSubsystem = armPivotSubsystem;
@@ -44,6 +44,7 @@ public class ArmSubsystem extends SubsystemBase {
             firstCommand,
             new SequentialCommandGroup(new WaitCommand(wait * 1000), secondCommand)
         );
+        
         cmdgrp.addRequirements(this);
         return cmdgrp;
     }

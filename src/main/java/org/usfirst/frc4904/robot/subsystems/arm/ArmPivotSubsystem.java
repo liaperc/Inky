@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ArmPivotSubsystem extends SubsystemBase {
-    public static final double INITIAL_ARM_ANGLE = -38;
+    public static final double HARD_STOP_ARM_ANGLE = -38; // TODO make it stow angle
     public static final double GEARBOX_RATIO = 48; //48:1, 48 rotations of motor = 360 degrees
     public static final double GEARBOX_SLACK_DEGREES = 6;
-    public static final double MAX_EXTENSION = 39.5;
+    public static final double MAX_EXTENSION = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION = 0;
 
     public static final double kS = 0;
@@ -31,8 +31,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double kG_extended = 1.08;
 
     // TODO: tune
-    public static final double kP = 0.1;
-    public static final double kI = 0;
+    public static final double kP = 0.04;
+    public static final double kI = 0.01;
     public static final double kD = 0;
 
     public final TalonMotorSubsystem armMotorGroup;
@@ -53,14 +53,16 @@ public class ArmPivotSubsystem extends SubsystemBase {
     }
 
     public double getCurrentAngleDegrees() {
-        return slackyEncoder.getRealPosition();
+        // return slackyEncoder.getRealPosition();
+        return motorRevsToAngle(armMotorGroup.getSensorPositionRotations());
+
     }
 
     /**
      * Expects sensors to be zeroed at forward hard-stop.
      */
     public void initializeEncoderPositions() {
-        armMotorGroup.zeroSensors(angleToMotorRevs(INITIAL_ARM_ANGLE));
+        armMotorGroup.zeroSensors(angleToMotorRevs(HARD_STOP_ARM_ANGLE));
         slackyEncoder.zeroSlackDirection(true);
     }
 
@@ -75,12 +77,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
     }
 
 
-    public Command c_controlAngularVelocity(DoubleSupplier revPerSecDealer) {
+    public Command c_controlAngularVelocity(DoubleSupplier degPerSecDealer) {
         return this.run(() -> {
             var ff = this.feedforward.calculate(
-                extensionDealer.getAsDouble()/MAX_EXTENSION,
+                1,//extensionDealer.getAsDouble()/MAX_EXTENSION,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
-                Units.rotationsPerMinuteToRadiansPerSecond(revPerSecDealer.getAsDouble() * 60),
+                Units.rotationsPerMinuteToRadiansPerSecond(Units.degreesToRotations(degPerSecDealer.getAsDouble()) * 60),
                 0
             );
             SmartDashboard.putNumber("feedforward", ff);
@@ -94,12 +96,16 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public Pair<Command, Double> c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {
         ezControl controller = new ezControl(
             kP, kI, kD,
-            (position, velocityRadPerSec) -> this.feedforward.calculate(
-                extensionDealer.getAsDouble()/MAX_EXTENSION,
-                position,   // or could use Units.degreesToRadians(getCurrentAngleDegrees()),
-                velocityRadPerSec,
-                0
-            )
+            (position, velocityDegPerSec) -> { 
+                double brr =  this.feedforward.calculate(
+                    extensionDealer.getAsDouble()/MAX_EXTENSION, // TODO test if worky
+                    Units.degreesToRadians(getCurrentAngleDegrees()),
+                    Units.degreesToRadians(velocityDegPerSec),
+                    0
+                );
+                SmartDashboard.putNumber("Intended voltage", maxAccelDegPerSecSquare);
+                return brr;
+            }
         );
 
         TrapezoidProfile profile = new TrapezoidProfile(
@@ -110,11 +116,21 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
-        return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, (volts) -> {
-                    // this.armMotorGroup.setVoltage(volts);
+        return new Pair<Command,Double>(
+            new ezMotion(
+                controller,
+                () -> this.getCurrentAngleDegrees(),
+                (volts) -> {
+                    // this.armMotorGroup.setVoltage(volts); // FIXME : use motorgroup setvoltage
+                    SmartDashboard.putNumber("Arm Volts", volts);
                     this.armMotorGroup.leadMotor.setVoltage(volts);
                     for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
                 },
-                (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, armMotorGroup), profile.totalTime());
+                (double t) -> {
+                    SmartDashboard.putNumber("deg setpoint", profile.calculate(t).position);
+                    SmartDashboard.putNumber("deg velocity", profile.calculate(t).velocity);
+                    return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
+                },
+            this, armMotorGroup), profile.totalTime());
     }
 }

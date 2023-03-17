@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.DoubleSupplier;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
@@ -31,6 +32,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 
 public class Robot extends CommandRobotBase {
@@ -46,13 +50,38 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
-        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 60, 60);
+        // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
+        Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(
+            10,
+            150,
+            200).getFirst();
+        gaming.schedule();
+
+        // Command gaming2 = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0);
+        // gaming2.schedule();
+
         // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0).schedule();
-        RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
+        // RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
     }
 
     @Override
     public void teleopExecute() {
+        // operator controller override
+
+        System.out.println("button " + String.valueOf(RobotMap.HumanInput.Operator.joystick.button1.getAsBoolean())); // TODO: buttons
+        final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
+        final DoubleSupplier extension_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(3) / 4;
+
+        if (pivot_getter.getAsDouble() != 0) {
+            RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble).schedule();
+        }
+        if (extension_getter.getAsDouble() != 0) {
+            RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(extension_getter::getAsDouble).schedule();
+        }
+        
+
+        SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
+        // System.out.println("gyro " + RobotMap.Component.navx.getAngle());
         // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
 
         
@@ -92,6 +121,11 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
+        // RobotMap.HumanInput.Operator.joystick.button1.onTrue(RobotMap.Component.intake.c_holdVoltage(4));
+        RobotMap.HumanInput.Operator.joystick.button1.onTrue(Commands.run(() -> System.out.println("henoteuhnotheuntoheu")));
+
+        RobotMap.HumanInput.Operator.joystick.button1.onFalse(RobotMap.Component.intake.c_holdVoltage(0));
+
 // RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
 //         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
@@ -105,12 +139,20 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testExecute() {
-        RobotMap.Component.chassis.testFeedForward(0.5);
-        SmartDashboard.putNumber("backward vel ", RobotMap.Component.chassis.leftMotors.leadMotor.getSelectedSensorVelocity(0) /2048 / RobotMap.Metrics.Chassis.GEAR_RATIO * RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS*Math.PI);
+        RobotMap.Component.intake.setVoltage(5);
+        CommandScheduler.getInstance().run();
+        SmartDashboard.putNumber("Intake current left", RobotMap.Component.intake.leftMotors.leadMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Intake current right", RobotMap.Component.intake.rightMotors.leadMotor.getOutputCurrent());
+
+
+        // RobotMap.Component.chassis.testFeedForward(0.5);
+        // SmartDashboard.putNumber("backward vel ", RobotMap.Component.chassis.leftMotors.leadMotor.getSelectedSensorVelocity(0) /2048 / RobotMap.Metrics.Chassis.GEAR_RATIO * RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS*Math.PI);
     }
 
     @Override
     public void alwaysExecute() {
+        SmartDashboard.putNumber("Arm angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+        SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
     }
 
 }

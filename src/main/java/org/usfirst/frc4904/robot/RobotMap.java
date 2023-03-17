@@ -15,6 +15,8 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
@@ -70,8 +72,8 @@ public class RobotMap {
             public static final int ARM_EXTENSION_MOTOR = 14;
 
             // TODO: the intake
-            // public static final int LEFT_INTAKE = 21;
-            // public static final int RIGHT_INTAKE = 22;
+            public static final int LEFT_INTAKE = 22;
+            public static final int RIGHT_INTAKE = 21;
         }
 
         public static class PWM {
@@ -225,16 +227,16 @@ public class RobotMap {
 
         armPivotSubsystem.initializeEncoderPositions();
         // TODO: rotate the arm up into frame-perimeter rest
-        // TODO: armExtensionSubsystem.zeroSensors();
+        // armExtensionSubsystem.initializeEncoderPositions(Units.inchesToMeters(38));
 
         /***********************
          * Intake Subsystem
         *************************/
         
-        // CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
-        // CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
-        // SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
-        // Component.intake = new Intake(intake_motors);
+        SparkMaxMotorSubsystem intake_left  = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, MotorType.kBrushless, false));
+        SparkMaxMotorSubsystem intake_right = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, MotorType.kBrushless, true));
+
+        Component.intake = new Intake(intake_left, intake_right);
 
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing

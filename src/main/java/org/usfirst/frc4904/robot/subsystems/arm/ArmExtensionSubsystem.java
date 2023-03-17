@@ -58,6 +58,10 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return motor;
     }
 
+    public void initializeEncoderPositions(double meters) {
+        this.motor.zeroSensors(extensionLengthToRevs(meters));
+    }
+
     public double getCurrentExtensionLength() {
         return revsToExtensionLength(motor.getSensorPositionRotations());
     }
@@ -66,6 +70,10 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         final double number_of_spool_rotations = rotations/GEARBOX_RATIO;
         final double extensionLength = number_of_spool_rotations * SPOOL_CIRCUMFERENCE;
         return extensionLength;
+    }
+
+    public double extensionLengthToRevs(double extension_meters) {
+        return extension_meters / SPOOL_CIRCUMFERENCE * GEARBOX_RATIO;
     }
 
     public Command c_controlVelocity(DoubleSupplier metersPerSecondSupplier) {
