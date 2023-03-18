@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -279,11 +280,14 @@ public class RobotContainer2 {
                     new ParallelCommandGroup(
                         //3. Retract arm
                         // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst()
+                                .withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond())
+                                .andThen(new WaitCommand(0.8))
+                                .andThen(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getSecond()).andThen(new InstantCommand(() -> RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(0)))
+                                ),
                         new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
-                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
-                            RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 100).getSecond()),
+                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.8).andThen(RobotMap.Component.intake.c_holdVoltage(0))
                         ),
                         new SequentialCommandGroup(
                             new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?

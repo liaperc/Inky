@@ -52,7 +52,7 @@ public class Robot extends CommandRobotBase {
         // donttouchme.m_robotDrive.m_rightMotors = null;
 
 
-        final double TURN_MULTIPLIER = 1;
+        final double TURN_MULTIPLIER = 2;
         RobotMap.Component.chassis.setDefaultCommand(
             nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
                 RobotMap.Component.chassis.c_controlWheelVoltages(
@@ -97,8 +97,21 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopExecute() {
+        // SmartDashboard.putNumber("Controller out", RobotMap.HumanInput.Driver.xbox.getLeftX());
+        // SmartDashboard.putNumber("Controller in trigger", RobotMap.HumanInput.Driver.xbox.getRightTriggerAxis());
+
+        // SmartDashboard.putNumber("left in", driver.getY() + 1 * driver.getTurnSpeed() * 12);
+        // SmartDashboard.putNumber("right in", driver.getY() - 1 * driver.getTurnSpeed() * 12);
+
+        
+        // SmartDashboard.putNumber("Driver out", driver.getTurnSpeed());
+        
+
         SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
+        // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.temp());
+
+
     }
 
     @Override
