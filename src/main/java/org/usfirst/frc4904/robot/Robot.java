@@ -24,6 +24,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 
@@ -48,7 +50,7 @@ public class Robot extends CommandRobotBase {
         RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
 
-        final double TURN_MULTIPLIER = 0.5;
+        final double TURN_MULTIPLIER = 1;
         RobotMap.Component.chassis.setDefaultCommand(
             nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
                 RobotMap.Component.chassis.c_controlWheelVoltages(
@@ -61,6 +63,14 @@ public class Robot extends CommandRobotBase {
             RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         ));
 
+
+
+        final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;    // TODO: pow
+        (new Trigger(() -> pivot_getter.getAsDouble() != 0)).whileTrue(
+            nameCommand("arm - teleop - armPivot operator override",
+                RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
+            )
+        );
 
 
         // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
@@ -78,74 +88,38 @@ public class Robot extends CommandRobotBase {
     public void teleopExecute() {
         // operator controller override
 
-        final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;
-        final DoubleSupplier extension_getter = () -> {
-            final int EXTEND_FORWARD_BUTTON = 5;
-            final int EXTEND_BACKWARD_BUTTON = 3;
-            final BooleanSupplier GOING_FORWARD  = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_FORWARD_BUTTON);
-            final BooleanSupplier GOING_BACKWARD = () -> RobotMap.HumanInput.Operator.joystick.getRawButtonPressed(EXTEND_BACKWARD_BUTTON);
-            final double EXTEND_SPEED_MPS = 0.2;
-            if (GOING_FORWARD.getAsBoolean() && GOING_BACKWARD.getAsBoolean()) { return 0; }
-            if (GOING_FORWARD.getAsBoolean()) return EXTEND_SPEED_MPS;
-            if (GOING_BACKWARD.getAsBoolean()) return -EXTEND_SPEED_MPS;
-            return 0;
-        };
 
-        if (pivot_getter.getAsDouble() != 0) {
-            var cmd = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble);
-            cmd.setName("arm - Teleop - c_controlAngularVelocity");
-            cmd.schedule();
-        }
-        if (extension_getter.getAsDouble() != 0) {
-            var cmd = RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(extension_getter::getAsDouble);
-            cmd.setName("arm - Teleop - c_controlVelocity");
-            cmd.schedule();
-        }
-        
         SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         // System.out.println("gyro " + RobotMap.Component.navx.getAngle());
         // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
 
-        RobotMap.HumanInput.Operator.joystick.button1.whileTrue(Commands.runOnce(() -> System.out.println("henoteuhnotheuntoheu")));
-        
     }
 
     @Override
     public void autonomousInitialize() {
-        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftATalonFX != null)  RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftBTalonFX != null)  RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
 
-        final Trajectory backward = donttouchme.getTrajectory("straight_backward");
-        // donttouchme.getTrajectory("straight_backward");
-        final Trajectory forward = donttouchme.getTrajectory("straight_forward");
-        // donttouchme.m_robotDrive.tankDriveVolts(5, 5);
-        // var command = new SequentialCommandGroup(donttouchme.getAutonomousCommand(trajectory), donttouchme.getAutonomousCommand(trajectory2));
-        
-        
-        //various autons, comment in what you want
-        //var commnand = donttouchme.getAutonomousCommand(backward);
-        // var commnand = donttouchme.notBalanceAuton();
         var commnand = donttouchme.balanceAuton(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         commnand.schedule();
-        // var command2 = donttouchme.getAutonomousCommand(trajectory2);
-        // command2.andThen(command).schedule();
-        // command.andThen(Commands.runOnce(() -> donttouchme.getAutonomousCommand(trajectory))).schedule();
     }
 
     @Override
     public void autonomousExecute() {
-        SmartDashboard.putString("pose", donttouchme.m_robotDrive.getPose().toString());
     }
 
     @Override
     public void disabledInitialize() {
-        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftATalonFX != null)  RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftBTalonFX != null)  RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
     }
 
     @Override
@@ -154,29 +128,18 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void testInitialize() {
-        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
-        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        if (RobotContainer2.Component.leftATalonFX != null)  RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast); 
+        if (RobotContainer2.Component.leftBTalonFX != null)  RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast); 
+        if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast); 
+        if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
         RobotMap.Component.arm.armPivotSubsystem.initializeEncoderPositions();
-//         RobotContainer2.Component.leftATalonFX.neutralOutput();
-//         RobotContainer2.Component.leftBTalonFX.neutralOutput();
-//         RobotContainer2.Component.rightATalonFX.neutralOutput();
-//         RobotContainer2.Component.rightBTalonFX.neutralOutput();        
-        
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setCoastOnNeutral();
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
     }
 
     @Override
     public void testExecute() {
         RobotMap.Component.arm.armExtensionSubsystem.initializeEncoderPositions(0);
-        RobotMap.Component.intake.setVoltage(5);
-        CommandScheduler.getInstance().run();
-        SmartDashboard.putNumber("Intake current left", RobotMap.Component.intake.leftMotors.leadMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Intake current right", RobotMap.Component.intake.rightMotors.leadMotor.getOutputCurrent());
-
-
-        // RobotMap.Component.chassis.testFeedForward(0.5);
-        // SmartDashboard.putNumber("backward vel ", RobotMap.Component.chassis.leftMotors.leadMotor.getSelectedSensorVelocity(0) /2048 / RobotMap.Metrics.Chassis.GEAR_RATIO * RobotMap.Metrics.Chassis.WHEEL_DIAMETER_METERS*Math.PI);
     }
 
     @Override

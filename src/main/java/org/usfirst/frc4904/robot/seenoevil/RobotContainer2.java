@@ -245,8 +245,12 @@ public class RobotContainer2 {
     public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
         var command = new SequentialCommandGroup(     
                 //1. Position arm to place gamepiece
-                RobotMap.Component.arm.placeCube(3) //TODO: set actual timeout
-                ,
+                // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+                RobotMap.Component.arm.placeCube(3),
+
+
+                // implement going over and shooting a cone?
+
             new ParallelCommandGroup(
                 //3. Retract arm
                 RobotMap.Component.arm.c_posReturnToHomeDown(false),
@@ -258,8 +262,8 @@ public class RobotContainer2 {
                     //5. Drive back to get partially on ramp
                     getAutonomousCommand(getTrajectory("back_to_ramp"))
                 )
-            ),
-            new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+            )
+        //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
             //6. balance code here
         );
         

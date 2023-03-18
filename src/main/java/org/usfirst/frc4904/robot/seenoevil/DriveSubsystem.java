@@ -31,13 +31,13 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
-  private final MotorControllerGroup m_leftMotors = //motors need to be talons
+  public MotorControllerGroup m_leftMotors = //motors need to be talons
       new MotorControllerGroup(
           RobotContainer2.Component.leftATalonFX,
           RobotContainer2.Component.leftBTalonFX);
 
   // The motors on the right side of the drive.
-  private final MotorControllerGroup m_rightMotors =
+  public MotorControllerGroup m_rightMotors =
       new MotorControllerGroup(
           RobotContainer2.Component.rightATalonFX,
           RobotContainer2.Component.rightBTalonFX);

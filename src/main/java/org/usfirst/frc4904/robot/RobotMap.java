@@ -1,7 +1,7 @@
 package org.usfirst.frc4904.robot;
 
 import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
-
+import org.usfirst.frc4904.standard.custom.controllers.CustomCommandXbox;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -59,8 +59,8 @@ public class RobotMap {
             public static final int ARM_EXTENSION_MOTOR = 14;
 
             // TODO: the intake
-            public static final int LEFT_INTAKE = 22;
-            public static final int RIGHT_INTAKE = 21;
+            public static final int LEFT_INTAKE = 21;
+            public static final int RIGHT_INTAKE = 22;
         }
 
         public static class PWM {
@@ -150,7 +150,7 @@ public class RobotMap {
 
     public static class HumanInput {
         public static class Driver {
-            public static CommandXboxController xbox;
+            public static CustomCommandXbox xbox;
         }
 
         public static class Operator {
@@ -161,7 +161,7 @@ public class RobotMap {
     public RobotMap() {
         Component.navx = new AHRS(SerialPort.Port.kMXP);
 
-        HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
+        HumanInput.Driver.xbox = new CustomCommandXbox(Port.HumanInput.xboxController, 0.1);
 		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick, 0.1);
         // // UDP things
         // try {
@@ -178,8 +178,8 @@ public class RobotMap {
 
         Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
         Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
-        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
-        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.InvertMotorOutput);
+        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
+        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
 
         TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
         TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);

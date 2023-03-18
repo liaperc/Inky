@@ -18,7 +18,7 @@ public class DefaultOperator extends Operator {
 	@Override
 	public void bindCommands() {
 		// Intake
-		var cmd2 = RobotMap.Component.intake.c_holdVoltage(4);
+		var cmd2 = RobotMap.Component.intake.c_holdVoltage(-8);
 		cmd2.setName("Intake - manual intake activation");
 		var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
 		cmdnull.setName("Intake - deactivated");
@@ -26,17 +26,17 @@ public class DefaultOperator extends Operator {
         RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdnull);
 
 		// Outtake
-		var cmd1 = RobotMap.Component.intake.c_holdVoltage(-4);
+		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
 		cmd1.setName("Intake - manual outtake activation");
 		RobotMap.HumanInput.Operator.joystick.button1.onTrue(cmd1);
         RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
 
 		// Flippy button
-		RobotMap.HumanInput.Operator.joystick.button12.onTrue(new InstantCommand(
-			() -> {
-				NathanGain.isFlippy = !NathanGain.isFlippy;
-			}
-		));
+		// RobotMap.HumanInput.Operator.joystick.button12.onTrue(new InstantCommand(
+		// 	() -> {
+		// 		NathanGain.isFlippy = !NathanGain.isFlippy;
+		// 	}
+		// ));
 		//TODO: flip?
 		// position + place cube
 		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.placeCube(3));
