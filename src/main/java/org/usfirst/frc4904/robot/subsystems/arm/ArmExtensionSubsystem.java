@@ -64,7 +64,6 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public void initializeEncoderPositions(double meters) {
         this.motor.zeroSensors(extensionLengthToRevs(meters));
-        motor.configSoftwareLimits(extensionLengthToRevs(MAX_EXTENSION_M), extensionLengthToRevs(MIN_EXTENSION_M));
     }
 
     public double getCurrentExtensionLength() {

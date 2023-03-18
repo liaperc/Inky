@@ -91,7 +91,6 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public void initializeEncoderPositions() {
         armMotorGroup.zeroSensors(angleToMotorRevs(HARD_STOP_ARM_ANGLE));
         slackyEncoder.zeroSlackDirection(true);
-        armMotorGroup.configSoftwareLimits(angleToMotorRevs(HARD_STOP_ARM_ANGLE), angleToMotorRevs(HARD_STOP_BACK));
     }
 
     public static double motorRevsToAngle(double revs) {
