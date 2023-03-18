@@ -56,9 +56,9 @@ public class Robot extends CommandRobotBase {
                         (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
         ))));
 
-        RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
-            RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
-        ));
+        // RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
+        //     RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
+        // ));
 
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;    // TODO: pow
         (new Trigger(() -> pivot_getter.getAsDouble() != 0)).whileTrue(

@@ -47,22 +47,14 @@ public class DefaultOperator extends Operator {
 		
 		//position cone
 		RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.c_angleCones(3));
-		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_angleCones(3));
-		RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.c_angleCones(3));
+		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_angleCones(2));
+		RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.c_angleCones(1));
 
 		//shelf intake
 		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
 		
 		//ground intake
 		RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());
-
-
-        // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(
-        //     () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) / 4
-        // ).schedule();
-        // RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(
-        //     () -> RobotMap.HumanInput.Operator.joystick.getAxis(2) * 0.5
-        // ).schedule();
 	}
 	
 }
