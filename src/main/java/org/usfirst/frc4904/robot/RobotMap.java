@@ -58,7 +58,6 @@ public class RobotMap {
             public static final int PIVOT_MOTOR_RIGHT = 12;
             public static final int ARM_EXTENSION_MOTOR = 14;
 
-            // TODO: the intake
             public static final int LEFT_INTAKE = 21;
             public static final int RIGHT_INTAKE = 22;
         }
@@ -99,8 +98,8 @@ public class RobotMap {
         public static class Drive {
             // PID constants
             public static final double kP = 1.5;
-            public static final double kI = 0;  // TODO: tune
-            public static final double kD = 0;  // TODO: tune
+            public static final double kI = 0;  // FIXME: tune
+            public static final double kD = 0;
             // feedforward constants
             // these are blinky constants from sysid on new drivetrain wednesday before 
             public static final double kS = 0.025236; 
@@ -213,10 +212,6 @@ public class RobotMap {
         ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors, armExtensionSubsystem::getCurrentExtensionLength);
 
         Component.arm = new ArmSubsystem(armPivotSubsystem, armExtensionSubsystem);
-
-        armPivotSubsystem.initializeEncoderPositions();
-        // TODO: rotate the arm up into frame-perimeter rest
-        // armExtensionSubsystem.initializeEncoderPositions(Units.inchesToMeters(38));
 
         /***********************
          * Intake Subsystem

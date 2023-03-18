@@ -14,7 +14,7 @@ public class Intake extends SubsystemBase {
         leftMotors = leftMotor;
         rightMotors = rightMotor;
 
-        //TODO: fix current limits
+        // FIXME: actual current limits (55 is way high)
         rightMotors.leadMotor.setSmartCurrentLimit(55);
         leftMotors.leadMotor.setSmartCurrentLimit(55);
     }

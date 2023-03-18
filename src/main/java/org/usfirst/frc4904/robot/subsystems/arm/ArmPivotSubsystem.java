@@ -33,7 +33,6 @@ public class ArmPivotSubsystem extends SubsystemBase {
     // public static final double kG_retracted = 0.43;
     // public static final double kG_extended = 1.08;
 
-    // // TODO: tune
     // public static final double kP = 0.04;
     // public static final double kI = 0.01;
     // public static final double kD = 0;
@@ -130,7 +129,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
                 double brr =  this.feedforward.calculate(
-                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M, // TODO test if worky
+                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M,
                     Units.degreesToRadians(getCurrentAngleDegrees()),
                     Units.degreesToRadians(velocityDegPerSec),
                     0
