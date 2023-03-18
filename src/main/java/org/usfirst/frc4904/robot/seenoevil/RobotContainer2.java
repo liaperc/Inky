@@ -246,14 +246,12 @@ public class RobotContainer2 {
         var command = new SequentialCommandGroup(     
                 //1. Position arm to place gamepiece
                 // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
-                RobotMap.Component.arm.placeCube(3),
-
 
                 // implement going over and shooting a cone?
 
             new ParallelCommandGroup(
                 //3. Retract arm
-                RobotMap.Component.arm.c_posReturnToHomeDown(false),
+                // RobotMap.Component.arm.c_posReturnToHomeDown(false),
                 new SequentialCommandGroup(
                     new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
                     //4. Drive forward past ramp
@@ -269,6 +267,39 @@ public class RobotContainer2 {
         
         return command;
         }
+
+        public Command balanceAutonAndShootCube(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
+            
+                var command = new SequentialCommandGroup(     
+                        //1. Position arm to place gamepiece
+                        // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+        
+                        // implement going over and shooting a cone?
+        
+                    new ParallelCommandGroup(
+                        //3. Retract arm
+                        // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(195, 150, 200).getFirst(),
+                        new SequentialCommandGroup(
+                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(195, 150, 200).getSecond()),
+                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+                            RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+                        ),
+                        new SequentialCommandGroup(
+                            new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?
+                            //4. Drive forward past ramp
+                            getAutonomousCommand(getTrajectory("past_ramp")),
+        
+                            //5. Drive back to get partially on ramp
+                            getAutonomousCommand(getTrajectory("back_to_ramp"))
+                        )
+                    )
+                //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+                    //6. balance code here
+                );
+                
+                return command;
+                }
 
         public Command notBalanceAuton(){
             var command = new SequentialCommandGroup(     
