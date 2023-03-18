@@ -42,10 +42,15 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void teleopInitialize() {
-        RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
-        RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftATalonFX != null) RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.leftBTalonFX != null) RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
+        if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        
+        // SATURDAY MORNING TEST - can you run drive train in queueline
+        // donttouchme.m_robotDrive.m_leftMotors = null;
+        // donttouchme.m_robotDrive.m_rightMotors = null;
+
 
         final double TURN_MULTIPLIER = 1;
         RobotMap.Component.chassis.setDefaultCommand(
@@ -56,9 +61,9 @@ public class Robot extends CommandRobotBase {
                         (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
         ))));
 
-        RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
-            RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
-        ));
+        // RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
+        //     RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
+        // ));
 
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;    // TODO: pow
         (new Trigger(() -> pivot_getter.getAsDouble() != 0)).whileTrue(
@@ -81,6 +86,7 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
 
+        // SATURDAY MORNING TEST: is the cube shooter auton gonna work
         var commnand = donttouchme.balanceAuton(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         commnand.schedule();
     }

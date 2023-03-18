@@ -136,35 +136,37 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
-        Command firstCommand;
-        Command secondCommand;
-        double wait;
+        // TODO: crashes
+        return this.runOnce(() -> System.out.println("TODO: hold arm pose crashes the code!"));
+        // Command firstCommand;
+        // Command secondCommand;
+        // double wait;
 
-        Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
-        Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
+        // Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
+        // Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
 
-        if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
-            firstCommand = pivotMovement.getFirst();
-            wait = pivotMovement.getSecond();
-            secondCommand = extensionMovement.getFirst();
-        } else {
-            firstCommand = extensionMovement.getFirst();
-            wait = extensionMovement.getSecond();
-            secondCommand = pivotMovement.getFirst();
-        }
-        var cmd = this.runOnce(() -> {
-                    firstCommand.schedule();
-                    // (Commands.run(() -> System.out.println(
-                    //     "1: " + String.valueOf(firstCommand.isScheduled())
-                    // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
-                    // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
-                    // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
-                    //     ))).schedule();
-                    (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
-        // ((new WaitCommand(1)).andThen(secondCommand)).schedule();
-        // secondCommand.schedule();      
-        }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
-        cmd.setName("arm - c_holdArmPose");
-        return cmd;
+        // if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
+        //     firstCommand = pivotMovement.getFirst();
+        //     wait = pivotMovement.getSecond();
+        //     secondCommand = extensionMovement.getFirst();
+        // } else {
+        //     firstCommand = extensionMovement.getFirst();
+        //     wait = extensionMovement.getSecond();
+        //     secondCommand = pivotMovement.getFirst();
+        // }
+        // var cmd = this.runOnce(() -> {
+        //             firstCommand.schedule();
+        //             // (Commands.run(() -> System.out.println(
+        //             //     "1: " + String.valueOf(firstCommand.isScheduled())
+        //             // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
+        //             // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
+        //             // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
+        //             //     ))).schedule();
+        //             (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
+        // // ((new WaitCommand(1)).andThen(secondCommand)).schedule();
+        // // secondCommand.schedule();      
+        // }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
+        // cmd.setName("arm - c_holdArmPose");
+        // return cmd;
     }
 }
