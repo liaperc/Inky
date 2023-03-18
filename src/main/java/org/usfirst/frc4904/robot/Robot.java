@@ -71,6 +71,28 @@ public class Robot extends CommandRobotBase {
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
             )
         );
+
+        RobotMap.HumanInput.Operator.joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.3));
+        RobotMap.HumanInput.Operator.joystick.button3.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
+
+        RobotMap.HumanInput.Operator.joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.3));
+        RobotMap.HumanInput.Operator.joystick.button5.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
+
+
+        // Intake
+		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
+		var cmd2 = RobotMap.Component.intake.c_holdVoltage(-8);
+		cmd2.setName("Intake - manual intake activation");
+		var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
+		cmdnull.setName("Intake - deactivated");
+		RobotMap.HumanInput.Operator.joystick.button2.onTrue(cmd2);
+        RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdnull);
+
+		// Outtake
+		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
+		cmd1.setName("Intake - manual outtake activation");
+		RobotMap.HumanInput.Operator.joystick.button1.onTrue(cmd1);
+        RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
     }
 
     @Override

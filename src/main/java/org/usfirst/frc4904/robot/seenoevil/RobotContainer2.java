@@ -279,9 +279,9 @@ public class RobotContainer2 {
                     new ParallelCommandGroup(
                         //3. Retract arm
                         // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(195, 150, 200).getFirst(),
+                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
                         new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(195, 150, 200).getSecond()),
+                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
                             RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
                             RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
                         ),
