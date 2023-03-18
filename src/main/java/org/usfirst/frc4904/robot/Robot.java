@@ -38,9 +38,6 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void initialize() {
-        // removed because we are doing operators manually
-        // driverChooser.setDefaultOption(new NathanGain());
-        // operatorChooser.setDefaultOption(new DefaultOperator()); 
     }
 
     @Override
@@ -63,37 +60,18 @@ public class Robot extends CommandRobotBase {
             RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         ));
 
-
-
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 30;    // TODO: pow
         (new Trigger(() -> pivot_getter.getAsDouble() != 0)).whileTrue(
             nameCommand("arm - teleop - armPivot operator override",
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
             )
         );
-
-
-        // Command gaming = RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.1, 0.1, 0.1).getFirst();
-        // Command gaming = RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(10, 150, 200).getFirst();
-        // gaming.schedule();
-
-        // Command gaming2 = RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0);
-        // gaming2.schedule();
-
-        // RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(() -> 0).schedule();
-        // RobotMap.Component.chassis.setDefaultCommand(RobotMap.Component.chassis.c_controlChassisSpeedAndTurn(() -> new Pair<Double, Double>(Robot.drivingConfig.getX(), Robot.drivingConfig.getTurnSpeed())));
     }
 
     @Override
     public void teleopExecute() {
-        // operator controller override
-
-
         SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
-        // System.out.println("gyro " + RobotMap.Component.navx.getAngle());
-        // RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(2);
-
     }
 
     @Override
