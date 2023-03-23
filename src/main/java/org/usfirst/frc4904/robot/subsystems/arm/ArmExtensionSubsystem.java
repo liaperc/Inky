@@ -25,8 +25,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION_M = 0;
     private final TalonMotorSubsystem motor;
-    private final static double SPOOL_DIAMETER_M = Units.inchesToMeters(0.75);
-    public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * SPOOL_DIAMETER_M; // Math.PI * SPOOL_DIAMETER
+    public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * Units.inchesToMeters(0.75); // Math.PI * SPOOL_DIAMETER
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
     private DoubleSupplier angleDealer_DEG;
