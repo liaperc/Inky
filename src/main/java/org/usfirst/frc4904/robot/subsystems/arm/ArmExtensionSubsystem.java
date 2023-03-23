@@ -24,7 +24,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
 
     public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION_M = 0;
-    private final TalonMotorSubsystem motor;
+    public final TalonMotorSubsystem motor;
     public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * Units.inchesToMeters(0.75); // Math.PI * SPOOL_DIAMETER
     private final static double GEARBOX_RATIO = 12; // 12:1 
     private final ArmFeedforward feedforward;
@@ -50,15 +50,6 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         this.motor = motor;
         this.feedforward = new ArmFeedforward(kS, kG, kV);
         this.angleDealer_DEG = angleDegreesDealer;
-    }
-    
-    /**
-     * Returns the motor controller used to extend the arm.
-     *
-     * @return the motor controller used to extend the arm
-     */
-    public TalonMotorSubsystem getMotor() {
-        return motor;
     }
 
     public void initializeEncoderPositions(double meters) {
@@ -107,7 +98,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
         ezControl controller = new ezControl(kP, kI, kD, 
                                             (double position, double velocity) -> this.feedforward.calculate(
-                                                Units.degreesToRadians(angleDealer_DEG.getAsDouble()) - Math.PI/2,
+                                                Units.degreesToRadians(angleDealer_DEG.getAsDouble()) - (Math.PI/2),
                                                 velocity,
                                                 0
                                             ));
