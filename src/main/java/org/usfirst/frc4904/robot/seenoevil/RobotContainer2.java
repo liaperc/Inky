@@ -95,19 +95,19 @@ public class RobotContainer2 {
                         List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
         
                         // End 3 meters straight ahead of where we started, facing forward
-                        new Pose2d(2, 0, new Rotation2d(Math.PI/2)),
+                        new Pose2d(3, 0, new Rotation2d(0)),
                         trajectoryConfig)
                 ),
                 entry("straight_forward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(new Translation2d(1, 0)),
-                        new Pose2d(2, 0, new Rotation2d(0)),
+                        new Pose2d(6, 0, new Rotation2d(0)),
                         trajectoryConfig
                 )),
                 entry("straight_backward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(Math.PI)),
                         List.of(new Translation2d(1, 0)),
-                        new Pose2d(2, 0, new Rotation2d(Math.PI)),
+                        new Pose2d(6, 0, new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
                 )),
                 entry("turn_right", TrajectoryGenerator.generateTrajectory(
@@ -183,7 +183,7 @@ public class RobotContainer2 {
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
                 RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-                EEEE.setEnabled(false);
+                EEEE.setEnabled(true);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
@@ -194,8 +194,8 @@ public class RobotContainer2 {
 				DriveConstants.kaVoltSecondsSquaredPerMeter),
 			DriveConstants.kDriveKinematics,
 			m_robotDrive::getWheelSpeeds,
-			new PIDController(DriveConstants.kPDriveVel, 0, 0),
-			new PIDController(DriveConstants.kPDriveVel, 0, 0),
+			new PIDController(DriveConstants.kPDriveVel, 0, 0), new PIDController(DriveConstants.kPDriveVel, 0, 0),
+                        // new PIDController(0, 0, 0), new PIDController(0, 0, 0),
 			// RamseteCommand passes volts to the callback
 			m_robotDrive::tankDriveVolts,
 			m_robotDrive);
