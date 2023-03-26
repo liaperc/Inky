@@ -46,6 +46,11 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.leftBTalonFX != null) RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setBrakeOnNeutral();
+
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
         
         // SATURDAY MORNING TEST - can you run drive train in queueline
         // donttouchme.m_robotDrive.m_leftMotors = null;
@@ -137,6 +142,8 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.leftBTalonFX != null)  RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setBrakeOnNeutral();
 
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
@@ -154,6 +161,8 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast); 
         RobotMap.Component.arm.armPivotSubsystem.initializeEncoderPositions();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setCoastOnNeutral();
+        RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setCoastOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
     }
 
