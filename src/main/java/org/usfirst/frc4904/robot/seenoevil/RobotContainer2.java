@@ -86,6 +86,30 @@ public class RobotContainer2 {
                         DriveConstants.kDriveKinematics,
                         10))
                 .setReversed(true);
+        private static TrajectoryConfig trajectoryConfigSlow = new TrajectoryConfig(
+                AutoConstants.kMaxSpeedMetersPerSecond/3,
+                AutoConstants.kMaxAccelerationMetersPerSecondSquared/2)
+                .setKinematics(DriveConstants.kDriveKinematics)
+                .addConstraint(new DifferentialDriveVoltageConstraint(
+                        new SimpleMotorFeedforward(
+                                DriveConstants.ksVolts,
+                                DriveConstants.kvVoltSecondsPerMeter,
+                                DriveConstants.kaVoltSecondsSquaredPerMeter),
+                        DriveConstants.kDriveKinematics,
+                        10))
+                .setReversed(false);
+        private static TrajectoryConfig trajectoryConfigSlowReversed = new TrajectoryConfig(
+                AutoConstants.kMaxSpeedMetersPerSecond/3,
+                AutoConstants.kMaxAccelerationMetersPerSecondSquared/2)
+                .setKinematics(DriveConstants.kDriveKinematics)
+                .addConstraint(new DifferentialDriveVoltageConstraint(
+                        new SimpleMotorFeedforward(
+                                DriveConstants.ksVolts,
+                                DriveConstants.kvVoltSecondsPerMeter,
+                                DriveConstants.kaVoltSecondsSquaredPerMeter),
+                        DriveConstants.kDriveKinematics,
+                        10))
+                .setReversed(true);
 
         private static Map<String, Trajectory> trajectories = Map.ofEntries(
                 entry("sickle", TrajectoryGenerator.generateTrajectory(
@@ -141,7 +165,7 @@ public class RobotContainer2 {
                         new Pose2d(0,0,new Rotation2d(0)),
                         List.of(),
                         new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(0)),
-                        trajectoryConfig
+                        trajectoryConfigSlow
                 )),
                 entry("go_over_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0,new Rotation2d(0)),
@@ -153,7 +177,7 @@ public class RobotContainer2 {
                         new Pose2d(0,0,new Rotation2d(Math.PI)),
                         List.of(),
                         new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(Math.PI)),
-                        trajectoryConfigReversed
+                        trajectoryConfigSlowReversed
                 )),
                 entry("go_middle_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0,new Rotation2d(Math.PI)),
