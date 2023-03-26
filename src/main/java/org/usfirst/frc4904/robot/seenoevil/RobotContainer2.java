@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -59,6 +60,7 @@ import com.kauailabs.navx.frc.AHRS;
  */
 
 public class RobotContainer2 {
+        private static final double placeholderconstant = 0; //TODO: Add this constant
         private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                         AutoConstants.kMaxSpeedMetersPerSecond,
                         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -126,7 +128,40 @@ public class RobotContainer2 {
                         List.of(),
                         new Pose2d(1, 0, new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
+                )),
+
+                //new auton
+                entry("to_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(24.19),0,new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("angle_ramp_forward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("go_over_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(118.02)+placeholderconstant,0,new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("angle_ramp_backward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(Math.PI)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
+                )),
+                entry("go_middle_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(Math.PI)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(53.5)+placeholderconstant,0,new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
                 ))
+
         );
 
         public static class Component {
@@ -318,5 +353,41 @@ public class RobotContainer2 {
             );
             
             return command;
-            }
+        }
+
+        public Command newAuton() {
+                var command = new SequentialCommandGroup(     
+                        //1. Position arm to place gamepiece
+                        // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+        
+                        // implement going over and shooting a cone?
+        
+                    new ParallelCommandGroup(
+                        //3. Retract arm
+                        // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+                        new SequentialCommandGroup(
+                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
+                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+                            RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+                        ),
+                        
+                        new SequentialCommandGroup(
+                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()+0.5),
+                            getAutonomousCommand(getTrajectory("to_ramp")),
+                            getAutonomousCommand(getTrajectory("angle_ramp_forward")),
+                            new WaitCommand(2),
+                            getAutonomousCommand(getTrajectory("go_over_ramp")),
+                            getAutonomousCommand(getTrajectory("angle_ramp_backward")),
+                            new WaitCommand(2),
+                            getAutonomousCommand(getTrajectory("go_middle_ramp"))
+                        )
+                    )
+                //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+                    //6. balance code here
+                );
+                
+                return command;
+
+        }
 }
