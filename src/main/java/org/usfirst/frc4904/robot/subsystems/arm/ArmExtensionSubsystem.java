@@ -26,19 +26,18 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double MIN_EXTENSION_M = 0;
     public final TalonMotorSubsystem motor;
     public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * Units.inchesToMeters(0.75); // Math.PI * SPOOL_DIAMETER
-    private final static double GEARBOX_RATIO = 12; // 12:1 
+    private final static double GEARBOX_RATIO = 4.3; // this number gives accurate values formerly 12:1
     private final ArmFeedforward feedforward;
     private DoubleSupplier angleDealer_DEG;
    
-    // TODO: recharacterize -- current values may be incorrect
-    public static final double kS = 0.21679;
-    public static final double kV = 8.2054;
-    public static final double kA = 0.17697;
-    public static final double kG = 0.26169;
+    public static final double kS = 0.14072;
+    public static final double kV = 7.8821;
+    public static final double kA = 0.45821;
+    public static final double kG = 0.18613;
 
     // TODO: tune
-    public static final double kP = 0.01;
-    public static final double kI = 0.001;
+    public static final double kP = 1.121;
+    public static final double kI = 0.01;
     public static final double kD = 0;
     
     /**
@@ -61,11 +60,11 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public void setVoltageSafely(double voltage) {
-        if ((java.lang.Math.cos(Units.degreesToRadians(angleDealer_DEG.getAsDouble())) * (getCurrentExtensionLength()) + ADDITIONAL_LENGTH_M) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M  && voltage > 0) {
-            System.err.println("WE DO NOT LIKE GAMING");
-            this.motor.setVoltage(0);
-            return;
-        };
+        // if ((java.lang.Math.cos(Units.degreesToRadians(angleDealer_DEG.getAsDouble())) * (getCurrentExtensionLength()) + ADDITIONAL_LENGTH_M) > MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M  && voltage > 0) { //TODO: Tune
+        //     System.err.println("WE DO NOT LIKE GAMING");
+        //     this.motor.setVoltage(0);
+        //     return;
+        // };
 
         this.motor.setVoltage(voltage);
     }

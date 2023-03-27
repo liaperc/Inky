@@ -46,6 +46,9 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.leftBTalonFX != null) RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
+
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setBrakeOnNeutral();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.neutralOutput();
         
         // SATURDAY MORNING TEST - can you run drive train in queueline
         // donttouchme.m_robotDrive.m_leftMotors = null;
@@ -109,7 +112,10 @@ public class Robot extends CommandRobotBase {
 
         SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
-        // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.temp());
+        SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
+        SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+
+        SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
 
 
     }
@@ -140,6 +146,9 @@ public class Robot extends CommandRobotBase {
 
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setBrakeOnNeutral();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.neutralOutput();
     }
 
     @Override
@@ -155,6 +164,9 @@ public class Robot extends CommandRobotBase {
         RobotMap.Component.arm.armPivotSubsystem.initializeEncoderPositions();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setCoastOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+
+        RobotMap.Component.arm.armExtensionSubsystem.motor.setCoastOnNeutral();
+        RobotMap.Component.arm.armExtensionSubsystem.motor.neutralOutput();
     }
 
     @Override

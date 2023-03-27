@@ -46,16 +46,23 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
     public static final double MIN_EXTENSION_M = 0;
 
-    public static final double kS = 0;
-    public static final double kV = 1.98;
-    public static final double kA = 0.03;
+    public static final double kS_retracted = 0.10126;
+    public static final double kS_extended = .20586;
+
     
-    public static final double kG_retracted = 0.32;
-    public static final double kG_extended = 1.05;
+    public static final double kV_retracted = 1.8894;
+    public static final double kV_extended = 1.7361;
+
+
+    public static final double kA_retracted = 0.048547; //extended: .12082
+    public static final double kA_extended = .12082;
+    
+    public static final double kG_retracted = 0.14427;
+    public static final double kG_extended = .3127;
 
     // TODO: tune
-    public static final double kP = 0.04;
-    public static final double kI = 0.01;
+    public static final double kP = 0.6; //extended: .36915 retracted: .01464
+    public static final double kI = 0.4;
     public static final double kD = 0;
 
 
@@ -70,7 +77,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerMeters) {
         this.armMotorGroup = armMotorGroup;
         this.extensionDealerMeters = () -> extensionDealerMeters.getAsDouble();
-        this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS, kV, kA);
+        this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS_retracted, kS_extended, kV_retracted, kV_extended, kA_retracted, kA_extended);
         this.slackyEncoder = new EncoderWithSlack(
             GEARBOX_SLACK_DEGREES,
             armMotorGroup::getSensorPositionRotations,
