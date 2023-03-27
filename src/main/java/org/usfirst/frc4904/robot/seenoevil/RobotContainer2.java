@@ -61,7 +61,7 @@ import com.kauailabs.navx.frc.AHRS;
  */
 
 public class RobotContainer2 {
-        private static final double placeholderconstant = 0; //TODO: Add this constant
+        private static final double placeholderconstant = 0; //TODO: add value
         private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                         AutoConstants.kMaxSpeedMetersPerSecond,
                         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -159,31 +159,32 @@ public class RobotContainer2 {
                 entry("to_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0, new Rotation2d(0)),
                         List.of(),
-                        new Pose2d(Units.inchesToMeters(24.19),0,new Rotation2d(0)),
+                        new Pose2d(Units.inchesToMeters(24.19-.5),0,new Rotation2d(0)),
                         trajectoryConfig
                 )),
-                entry("angle_ramp_forward", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0,0,new Rotation2d(0)),
-                        List.of(),
-                        new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(0)),
-                        trajectoryConfigSlow
-                )),
+                
                 entry("go_over_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0,new Rotation2d(0)),
                         List.of(),
-                        new Pose2d(Units.inchesToMeters(118.02)+placeholderconstant,0,new Rotation2d(0)),
+                        new Pose2d(Units.inchesToMeters(118.02-.5)+placeholderconstant,0,new Rotation2d(0)),
                         trajectoryConfig
+                )),
+                entry("ramp_start", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(Units.inchesToMeters(5.001)+placeholderconstant,0,new Rotation2d(0)),
+                        trajectoryConfigSlow
                 )),
                 entry("angle_ramp_backward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0,new Rotation2d(Math.PI)),
                         List.of(),
-                        new Pose2d(Units.inchesToMeters(4.75)+placeholderconstant,0,new Rotation2d(Math.PI)),
+                        new Pose2d(Units.inchesToMeters(5.001)+placeholderconstant,0,new Rotation2d(Math.PI)),
                         trajectoryConfigSlowReversed
                 )),
                 entry("go_middle_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0,0,new Rotation2d(Math.PI)),
                         List.of(),
-                        new Pose2d(Units.inchesToMeters(53.5)+placeholderconstant,0,new Rotation2d(Math.PI)),
+                        new Pose2d(Units.inchesToMeters(53.5),0,new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
                 ))
 
