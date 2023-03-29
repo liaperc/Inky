@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 
 public class DriveSubsystem extends SubsystemBase {
+  public static boolean skuffedaf_teleop_initialized = false;
   // The motors on the left side of the drive.
   public MotorControllerGroup m_leftMotors = //motors need to be talons
       new MotorControllerGroup(
@@ -91,8 +92,11 @@ public Imblueeeeeee m_rightEncoder =
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
+    if (!skuffedaf_teleop_initialized) {
+      m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    }
+   
         // m_leftEncoder.debug();
         // m_rightEncoder.debug();
   }

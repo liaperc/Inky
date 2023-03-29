@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
+import org.usfirst.frc4904.robot.seenoevil.DriveSubsystem;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.standard.CommandRobotBase;
@@ -59,9 +60,10 @@ public class Robot extends CommandRobotBase {
         
         donttouchme.m_robotDrive.m_leftMotors = null;
         donttouchme.m_robotDrive.m_rightMotors = null;
+        DriveSubsystem.skuffedaf_teleop_initialized = true;
         
-        donttouchme.m_robotDrive.m_leftEncoder = null;
-        donttouchme.m_robotDrive.m_rightEncoder = null;
+        // donttouchme.m_robotDrive.m_leftEncoder = null;
+        // donttouchme.m_robotDrive.m_rightEncoder = null;
         
         // RobotContainer2.Component.leftATalonFX = null;
         // RobotContainer2.Component.leftBTalonFX = null;
