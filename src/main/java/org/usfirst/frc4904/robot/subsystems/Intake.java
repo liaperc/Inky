@@ -20,11 +20,11 @@ public class Intake extends SubsystemBase {
     }
     public void setVoltage(double voltage) {
         leftMotors.setVoltage(voltage);
-        rightMotors.setVoltage(-1.3*voltage);
+        rightMotors.setVoltage(-voltage);
     }
     public void setPower(double power) {
         leftMotors.setPower(power);
-        rightMotors.setPower(-1.3*power);
+        rightMotors.setPower(-power);
     }
     public Command c_holdVoltage(double voltage) {
         return Commands.run(() -> {
