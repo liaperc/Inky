@@ -77,7 +77,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerMeters) {
         this.armMotorGroup = armMotorGroup;
         this.extensionDealerMeters = () -> extensionDealerMeters.getAsDouble();
-        this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS_retracted, kS_extended, kV_retracted, kV_extended, kA_retracted, kA_extended);
+        this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS_retracted, kV_extended, kA_extended);
         this.slackyEncoder = new EncoderWithSlack(
             GEARBOX_SLACK_DEGREES,
             armMotorGroup::getSensorPositionRotations,

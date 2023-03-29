@@ -55,12 +55,12 @@ public class DriveSubsystem extends SubsystemBase {
   //     new ManualTalonEncoderLmao(
   //         RobotContainer.Component.rightATalonFX, 2);
   
-  private final Imblueeeeeee m_leftEncoder =
+public Imblueeeeeee m_leftEncoder =
   new Imblueeeeeee(
       "leftWheel", RobotContainer2.Component.leftATalonFX, true, DriveConstants.kEncoderDistancePerPulse, FeedbackDevice.IntegratedSensor);
 
 // The right-side drive encoder
-private final Imblueeeeeee m_rightEncoder =
+public Imblueeeeeee m_rightEncoder =
   new Imblueeeeeee(
     "leftWheel", RobotContainer2.Component.rightATalonFX, false, DriveConstants.kEncoderDistancePerPulse, FeedbackDevice.IntegratedSensor);
 

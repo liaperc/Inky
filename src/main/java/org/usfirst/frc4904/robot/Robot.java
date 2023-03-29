@@ -52,9 +52,26 @@ public class Robot extends CommandRobotBase {
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
         
+        /***********************
+         * HAZMAT BLOCK START
+        *************************/
         // SATURDAY MORNING TEST - can you run drive train in queueline
-        // donttouchme.m_robotDrive.m_leftMotors = null;
-        // donttouchme.m_robotDrive.m_rightMotors = null;
+        
+        donttouchme.m_robotDrive.m_leftMotors = null;
+        donttouchme.m_robotDrive.m_rightMotors = null;
+        
+        donttouchme.m_robotDrive.m_leftEncoder = null;
+        donttouchme.m_robotDrive.m_rightEncoder = null;
+        
+        // RobotContainer2.Component.leftATalonFX = null;
+        // RobotContainer2.Component.leftBTalonFX = null;
+
+        // RobotContainer2.Component.rightATalonFX = null;
+        // RobotContainer2.Component.rightBTalonFX = null;
+
+        /***********************
+         * HAZMAT BLOCK END
+        *************************/
 
 
         final double TURN_MULTIPLIER = 2;
