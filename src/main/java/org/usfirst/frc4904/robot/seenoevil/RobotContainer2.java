@@ -8,6 +8,7 @@ import static java.util.Map.entry;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
+import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -42,6 +43,7 @@ import java.util.function.Supplier;
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
+import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.seenoevil.Balance;
@@ -191,44 +193,44 @@ public class RobotContainer2 {
         );
 
         public static class Component {
-                public static WPI_TalonFX leftATalonFX;
-                public static WPI_TalonFX leftBTalonFX;
-                public static WPI_TalonFX rightATalonFX;
-                public static WPI_TalonFX rightBTalonFX;
-                public static WPI_TalonFX testTalon;
+                // public static WPI_TalonFX leftATalonFX;
+                // public static WPI_TalonFX leftBTalonFX;
+                // public static WPI_TalonFX rightATalonFX;
+                // public static WPI_TalonFX rightBTalonFX;
+                // public static WPI_TalonFX testTalon;
         }
 
         // The robot's subsystems
         // motors
 
-        public final DriveSubsystem m_robotDrive;
+        public final WestCoastDrive m_robotDrive;
         // public final XboxController m_driverController;
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
-        public RobotContainer2(WPI_TalonFX leftATalonFX, WPI_TalonFX leftBTalonFX, WPI_TalonFX rightATalonFX, WPI_TalonFX rightBTalonFX, AHRS navx) {
+        public RobotContainer2(WestCoastDrive drive, AHRS navx) {
 
                 // The driver's controller
                 // m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
                 // Configure the button bindings
-                Component.leftATalonFX = leftATalonFX; 
-                Component.leftBTalonFX = leftBTalonFX;
-                Component.rightATalonFX = rightATalonFX;
-                Component.rightBTalonFX = rightBTalonFX;
+                // Component.leftATalonFX = leftATalonFX; 
+                // Component.leftBTalonFX = leftBTalonFX;
+                // Component.rightATalonFX = rightATalonFX;
+                // Component.rightBTalonFX = rightBTalonFX;
 
 		
-		RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast);
-		RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast);
-		RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast);
-		RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast);
+		// RobotContainer2.Component.leftATalonFX.setNeutralMode(NeutralMode.Coast);
+		// RobotContainer2.Component.leftBTalonFX.setNeutralMode(NeutralMode.Coast);
+		// RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Coast);
+		// RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Coast);
 
-                Component.testTalon = new WPI_TalonFX(1);
+                // Component.testTalon = new WPI_TalonFX(1);
                 // Component.leftATalonFX.setInverted(true);
                 // Component.leftBTalonFX.setInverted(true);
 
-                this.m_robotDrive = new DriveSubsystem(navx);
+                this.m_robotDrive = drive;
 
                 // Configure default commands
                 // Set the default drive command to split-stick arcade drive
@@ -246,7 +248,7 @@ public class RobotContainer2 {
                 EEEE.setEnabled(false);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
-			m_robotDrive::getPose,
+			m_robotDrive::getPoseMeters,
 			EEEE,
 			new SimpleMotorFeedforward(
 				DriveConstants.ksVolts,
@@ -257,7 +259,7 @@ public class RobotContainer2 {
 			// new PIDController(DriveConstants.kPDriveVel, 0, 0), new PIDController(DriveConstants.kPDriveVel, 0, 0),
                         new PIDController(0, 0, 0), new PIDController(0, 0, 0),
 			// RamseteCommand passes volts to the callback
-			m_robotDrive::tankDriveVolts,
+                        m_robotDrive::setWheelVoltages,
 			m_robotDrive);
 	
 		// Reset odometry to the starting pose of the trajectory.
@@ -268,9 +270,9 @@ public class RobotContainer2 {
 		// return Commands.run(() -> m_robotDrive.tankDriveVolts(1, 1), m_robotDrive);
 		//return Commands.runOnce(() -> m_robotDrive.arcadeDrive(0.5, 0), m_robotDrive);
 		//return Commands.runOnce(() -> Component.testTalon.setVoltage(6));
-		return Commands.runOnce(() -> 		m_robotDrive.resetOdometry(trajectory.getInitialPose())
+		return Commands.runOnce(() -> 		m_robotDrive.resetPoseMeters(trajectory.getInitialPose())
                                 ) .andThen(                ramseteCommand)
-			.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+			.andThen(() -> m_robotDrive.setWheelVoltages(0, 0));
 	}
 
     /**
