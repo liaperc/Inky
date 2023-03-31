@@ -137,7 +137,7 @@ public class Robot extends CommandRobotBase {
  		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
 
  		//ground intake
- 		RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());
+ 		// RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());
     }
 
     @Override
