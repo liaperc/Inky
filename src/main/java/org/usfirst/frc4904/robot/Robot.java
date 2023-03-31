@@ -52,6 +52,8 @@ public class Robot extends CommandRobotBase {
 
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+
+        driver.bindCommands();
         
         /***********************
          * HAZMAT BLOCK START
