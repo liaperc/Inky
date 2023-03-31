@@ -126,14 +126,14 @@ public class Robot extends CommandRobotBase {
         RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
 
                 		// position + place cube
- 		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.c_angleCubes(3));
- 		RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.c_angleCubes(2));
- 		RobotMap.HumanInput.Operator.joystick.button11.onTrue(RobotMap.Component.arm.c_angleCubes(1));
+ 		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.c_shootCubes(3));
+ 		RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.c_shootCubes(2));
+ 		RobotMap.HumanInput.Operator.joystick.button11.onTrue(RobotMap.Component.arm.c_shootCubes(1));
 
- 		//position cone
- 		RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.placeCones(3));
- 		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.placeCones(2));
- 		RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.placeCones(1));
+ 		// //position cone
+ 		// RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.placeCones(3));
+ 		// RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.placeCones(2));
+ 		// RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.placeCones(1));
 
  		//shelf intake
  		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());

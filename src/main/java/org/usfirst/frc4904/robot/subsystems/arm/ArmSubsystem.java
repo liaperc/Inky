@@ -53,89 +53,36 @@ public class ArmSubsystem extends SubsystemBase {
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
 
-    public Command c_posReturnToHomeUp(boolean flippy) {
-        var cmd = c_holdArmPoseFlippy(otherPositions.get("homeUp"), NathanGain.isFlippy);
+    public Command c_posReturnToHomeUp() {
+        var cmd = c_holdArmPose(otherPositions.get("homeUp").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
         cmd.setName("arm position - home (up)");
         return cmd;
     }
-    public Command c_posReturnToHomeDown(boolean flippy) {
-        var cmd = c_holdArmPoseFlippy(otherPositions.get("homeDown"), NathanGain.isFlippy);
+    public Command c_posReturnToHomeDown() {
+        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
         cmd.setName("arm position - home (down)");
-        return cmd;
-    }
-    public Command c_posIntakeGround() {
-        var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeGround"), NathanGain.isFlippy);
-        cmd.setName("arm position - ground intake");
         return cmd;
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
-        var cmd = c_holdArmPoseFlippy(otherPositions.get("intakeShelf"), NathanGain.isFlippy);
+        var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
 
-    public Command c_angleCubes(int shelf) {
+    public Command c_shootCubes(int shelf) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
         var extensionLengthMeters = cubes.get(shelf).getSecond();
 
-        if (NathanGain.isFlippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
-        }
+        Pair<Command, Double> armMovement = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
 
-        var cmd = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
-        cmd.setName("arm - c_angleCubes - " + shelf);
-        return cmd;
-    }
-    //for auton
-    public Command placeCube(int shelf, boolean flippy) {
-        double degreesFromHorizontal = cubes.get(shelf).getFirst();
-        if (flippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
-        }
-        double extensionLengthMeters= cubes.get(shelf).getSecond();
-
-        return (
-            c_holdArmPose(degreesFromHorizontal, extensionLengthMeters)
-            .alongWith(new WaitCommand(1).andThen(RobotMap.Component.intake.c_holdVoltage(-Intake.DEFAULT_INTAKE_VOLTS))
-        )).withTimeout(5); //TODO: change timeout
-    }
-    //for buttons
-    public Command placeCube(int shelf) {
-        double degreesFromHorizontal = cubes.get(shelf).getFirst();
-        if (NathanGain.isFlippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
-        }
-        double extensionLengthMeters= cubes.get(shelf).getSecond();
-
-        return (
-            c_holdArmPose(degreesFromHorizontal, extensionLengthMeters)
-            .alongWith(new WaitCommand(1).andThen(RobotMap.Component.intake.c_holdVoltage(Intake.DEFAULT_INTAKE_VOLTS))
-        )).withTimeout(5); //TODO: change timeout
-    }
-    public Command placeCones(int shelf) {
-        var degreesFromHorizontal = cones.get(shelf).getFirst();
-        var extensionLengthMeters = cones.get(shelf).getSecond();
-        
-        if (NathanGain.isFlippy) {
-            degreesFromHorizontal = (degreesFromHorizontal * -1) + 180;
-        }
-
-        var cmd = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
-        cmd.setName("arm - c_angleCones - " + shelf);
-        return cmd;
+        return armMovement.getFirst().withTimeout(armMovement.getSecond())
+                .andThen(RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5))
+                .andThen(RobotMap.Component.intake.c_holdVoltage(0))
+                .andThen(c_posReturnToHomeUp());
     }
 
-    public Command c_holdArmPoseFlippy(Pair<Double, Double> angleAndExtensionMeters, boolean flippy) {
-        var degreesFromHorizontal = angleAndExtensionMeters.getFirst();
-        var extensionLengthMeters = angleAndExtensionMeters.getSecond();
-
-        if (flippy) degreesFromHorizontal = 180 - degreesFromHorizontal;
-
-        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
-    }
-
-    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
+    public Pair<Command, Double> c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
         // TODO: crashes
         // return this.runOnce(() -> System.out.println("TODO: hold arm pose crashes the code!"));
         Command firstCommand;
@@ -167,6 +114,6 @@ public class ArmSubsystem extends SubsystemBase {
         // secondCommand.schedule();      
         }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
         cmd.setName("arm - c_holdArmPose");
-        return cmd;
+        return new Pair<Command, Double>(cmd, pivotMovement.getSecond() + extensionMovement.getSecond());
     }
 }
