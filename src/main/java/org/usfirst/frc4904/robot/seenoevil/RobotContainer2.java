@@ -243,7 +243,7 @@ public class RobotContainer2 {
 	public Command getAutonomousCommand(Trajectory trajectory) {
 		// RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
                 RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-                EEEE.setEnabled(true);
+                EEEE.setEnabled(false);
 		RamseteCommand ramseteCommand = new RamseteCommand(
 			trajectory,
 			m_robotDrive::getPose,
@@ -254,8 +254,8 @@ public class RobotContainer2 {
 				DriveConstants.kaVoltSecondsSquaredPerMeter),
 			DriveConstants.kDriveKinematics,
 			m_robotDrive::getWheelSpeeds,
-			new PIDController(DriveConstants.kPDriveVel, 0, 0), new PIDController(DriveConstants.kPDriveVel, 0, 0),
-                        // new PIDController(0, 0, 0), new PIDController(0, 0, 0),
+			// new PIDController(DriveConstants.kPDriveVel, 0, 0), new PIDController(DriveConstants.kPDriveVel, 0, 0),
+                        new PIDController(0, 0, 0), new PIDController(0, 0, 0),
 			// RamseteCommand passes volts to the callback
 			m_robotDrive::tankDriveVolts,
 			m_robotDrive);
