@@ -60,7 +60,9 @@ public class Robot extends CommandRobotBase {
         
         donttouchme.m_robotDrive.m_leftMotors = null;
         donttouchme.m_robotDrive.m_rightMotors = null;
+        donttouchme.m_robotDrive.m_drive = null;
         DriveSubsystem.skuffedaf_teleop_initialized = true;
+        
         
         // donttouchme.m_robotDrive.m_leftEncoder = null;
         // donttouchme.m_robotDrive.m_rightEncoder = null;
@@ -90,7 +92,7 @@ public class Robot extends CommandRobotBase {
         // ));
 
         final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 50;  
-        (new Trigger(() -> pivot_getter.getAsDouble() != 0)).whileTrue(
+        (new Trigger(() -> pivot_getter.getAsDouble() != 0)).onTrue(
             nameCommand("arm - teleop - armPivot operator override",
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
             )
@@ -105,12 +107,15 @@ public class Robot extends CommandRobotBase {
 
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
-		var cmd2 = RobotMap.Component.intake.c_holdVoltage(-8);
+        var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
+
+        var cmd2 = RobotMap.Component.intake.c_holdVoltage(-8);
 		cmd2.setName("Intake - manual intake activation");
-		var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
+        var cmdhold = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1));
+
 		cmdnull.setName("Intake - deactivated");
 		RobotMap.HumanInput.Operator.joystick.button2.onTrue(cmd2);
-        RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdnull);
+        RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdhold);
 
 		// Outtake
 		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
@@ -148,6 +153,17 @@ public class Robot extends CommandRobotBase {
         if (RobotContainer2.Component.rightATalonFX != null) RobotContainer2.Component.rightATalonFX.setNeutralMode(NeutralMode.Brake); 
         if (RobotContainer2.Component.rightBTalonFX != null) RobotContainer2.Component.rightBTalonFX.setNeutralMode(NeutralMode.Brake); 
 
+        // hold arm pose
+        // RobotMap.Component.arm.c_holdArmPose(0, 0.5).schedule();
+
+
+        // arm pose individual tests
+        // RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(6, 150, 200).getFirst().schedule();
+        // // RobotMap.Component.arm.c_holdArmPose(6, 0.5);
+        // RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0.5, 1, 2).getFirst().schedule();
+
+
+
         // SATURDAY MORNING TEST: is the cube shooter auton gonna work
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         var commnand = donttouchme.getAutonomousCommand(donttouchme.getTrajectory("sickle"));
@@ -156,6 +172,14 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousExecute() {
+        // TODO remove logging
+        
+        SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
+        SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
+        SmartDashboard.putNumber("armV extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
+        SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+
+        SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
     }
 
     @Override

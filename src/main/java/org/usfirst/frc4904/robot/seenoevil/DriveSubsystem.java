@@ -44,7 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
           RobotContainer2.Component.rightBTalonFX);
 
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  public DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
   // The left-side drive encoder
   // private final ManualTalonEncoderLmao m_leftEncoder =
@@ -96,6 +96,12 @@ public Imblueeeeeee m_rightEncoder =
       m_odometry.update(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     }
+    // RobotContainer2.Component.leftATalonFX.feed();
+    // RobotContainer2.Component.leftBTalonFX.feed();
+
+    // RobotContainer2.Component.rightATalonFX.feed();
+    // RobotContainer2.Component.rightBTalonFX.feed();
+
    
         // m_leftEncoder.debug();
         // m_rightEncoder.debug();

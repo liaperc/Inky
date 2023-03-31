@@ -22,7 +22,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M = Units.inchesToMeters(48);
     public static final double ADDITIONAL_LENGTH_M = Units.inchesToMeters(30.71);
 
-    public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
+    public static final double MAX_EXTENSION_M = 0.902;
     public static final double MIN_EXTENSION_M = 0;
     public final TalonMotorSubsystem motor;
     public final static double SPOOL_CIRCUMFERENCE_M = Math.PI * Units.inchesToMeters(0.75); // Math.PI * SPOOL_DIAMETER
@@ -36,8 +36,8 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double kG = 0.18613;
 
     // TODO: tune
-    public static final double kP = 1.121;
-    public static final double kI = 0.01;
+    public static final double kP = 2.2;
+    public static final double kI = 0.1;
     public static final double kD = 0;
     
     /**

@@ -43,8 +43,6 @@ public class ArmPivotSubsystem extends SubsystemBase {
     // constants for big sprocket, assuming it's 4x the little sprocket
     public static final double GEARBOX_RATIO = 48 * 60/26; // big sprocket
     public static final double GEARBOX_SLACK_DEGREES = 6;    // todo
-    public static final double MAX_EXTENSION_M = Units.inchesToMeters(39.5);
-    public static final double MIN_EXTENSION_M = 0;
 
     public static final double kS = 0.10126;
     // public static final double kS_extended = .20586;
@@ -57,12 +55,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double kA = 0.048547; //extended: .12082
     // public static final double kA_extended = .12082;
     
-    public static final double kG_retracted = 0.14427;
-    public static final double kG_extended = .3127;
+    public static final double kG_retracted = 0.32;
+    public static final double kG_extended = 0.7;
 
     // TODO: tune
-    public static final double kP = 0.04; //extended: .36915 retracted: .01464
-    public static final double kI = 0.01;
+    public static final double kP = 0;//0.04; //extended: .36915 retracted: .01464
+    public static final double kI = 0;//0.01;
     public static final double kD = 0;
 
     public final TalonMotorSubsystem armMotorGroup;
@@ -110,7 +108,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public Command c_controlAngularVelocity(DoubleSupplier degPerSecDealer) {
         var cmd = this.run(() -> {
             var ff = this.feedforward.calculate(
-                extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M,
+                extensionDealerMeters.getAsDouble()/ArmExtensionSubsystem.MAX_EXTENSION_M,
                 Units.degreesToRadians(getCurrentAngleDegrees()),
                 Units.rotationsPerMinuteToRadiansPerSecond(Units.degreesToRotations(degPerSecDealer.getAsDouble()) * 60),
                 0
@@ -131,7 +129,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
                 double brr =  this.feedforward.calculate(
-                    extensionDealerMeters.getAsDouble()/MAX_EXTENSION_M,
+                    extensionDealerMeters.getAsDouble()/ArmExtensionSubsystem.MAX_EXTENSION_M,
                     Units.degreesToRadians(getCurrentAngleDegrees()),
                     Units.degreesToRadians(velocityDegPerSec),
                     0
@@ -149,7 +147,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
         var cmd = new ezMotion(
             controller,
             () -> this.getCurrentAngleDegrees(),
-            (volts) -> {
+            (double volts) -> {
                 // this.armMotorGroup.setVoltage(volts); // FIXME : use motorgroup setvoltage
                 SmartDashboard.putNumber("Arm Volts", volts);
                 this.armMotorGroup.leadMotor.setVoltage(volts);
