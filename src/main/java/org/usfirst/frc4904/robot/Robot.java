@@ -99,6 +99,7 @@ public class Robot extends CommandRobotBase {
             )
         );
 
+
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
         var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
@@ -146,12 +147,12 @@ public class Robot extends CommandRobotBase {
         // SmartDashboard.putNumber("Driver out", driver.getTurnSpeed());
         
 
-        SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
+        // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
         SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
 
-        SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
+        // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
 
 
     }
@@ -249,7 +250,9 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void alwaysExecute() {
-        // SmartDashboard.putNumber("Arm angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+        SmartDashboard.putNumber("Arm angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+        SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
+
         // SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
     }
 
