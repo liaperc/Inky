@@ -259,11 +259,6 @@ public class Robot extends CommandRobotBase {
     public void alwaysExecute() {
         // SmartDashboard.putNumber("Arm angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
         // SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
-        SmartDashboard.putNumber("joystick left  T", RobotMap.HumanInput.Driver.xbox.getLeftTriggerAxis());
-        SmartDashboard.putNumber("joystick right T", RobotMap.HumanInput.Driver.xbox.getRightTriggerAxis());
-
-
-        
     }
 
 }

@@ -185,10 +185,10 @@ public class RobotMap {
         Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
         Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
 
-        Component.backRightWheelTalon.setSafetyEnabled(false);
-        Component.frontRightWheelTalon.setSafetyEnabled(false);
-        Component.backLeftWheelTalon.setSafetyEnabled(false);
-        Component.frontLeftWheelTalon.setSafetyEnabled(false);
+        // Component.backRightWheelTalon.setSafetyEnabled(false);
+        // Component.frontRightWheelTalon.setSafetyEnabled(false);
+        // Component.backLeftWheelTalon.setSafetyEnabled(false);
+        // Component.frontLeftWheelTalon.setSafetyEnabled(false);
 
         TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
         TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
