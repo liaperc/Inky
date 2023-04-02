@@ -99,13 +99,10 @@ public class Robot extends CommandRobotBase {
             )
         );
 
-<<<<<<< HEAD
 
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
         var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
-=======
->>>>>>> c24f3e8d76ec6b74303e49b48b5727317f77cec8
 
     }
 

@@ -11,7 +11,7 @@ public class NathanGain extends Driver {
 	public static final double SPEED_EXP = 2;
 	public static final double Y_SPEED_SCALE = 1;
 
-	public static final double TURN_EXP = 3.5;
+	public static final double TURN_EXP = 4;
 	public static final double TURN_SPEED_SCALE = 1;
 
 
