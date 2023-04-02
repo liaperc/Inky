@@ -34,6 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         shelfCones.put(2, new Triple<>(29. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(19) + FUNNY_EXTENSION_CORRECTION, 3.2));
         shelfCones.put(3, new Triple<>(41. + FUNNY_ANGLE_CORRECTION, ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 3.2));
+        shelfCones.put(4, new Triple<>(180-(41+FUNNY_ANGLE_CORRECTION), ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 4.));
     }
     
     public static final HashMap<Integer, Triple<Double, Double, Double>> floorCones = new HashMap<>(); //in degrees, meters
@@ -78,8 +79,15 @@ public class ArmSubsystem extends SubsystemBase {
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
+        cones = floorCones;
         var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("intakeShelf").getSecond()).getFirst();
         cmd.setName("arm position - pre shelf intake");
+        return cmd;
+    }
+    public Command c_posIntakeFloor() {
+        cones = floorCones;
+        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeDown").getSecond()).getFirst();
+        cmd.setName("arm position - pre floor intake");
         return cmd;
     }
 

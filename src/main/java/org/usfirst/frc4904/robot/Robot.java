@@ -99,40 +99,14 @@ public class Robot extends CommandRobotBase {
             )
         );
 
+<<<<<<< HEAD
 
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
         var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
+=======
+>>>>>>> c24f3e8d76ec6b74303e49b48b5727317f77cec8
 
-        var cmd2 = RobotMap.Component.intake.c_holdVoltage(-8);
-		cmd2.setName("Intake - manual intake activation");
-        var cmdhold = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1));
-
-		cmdnull.setName("Intake - deactivated");
-		RobotMap.HumanInput.Operator.joystick.button2.onTrue(cmd2);
-        RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdhold);
-
-		// Outtake
-		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
-		cmd1.setName("Intake - manual outtake activation");
-		RobotMap.HumanInput.Operator.joystick.button1.onTrue(cmd1);
-        RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
-
-                		// position + place cube
- 		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.c_shootCubes(3));
- 		RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.c_shootCubes(2));
-
- 		//position cone
- 		RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.c_shootCones(3));
- 		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_shootCones(2));
-
- 		//shelf intake
- 		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
-         RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posReturnToHomeUp());
-
-
- 		//ground intake
- 		// RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());
     }
 
     @Override
