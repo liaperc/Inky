@@ -1,9 +1,12 @@
 package org.usfirst.frc4904.robot.subsystems.arm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
+import org.usfirst.frc4904.standard.custom.Triple;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
@@ -13,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.opencv.core.MatOfDouble;
 
 
 public class ArmSubsystem extends SubsystemBase {
@@ -26,17 +30,18 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_ACCEL_PIVOT = 200;
 
     
-    public static final HashMap<Integer, Pair<Double, Double>> cones = new HashMap<>(); //in degrees, meters
+    public static final HashMap<Integer, Triple<Double, Double, Double>> cones = new HashMap<>(); //in degrees, meters
     static {
-        cones.put(1, new Pair<>(-19.,Units.inchesToMeters(0.)));
-        cones.put(2, new Pair<>(29.,Units.inchesToMeters(18.)));
-        cones.put(3, new Pair<>(31.,Units.inchesToMeters(38.)));
+        cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
+        cones.put(2, new Triple<>(29., Units.inchesToMeters(18), 3.));
+        cones.put(3, new Triple<>(31., Units.inchesToMeters(38.), 3.));
     }
-    public static final HashMap<Integer, Pair<Double, Double>> cubes = new HashMap<Integer, Pair<Double, Double>>(); //in degrees, meters
+
+    public static final HashMap<Integer, Triple<Double, Double, Double>> cubes = new HashMap<>(); //in degrees, meters
     static {
-        cubes.put(1, new Pair<>(-33.,Units.inchesToMeters(0.)));
-        cubes.put(2, new Pair<>(14.,Units.inchesToMeters(6.)));
-        cubes.put(3, new Pair<>(22.,Units.inchesToMeters(28.)));
+        cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
+        cubes.put(2, new Triple<>(14., Units.inchesToMeters(6), 4.));
+        cubes.put(3, new Triple<>(22., Units.inchesToMeters(28.), 4.5));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
@@ -69,6 +74,13 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
+   
+    public Pair<Command, Double> c_angleCubes(int shelf) {
+        var degreesFromHorizontal = cubes.get(shelf).getFirst();
+        var extensionLengthMeters = cubes.get(shelf).getSecond();
+
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+    }
 
     public Command c_shootCubes(int shelf) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
@@ -83,7 +95,6 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Pair<Command, Double> c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
-        // TODO: crashes
         // return this.runOnce(() -> System.out.println("TODO: hold arm pose crashes the code!"));
         Command firstCommand;
         Command secondCommand;

@@ -52,6 +52,8 @@ public class Robot extends CommandRobotBase {
 
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setBrakeOnNeutral();
         RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.neutralOutput();
+
+        driver.bindCommands();
         
         /***********************
          * HAZMAT BLOCK START
@@ -118,7 +120,7 @@ public class Robot extends CommandRobotBase {
         RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdhold);
 
 		// Outtake
-		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
+		var cmd1 = RobotMap.Component.intake.c_holdVoltage(5);
 		cmd1.setName("Intake - manual outtake activation");
 		RobotMap.HumanInput.Operator.joystick.button1.onTrue(cmd1);
         RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
@@ -257,6 +259,8 @@ public class Robot extends CommandRobotBase {
     public void alwaysExecute() {
         // SmartDashboard.putNumber("Arm angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
         // SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
+        SmartDashboard.putNumber("joystick left  T", RobotMap.HumanInput.Driver.xbox.getLeftTriggerAxis());
+        SmartDashboard.putNumber("joystick right T", RobotMap.HumanInput.Driver.xbox.getRightTriggerAxis());
 
 
         

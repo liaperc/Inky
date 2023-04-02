@@ -165,8 +165,8 @@ public class RobotMap {
     public RobotMap() {
         Component.navx = new AHRS(SerialPort.Port.kMXP);
 
-        HumanInput.Driver.xbox = new CustomCommandXbox(Port.HumanInput.xboxController, 0.1);
-		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick, 0.05);
+        HumanInput.Driver.xbox = new CustomCommandXbox(Port.HumanInput.xboxController, 0.01);
+		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick, 0.01);
         // // UDP things
         // try {
         //     Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
