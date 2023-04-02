@@ -469,14 +469,16 @@ public class RobotContainer2 {
                                 getAutonomousCommand(getTrajectory("go_to_pickup_next"))
                         ),
                         RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(0.5), //TODO: for picking up cone tune to make sure it works
-                        getAutonomousCommand(getTrajectory("go_to_pickup_next")),
-                        new ParallelCommandGroup( // shootign cube
-                                RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
-                                        RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
-                                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
-                        ))
+                        new ParallelCommandGroup(
+                                RobotMap.Component.intake.c_holdVoltage(-1).withTimeout(2.5), //TODO: Tune the time after testing
+                                getAutonomousCommand(getTrajectory("go_to_pickup_next")),
+                                new ParallelCommandGroup( // shootign cube
+                                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+                                        new SequentialCommandGroup(
+                                                new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
+                                                RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+                                                RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+                                )))
                         
                 );
                 return command;
