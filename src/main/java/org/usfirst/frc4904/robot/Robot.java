@@ -52,6 +52,7 @@ public class Robot extends CommandRobotBase {
         RobotMap.Component.arm.armExtensionSubsystem.motor.brake();
 
         driver.bindCommands();
+        operator.bindCommands();
         
         /***********************
          * HAZMAT BLOCK START
@@ -98,13 +99,6 @@ public class Robot extends CommandRobotBase {
             )
         );
 
-        RobotMap.HumanInput.Operator.joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.3));
-        RobotMap.HumanInput.Operator.joystick.button3.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
-
-        RobotMap.HumanInput.Operator.joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.3));
-        RobotMap.HumanInput.Operator.joystick.button5.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
-
-
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
         var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
@@ -118,7 +112,7 @@ public class Robot extends CommandRobotBase {
         RobotMap.HumanInput.Operator.joystick.button2.onFalse(cmdhold);
 
 		// Outtake
-		var cmd1 = RobotMap.Component.intake.c_holdVoltage(5);
+		var cmd1 = RobotMap.Component.intake.c_holdVoltage(3);
 		cmd1.setName("Intake - manual outtake activation");
 		RobotMap.HumanInput.Operator.joystick.button1.onTrue(cmd1);
         RobotMap.HumanInput.Operator.joystick.button1.onFalse(cmdnull);
@@ -126,15 +120,15 @@ public class Robot extends CommandRobotBase {
                 		// position + place cube
  		RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.c_shootCubes(3));
  		RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.c_shootCubes(2));
- 		RobotMap.HumanInput.Operator.joystick.button11.onTrue(RobotMap.Component.arm.c_shootCubes(1));
 
- 		// //position cone
- 		// RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.placeCones(3));
- 		// RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.placeCones(2));
- 		// RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.placeCones(1));
+ 		//position cone
+ 		RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.c_shootCones(3));
+ 		RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_shootCones(2));
 
  		//shelf intake
  		RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
+         RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posReturnToHomeUp());
+
 
  		//ground intake
  		// RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());

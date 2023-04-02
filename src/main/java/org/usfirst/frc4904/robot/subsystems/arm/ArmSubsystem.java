@@ -26,19 +26,30 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_PIVOT = 150;
     public static final double MAX_ACCEL_PIVOT = 200;
 
-    
-    public static final HashMap<Integer, Triple<Double, Double, Double>> cones = new HashMap<>(); //in degrees, meters
+    public static final double FUNNY_ANGLE_CORRECTION = 6;
+    public static final double FUNNY_EXTENSION_CORRECTION = 0;
+
+    public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
     static {
-        cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
-        cones.put(2, new Triple<>(29., Units.inchesToMeters(18), 3.));
-        cones.put(3, new Triple<>(31., Units.inchesToMeters(38.), 3.));
+        // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
+        shelfCones.put(2, new Triple<>(29. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(19) + FUNNY_EXTENSION_CORRECTION, 3.2));
+        shelfCones.put(3, new Triple<>(41. + FUNNY_ANGLE_CORRECTION, ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 3.2));
     }
+    
+    public static final HashMap<Integer, Triple<Double, Double, Double>> floorCones = new HashMap<>(); //in degrees, meters
+    static {
+        // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
+        floorCones.put(2, new Triple<>(29. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(16) + FUNNY_EXTENSION_CORRECTION, 3.));
+        floorCones.put(3, new Triple<>(31. + FUNNY_ANGLE_CORRECTION, ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 3.));
+    }
+
+    public static HashMap<Integer, Triple<Double, Double, Double>> cones = floorCones;
 
     public static final HashMap<Integer, Triple<Double, Double, Double>> cubes = new HashMap<>(); //in degrees, meters
     static {
-        cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
-        cubes.put(2, new Triple<>(14., Units.inchesToMeters(6), 4.));
-        cubes.put(3, new Triple<>(22., Units.inchesToMeters(28.), 4.5));
+        // cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
+        cubes.put(2, new Triple<>(15. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(0), 4.5));
+        cubes.put(3, new Triple<>(22. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(0), 4.5));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
@@ -46,8 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
         // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0 in degrees, meters
         otherPositions.put("homeUp", new Pair<>(70., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
         otherPositions.put("homeDown", new Pair<>(-37., Units.inchesToMeters(0.)));
-        otherPositions.put("intakeGround", new Pair<>(-37., Units.inchesToMeters(4.)));
-        otherPositions.put("intakeShelf", new Pair<>(-37., Units.inchesToMeters(4.))); // TODO WRONG AND BAD
+        otherPositions.put("intakeShelf", new Pair<>(31., Units.inchesToMeters(20.)));
     }
 
 
