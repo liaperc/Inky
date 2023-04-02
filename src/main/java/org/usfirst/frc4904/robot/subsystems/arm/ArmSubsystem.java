@@ -26,22 +26,19 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_PIVOT = 150;
     public static final double MAX_ACCEL_PIVOT = 200;
 
-    public static final double FUNNY_ANGLE_CORRECTION = 6;
-    public static final double FUNNY_EXTENSION_CORRECTION = 0;
-
     public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
     static {
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
-        shelfCones.put(2, new Triple<>(29. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(19) + FUNNY_EXTENSION_CORRECTION, 3.2));
-        shelfCones.put(3, new Triple<>(41. + FUNNY_ANGLE_CORRECTION, ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 3.2));
-        shelfCones.put(4, new Triple<>(180-(41+FUNNY_ANGLE_CORRECTION), ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 4.));
+        shelfCones.put(2, new Triple<>(29., Units.inchesToMeters(19), 3.2));
+        shelfCones.put(3, new Triple<>(41., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.2));
+        shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 4.));
     }
     
     public static final HashMap<Integer, Triple<Double, Double, Double>> floorCones = new HashMap<>(); //in degrees, meters
     static {
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
-        floorCones.put(2, new Triple<>(29. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(16) + FUNNY_EXTENSION_CORRECTION, 3.));
-        floorCones.put(3, new Triple<>(31. + FUNNY_ANGLE_CORRECTION, ArmExtensionSubsystem.MAX_EXTENSION_M + FUNNY_EXTENSION_CORRECTION, 3.));
+        floorCones.put(2, new Triple<>(29., Units.inchesToMeters(16), 3.));
+        floorCones.put(3, new Triple<>(31., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
 
     public static HashMap<Integer, Triple<Double, Double, Double>> cones = floorCones;
@@ -49,8 +46,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<Integer, Triple<Double, Double, Double>> cubes = new HashMap<>(); //in degrees, meters
     static {
         // cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
-        cubes.put(2, new Triple<>(15. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(0), 4.5));
-        cubes.put(3, new Triple<>(22. + FUNNY_ANGLE_CORRECTION, Units.inchesToMeters(0), 4.5));
+        cubes.put(2, new Triple<>(15., Units.inchesToMeters(0), 4.5));
+        cubes.put(3, new Triple<>(22., Units.inchesToMeters(0), 4.5));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
