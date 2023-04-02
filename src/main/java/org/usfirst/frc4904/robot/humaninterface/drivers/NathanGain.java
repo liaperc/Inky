@@ -21,6 +21,8 @@ public class NathanGain extends Driver {
 	public static final double PRECISE_SPEED_SCALE = 0.4;	
 	public static final double PRECISE_TURN_SCALE = 0.1;
 
+	public static final double TURN_CORRECTION = 0.05;
+
 	// public static final double SPEEDY_TURN_GAIN = 0.7;
 
 	public static double precisionScaleY = NORMAL_SPEED_GAIN;
@@ -81,6 +83,6 @@ public class NathanGain extends Driver {
 		// double operatorControlTurnSpeed = scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(0), 0.2, 1.5);
 		
 		if (NathanGain.isFlippy) return (turnSpeed) * -1;
-		return turnSpeed;// + precisionTurnSpeed;
+		return turnSpeed + TURN_CORRECTION;// + precisionTurnSpeed;
 	}
 }
