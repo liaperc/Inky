@@ -75,8 +75,11 @@ public class ArmSubsystem extends SubsystemBase {
         return cmd;
     }
    
-    public Command c_angleCubes(int shelf) {
+    public Pair<Command, Double> c_angleCubes(int shelf) {
+        var degreesFromHorizontal = cubes.get(shelf).getFirst();
+        var extensionLengthMeters = cubes.get(shelf).getSecond();
 
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
     }
 
     public Command c_shootCubes(int shelf) {
