@@ -32,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
         cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         cones.put(2, new Triple<>(29., Units.inchesToMeters(18), 3.));
         cones.put(3, new Triple<>(31., Units.inchesToMeters(38.), 3.));
+        cones.put(4, new Triple<>(180+31.,Units.inchesToMeters(38),3.));//placehoders, need a lot of tuning
     }
 
     public static final HashMap<Integer, Triple<Double, Double, Double>> cubes = new HashMap<>(); //in degrees, meters

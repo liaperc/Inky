@@ -191,8 +191,12 @@ public class RobotContainer2 {
                         new Pose2d(0,0,new Rotation2d(0)),
                         List.of(),
                         new Pose2d(4.44,0,new Rotation2d(0)),
-                        trajectoryConfig))
-
+                        trajectoryConfig)),
+                entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0,0,new Rotation2d(Math.PI)),
+                        List.of(),
+                        new Pose2d(4.44,0,new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed))
         );
 
         public static class Component {
@@ -457,7 +461,25 @@ public class RobotContainer2 {
                 
                 return command;
         }
-
+        public Command shoot2auto(){ //shoot cone, grab cube, shoot cube, doesn't balance
+                var command = new SequentialCommandGroup(
+                        RobotMap.Component.arm.c_shootCones(4),
+                        new ParallelCommandGroup(
+                                RobotMap.Component.arm.c_posReturnToHomeDown(),
+                                getAutonomousCommand(getTrajectory("go_to_pickup_next"))
+                        ),
+                        RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(0.5), //TODO: for picking up cone tune to make sure it works
+                        getAutonomousCommand(getTrajectory("go_to_pickup_next")),
+                        new ParallelCommandGroup( // shootign cube
+                                RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+                                new SequentialCommandGroup(
+                                        new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
+                                        RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+                                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+                        ))
+                        
+                );
+                return command;
+        }
         
-
 }
