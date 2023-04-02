@@ -65,30 +65,30 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_posReturnToHomeUp() {
-        var cmd = c_holdArmPose(otherPositions.get("homeUp").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("homeUp"));
         cmd.setName("arm position - home (up)");
         return cmd;
     }
     public Command c_posReturnToHomeDown() {
-        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeDown").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("homeDown"));
         cmd.setName("arm position - home (down)");
         return cmd;
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
         cones = floorCones;
-        var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("intakeShelf").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("intakeShelf"));
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
     public Command c_posIntakeFloor() {
         cones = floorCones;
-        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeDown").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("homeDown"));
         cmd.setName("arm position - pre floor intake");
         return cmd;
     }
 
-    public Pair<Command, Double> c_angleCones(int shelf) {
+    public Command c_angleCones(int shelf) {
         var degreesFromHorizontal = cones.get(shelf).getFirst();
         var extensionLengthMeters = cones.get(shelf).getSecond();
 
@@ -100,19 +100,18 @@ public class ArmSubsystem extends SubsystemBase {
         var extensionLengthMeters = cones.get(shelf).getSecond();
         var voltage = cones.get(shelf).getThird();
 
-        Pair<Command, Double> armMovement = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
-
-        return armMovement.getFirst().withTimeout(armMovement.getSecond())
-                .andThen(RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5))
-                .andThen(RobotMap.Component.intake.c_holdVoltage(0))
-                .andThen(c_posReturnToHomeUp());
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            .andThen(RobotMap.Component.intake.c_holdVoltage(0))
+            .andThen(c_posReturnToHomeUp())
+        );
     }
    
-    public Pair<Command, Double> c_angleCubes(int shelf) {
+    public Command c_angleCubes(int shelf) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
         var extensionLengthMeters = cubes.get(shelf).getSecond();
 
-        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, null);
     }
 
     public Command c_shootCubes(int shelf) {
@@ -120,45 +119,52 @@ public class ArmSubsystem extends SubsystemBase {
         var extensionLengthMeters = cubes.get(shelf).getSecond();
         var voltage = cubes.get(shelf).getThird();
 
-        Pair<Command, Double> armMovement = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
-
-        return armMovement.getFirst().withTimeout(armMovement.getSecond())
-                .andThen(RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5))
-                .andThen(RobotMap.Component.intake.c_holdVoltage(0))
-                .andThen(c_posReturnToHomeUp());
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            .andThen(RobotMap.Component.intake.c_holdVoltage(0))
+            .andThen(c_posReturnToHomeUp())
+        );
     }
 
-    public Pair<Command, Double> c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
-        // return this.runOnce(() -> System.out.println("TODO: hold arm pose crashes the code!"));
-        Command firstCommand;
-        Command secondCommand;
-        double wait;
+    public Command c_holdArmPose(Pair<Double, Double> emacs) {
+        return c_holdArmPose(emacs.getFirst(), emacs.getSecond());
+    }
+    public Command c_holdArmPose(Pair<Double, Double> emacs, Command onArrivalCommand) {
+        return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), onArrivalCommand);
+    }
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, null);
+    }
 
-        Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
-        Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
-
-        if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
-            firstCommand = pivotMovement.getFirst();
-            wait = pivotMovement.getSecond();
-            secondCommand = extensionMovement.getFirst();
-        } else {
-            firstCommand = extensionMovement.getFirst();
-            wait = extensionMovement.getSecond();
-            secondCommand = pivotMovement.getFirst();
-        }
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Command onArrivalCommand) {
         var cmd = this.runOnce(() -> {
-                    firstCommand.schedule();
-                    // (Commands.run(() -> System.out.println(
-                    //     "1: " + String.valueOf(firstCommand.isScheduled())
-                    // + " ... 2: " + String.valueOf(secondCommand.isScheduled())
-                    // + " ... cur :  " + armExtensionSubsystem.getCurrentCommand().getName() 
-                    // + " ... joystick: " + String.valueOf(RobotMap.HumanInput.Operator.joystick.getAxis(3))
-                    //     ))).schedule();
-                    (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
-        // ((new WaitCommand(1)).andThen(secondCommand)).schedule();
-        // secondCommand.schedule();      
+            Command firstCommand;
+            Command secondCommand;
+            double wait;
+            double secondWait;
+
+            Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal,
+                    MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
+            Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthMeters,
+                    MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
+
+            if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
+                firstCommand = pivotMovement.getFirst();
+                wait = pivotMovement.getSecond();
+                secondCommand = extensionMovement.getFirst();
+                secondWait = wait + extensionMovement.getSecond();
+            } else {
+                firstCommand = extensionMovement.getFirst();
+                wait = extensionMovement.getSecond();
+                secondCommand = pivotMovement.getFirst();
+                secondWait = wait + pivotMovement.getSecond();
+            }
+
+            firstCommand.schedule();
+            (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
+            if (onArrivalCommand != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommand)).schedule();
         }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
         cmd.setName("arm - c_holdArmPose");
-        return new Pair<Command, Double>(cmd, pivotMovement.getSecond() + extensionMovement.getSecond());
+        return cmd;
     }
 }
