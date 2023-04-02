@@ -71,6 +71,26 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
+
+    public Pair<Command, Double> c_angleCones(int shelf) {
+        var degreesFromHorizontal = cones.get(shelf).getFirst();
+        var extensionLengthMeters = cones.get(shelf).getSecond();
+
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+    }
+
+    public Command c_shootCones(int shelf) {
+        var degreesFromHorizontal = cones.get(shelf).getFirst();
+        var extensionLengthMeters = cones.get(shelf).getSecond();
+        var voltage = cones.get(shelf).getThird();
+
+        Pair<Command, Double> armMovement = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+
+        return armMovement.getFirst().withTimeout(armMovement.getSecond())
+                .andThen(RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5))
+                .andThen(RobotMap.Component.intake.c_holdVoltage(0))
+                .andThen(c_posReturnToHomeUp());
+    }
    
     public Pair<Command, Double> c_angleCubes(int shelf) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
@@ -82,11 +102,12 @@ public class ArmSubsystem extends SubsystemBase {
     public Command c_shootCubes(int shelf) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
         var extensionLengthMeters = cubes.get(shelf).getSecond();
+        var voltage = cubes.get(shelf).getThird();
 
         Pair<Command, Double> armMovement = c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
 
         return armMovement.getFirst().withTimeout(armMovement.getSecond())
-                .andThen(RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5))
+                .andThen(RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5))
                 .andThen(RobotMap.Component.intake.c_holdVoltage(0))
                 .andThen(c_posReturnToHomeUp());
     }
