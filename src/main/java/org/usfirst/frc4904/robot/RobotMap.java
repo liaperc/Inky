@@ -211,7 +211,7 @@ public class RobotMap {
         TalonMotorSubsystem armRotationMotors = new TalonMotorSubsystem("Arm Pivot Subsystem", NeutralMode.Brake, 0, leftPivotMotor, rightPivotMotor);
         ArmExtensionSubsystem armExtensionSubsystem = new ArmExtensionSubsystem(
             new TalonMotorSubsystem("Arm Extension Subsystem", NeutralMode.Brake, 0, armExtensionMotor),
-            () -> ArmPivotSubsystem.motorRevsToAngle(armRotationMotors.getSensorPositionRotations())
+            () -> ArmPivotSubsystem.motorRevsToAngle(armRotationMotors.getSensorPositionRotations() * 0.911 - 6.3)
         );
         // Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
         //     PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,

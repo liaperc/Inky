@@ -86,7 +86,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
     }
 
-    /**
+    /**[p]
      * Expects sensors to be zeroed at forward hard-stop.
      */
     public void initializeEncoderPositions() {
@@ -130,7 +130,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             (position, velocityDegPerSec) -> { 
                 double brr =  this.feedforward.calculate(
                     extensionDealerMeters.getAsDouble()/ArmExtensionSubsystem.MAX_EXTENSION_M,
-                    Units.degreesToRadians(getCurrentAngleDegrees()),
+                    Units.degreesToRadians((getCurrentAngleDegrees() + 6.3)/0.911),
                     Units.degreesToRadians(velocityDegPerSec),
                     0
                 );
@@ -141,8 +141,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
 
         TrapezoidProfile profile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelDegPerSec, maxAccelDegPerSecSquare),
-            new TrapezoidProfile.State(degreesFromHorizontal, 0),
-            new TrapezoidProfile.State(getCurrentAngleDegrees(), 0)
+            new TrapezoidProfile.State((degreesFromHorizontal + 6.3)/0.911, 0),
+            new TrapezoidProfile.State((getCurrentAngleDegrees() + 6.3)/0.911, 0)
         );
         var cmd = new ezMotion(
             controller,

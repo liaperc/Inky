@@ -103,8 +103,8 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                                             ));
         
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
-                                                        new TrapezoidProfile.State(extensionLengthMeters, 0), 
-                                                        new TrapezoidProfile.State(getCurrentExtensionLength(), 0));
+                                                        new TrapezoidProfile.State((extensionLengthMeters - 0.0853)/0.968, 0), 
+                                                        new TrapezoidProfile.State((getCurrentExtensionLength() - 0.0853)/0.968, 0));
         var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
         cmd.setName("arm - c_holdExtension");
         return new Pair<Command, Double>(cmd, profile.totalTime());
