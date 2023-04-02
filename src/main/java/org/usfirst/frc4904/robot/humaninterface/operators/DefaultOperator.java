@@ -17,37 +17,45 @@ public class DefaultOperator extends Operator {
 
 	@Override
 	public void bindCommands() {
+		var joystick = RobotMap.HumanInput.Operator.joystick;
 		
-        RobotMap.HumanInput.Operator.joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.3));
-        RobotMap.HumanInput.Operator.joystick.button3.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
+        joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.3));
+        joystick.button3.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
 
-        RobotMap.HumanInput.Operator.joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.3));
-        RobotMap.HumanInput.Operator.joystick.button5.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
-		
+        joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.3));
+		joystick.button5.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
 
-		// Flippy button
-		// RobotMap.HumanInput.Operator.joystick.button12.onTrue(new InstantCommand(
-		// 	() -> {
-		// 		NathanGain.isFlippy = !NathanGain.isFlippy;
-		// 	}
-		// ));
-		// don't use flippy because confusion
+		// Intake
+		// FIXME: use nameCommand to make it cleaner with expresions (no varibales)
+		var zeroIntake = RobotMap.Component.intake.c_holdVoltage(0);
+		var holdPiece = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1));
+		var runIntake = RobotMap.Component.intake.c_holdVoltage(-8);
+		var runOuttake = RobotMap.Component.intake.c_holdVoltage(3);
 
-		// // position + place cube
-		// RobotMap.HumanInput.Operator.joystick.button7.onTrue(RobotMap.Component.arm.placeCube(3));
-		// RobotMap.HumanInput.Operator.joystick.button9.onTrue(RobotMap.Component.arm.placeCube(2));
-		// RobotMap.HumanInput.Operator.joystick.button11.onTrue(RobotMap.Component.arm.placeCube(1));
-		
-		// //position cone
-		// RobotMap.HumanInput.Operator.joystick.button8.onTrue(RobotMap.Component.arm.c_angleCones(3));
-		// RobotMap.HumanInput.Operator.joystick.button10.onTrue(RobotMap.Component.arm.c_angleCones(2));
-		// RobotMap.HumanInput.Operator.joystick.button12.onTrue(RobotMap.Component.arm.c_angleCones(1));
+		// intake
+		joystick.button2.onTrue(runIntake);
+		joystick.button2.onFalse(holdPiece);
 
-		// //shelf intake
-		// RobotMap.HumanInput.Operator.joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
-		
-		// //ground intake
-		// RobotMap.HumanInput.Operator.joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeGround());
+		// outtake
+		joystick.button1.onTrue(runOuttake);
+		joystick.button1.onFalse(zeroIntake);
+
+
+		// position + place cube
+		joystick.button7.onTrue(RobotMap.Component.arm.c_shootCubes(3));
+		joystick.button9.onTrue(RobotMap.Component.arm.c_shootCubes(2));
+
+		// position cone
+		joystick.button8.onTrue(RobotMap.Component.arm.c_shootCones(3));
+		joystick.button10.onTrue(RobotMap.Component.arm.c_shootCones(2));
+
+		// intake positions
+		joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
+		joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeFloor());
+
+		// stow positions
+		joystick.button11.onTrue(RobotMap.Component.arm.c_posReturnToHomeDown());
+		joystick.button12.onTrue(RobotMap.Component.arm.c_posReturnToHomeUp());
 	}
 	
 }

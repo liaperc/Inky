@@ -79,8 +79,15 @@ public class ArmSubsystem extends SubsystemBase {
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
+        cones = floorCones;
         var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("intakeShelf").getSecond()).getFirst();
         cmd.setName("arm position - pre shelf intake");
+        return cmd;
+    }
+    public Command c_posIntakeFloor() {
+        cones = floorCones;
+        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeDown").getSecond()).getFirst();
+        cmd.setName("arm position - pre floor intake");
         return cmd;
     }
 
