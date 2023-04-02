@@ -47,6 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
         otherPositions.put("homeUp", new Pair<>(70., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
         otherPositions.put("homeDown", new Pair<>(-37., Units.inchesToMeters(0.)));
         otherPositions.put("intakeGround", new Pair<>(-37., Units.inchesToMeters(4.)));
+        otherPositions.put("intakeShelf", new Pair<>(-37., Units.inchesToMeters(4.))); // TODO WRONG AND BAD
     }
 
 
@@ -61,13 +62,13 @@ public class ArmSubsystem extends SubsystemBase {
         return cmd;
     }
     public Command c_posReturnToHomeDown() {
-        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("homeDown").getFirst(), otherPositions.get("homeDown").getSecond()).getFirst();
         cmd.setName("arm position - home (down)");
         return cmd;
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
-        var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("homeUp").getSecond()).getFirst();
+        var cmd = c_holdArmPose(otherPositions.get("intakeShelf").getFirst(), otherPositions.get("intakeShelf").getSecond()).getFirst();
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
