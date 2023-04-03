@@ -28,7 +28,7 @@ public class DefaultOperator extends Operator {
 		// Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales)
 		var zeroIntake = RobotMap.Component.intake.c_holdVoltage(0);
-		var holdPiece = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1));
+		var holdPiece = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1.6));
 		var runIntake = RobotMap.Component.intake.c_holdVoltage(-8);
 		var runOuttake = RobotMap.Component.intake.c_holdVoltage(3);
 

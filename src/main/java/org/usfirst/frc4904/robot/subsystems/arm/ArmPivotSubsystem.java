@@ -66,18 +66,11 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public final TalonMotorSubsystem armMotorGroup;
     public final TelescopingArmPivotFeedForward feedforward;
     public final DoubleSupplier extensionDealerMeters;
-    private final EncoderWithSlack slackyEncoder;
 
     public ArmPivotSubsystem(TalonMotorSubsystem armMotorGroup, DoubleSupplier extensionDealerMeters) {
         this.armMotorGroup = armMotorGroup;
         this.extensionDealerMeters = () -> extensionDealerMeters.getAsDouble();
         this.feedforward = new TelescopingArmPivotFeedForward(kG_retracted, kG_extended, kS, kV, kA);
-        this.slackyEncoder = new EncoderWithSlack(
-            GEARBOX_SLACK_DEGREES,
-            armMotorGroup::getSensorPositionRotations,
-            Units.rotationsToDegrees(1/GEARBOX_RATIO),
-            true
-        );
     }
 
     public double getCurrentAngleDegrees() {
@@ -91,7 +84,6 @@ public class ArmPivotSubsystem extends SubsystemBase {
      */
     public void initializeEncoderPositions() {
         armMotorGroup.zeroSensors(angleToMotorRevs(HARD_STOP_ARM_ANGLE));
-        slackyEncoder.zeroSlackDirection(true);
     }
 
     public static double motorRevsToAngle(double revs) {

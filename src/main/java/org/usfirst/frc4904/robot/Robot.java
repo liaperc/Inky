@@ -22,6 +22,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -99,10 +100,9 @@ public class Robot extends CommandRobotBase {
             )
         );
 
-
         // Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
-        var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
+        // var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
 
     }
 
@@ -119,11 +119,12 @@ public class Robot extends CommandRobotBase {
         
 
         // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
+        // if (RobotMap.HumanInput.Operator.joystick.getPOV()) {
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
         SmartDashboard.putNumber("zeroing", RobotMap.Component.arm.armExtensionSubsystem.motor.getSensorPositionRotations());
         SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
-
+        //}
         // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
 
 
