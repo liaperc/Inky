@@ -1,6 +1,7 @@
 package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
@@ -101,7 +102,7 @@ public class ArmSubsystem extends SubsystemBase {
         var voltage = cones.get(shelf).getThird();
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
             .andThen(RobotMap.Component.intake.c_holdVoltage(0))
             .andThen(c_posReturnToHomeUp())
         );
@@ -120,7 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
         var voltage = cubes.get(shelf).getThird();
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
             .andThen(RobotMap.Component.intake.c_holdVoltage(0))
             .andThen(c_posReturnToHomeUp())
         );
@@ -129,14 +130,14 @@ public class ArmSubsystem extends SubsystemBase {
     public Command c_holdArmPose(Pair<Double, Double> emacs) {
         return c_holdArmPose(emacs.getFirst(), emacs.getSecond());
     }
-    public Command c_holdArmPose(Pair<Double, Double> emacs, Command onArrivalCommand) {
-        return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), onArrivalCommand);
+    public Command c_holdArmPose(Pair<Double, Double> emacs, Supplier<Command> onArrivalCommandDealer) {
+        return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), onArrivalCommandDealer);
     }
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, null);
     }
 
-    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Command onArrivalCommand) {
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Supplier<Command> onArrivalCommandDealer) {
         var cmd = this.runOnce(() -> {
             Command firstCommand;
             Command secondCommand;
@@ -162,7 +163,7 @@ public class ArmSubsystem extends SubsystemBase {
 
             firstCommand.schedule();
             (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
-            if (onArrivalCommand != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommand)).schedule();
+            if (onArrivalCommandDealer != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommandDealer.get())).schedule();
         }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
         cmd.setName("arm - c_holdArmPose");
         return cmd;
