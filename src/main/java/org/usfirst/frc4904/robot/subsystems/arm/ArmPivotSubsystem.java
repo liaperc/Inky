@@ -17,6 +17,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -165,8 +167,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
         cmd.setName("arm - c_holdRotation");
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
-        return onArrivalCommandDealer == null ? cmd :
-            cmd.alongWith((new WaitCommand(profile.totalTime()))
-            .andThen(new TriggerCommandFactory(onArrivalCommandDealer)));
+        return onArrivalCommandDealer == null ? cmd : new ParallelCommandGroup(
+            cmd,
+            new SequentialCommandGroup(
+                new WaitCommand(profile.totalTime()),
+                new TriggerCommandFactory(onArrivalCommandDealer)
+            )
+        );
     }
 }

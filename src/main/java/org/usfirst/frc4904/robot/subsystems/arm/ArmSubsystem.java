@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.standard.commands.Noop;
+import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.Triple;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
@@ -69,12 +70,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_posReturnToHomeUp() {
-        var cmd = c_holdArmPose(otherPositions.get("homeUp"));
+        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeUp")));
         cmd.setName("arm position - home (up)");
         return cmd;
     }
     public Command c_posReturnToHomeDown() {
-        var cmd = c_holdArmPose(otherPositions.get("homeDown"));
+        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeDown")));
         cmd.setName("arm position - home (down)");
         return cmd;
     }

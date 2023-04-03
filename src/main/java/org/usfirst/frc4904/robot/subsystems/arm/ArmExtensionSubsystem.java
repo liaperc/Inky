@@ -18,6 +18,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WrapperCommand;
@@ -117,9 +119,13 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                                                         new TrapezoidProfile.State((getCurrentExtensionLength() - 0.0853)/0.968, 0));
         var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, () -> (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
         cmd.setName("arm - c_holdExtension");
-        return onArrivalCommandDealer == null ? cmd :
-            cmd.alongWith((new WaitCommand(profile.totalTime()).andThen(
-            new TriggerCommandFactory(onArrivalCommandDealer))));
+        return onArrivalCommandDealer == null ? cmd : new ParallelCommandGroup(
+            cmd,
+            new SequentialCommandGroup(
+                new WaitCommand(profile.totalTime()),
+                new TriggerCommandFactory(onArrivalCommandDealer)
+            )
+        );
     }
 }
 
