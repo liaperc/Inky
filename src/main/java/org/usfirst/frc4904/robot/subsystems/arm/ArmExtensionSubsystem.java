@@ -95,12 +95,18 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     }
 
     public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
-        ezControl controller = new ezControl(kP, kI, kD, 
-                                            (double position, double velocity) -> this.feedforward.calculate(
-                                                Units.degreesToRadians(angleDealer_DEG.getAsDouble()) - (Math.PI/2),
-                                                velocity,
-                                                0
-                                            ));
+        ezControl controller = new ezControl(
+            kP, kI, kD, 
+            (double position, double velocity) -> this.feedforward.calculate(
+                Units.degreesToRadians(angleDealer_DEG.getAsDouble()) - (Math.PI/2),
+                velocity,
+                0
+            )) {
+                @Override
+                public void updateSetpoint(double setpoint, double setpoint_dt) {
+                    super.updateSetpoint(setpoint * 0.968 - 0.0853, setpoint_dt);
+            }
+        };
         
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
                                                         new TrapezoidProfile.State((extensionLengthMeters - 0.0853)/0.968, 0), 

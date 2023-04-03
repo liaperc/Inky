@@ -129,7 +129,11 @@ public class ArmPivotSubsystem extends SubsystemBase {
                 SmartDashboard.putNumber("Intended voltage", maxAccelDegPerSecSquare);
                 return brr;
             }
-        );
+        ){
+            @Override
+            public void updateSetpoint(double setpoint, double setpoint_dt) {
+                super.updateSetpoint(setpoint * 0.911 - 6.3, setpoint_dt);
+        };
 
         TrapezoidProfile profile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelDegPerSec, maxAccelDegPerSecSquare),
