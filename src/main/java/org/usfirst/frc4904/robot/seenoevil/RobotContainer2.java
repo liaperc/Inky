@@ -313,176 +313,176 @@ public class RobotContainer2 {
         return trajectories.get(trajectoryName);
     }
 
-    public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
-        var command = new SequentialCommandGroup(     
-                //1. Position arm to place gamepiece
-                // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+//     public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
+//         var command = new SequentialCommandGroup(     
+//                 //1. Position arm to place gamepiece
+//                 // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
 
-                // implement going over and shooting a cone?
+//                 // implement going over and shooting a cone?
 
-            new ParallelCommandGroup(
-                //3. Retract arm
-                // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                new SequentialCommandGroup(
-                    new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
-                    //4. Drive forward past ramp
-                    getAutonomousCommand(getTrajectory("past_ramp")),
+//             new ParallelCommandGroup(
+//                 //3. Retract arm
+//                 // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+//                 new SequentialCommandGroup(
+//                     new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
+//                     //4. Drive forward past ramp
+//                     getAutonomousCommand(getTrajectory("past_ramp")),
 
-                    //5. Drive back to get partially on ramp
-                    getAutonomousCommand(getTrajectory("back_to_ramp"))
-                )
-            )
-        //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-            //6. balance code here
-        );
+//                     //5. Drive back to get partially on ramp
+//                     getAutonomousCommand(getTrajectory("back_to_ramp"))
+//                 )
+//             )
+//         //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+//             //6. balance code here
+//         );
         
-        return command;
-        }
+//         return command;
+//         }
 
-        public Command balanceAutonAndShootCube(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
+//         public Command balanceAutonAndShootCube(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts){
             
-                var command = new SequentialCommandGroup(     
-                        //1. Position arm to place gamepiece
-                        // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+//                 var command = new SequentialCommandGroup(     
+//                         //1. Position arm to place gamepiece
+//                         // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
         
-                        // implement going over and shooting a cone?
+//                         // implement going over and shooting a cone?
         
-                    new ParallelCommandGroup(
-                        //3. Retract arm
-                        // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst()
-                                .withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond())
-                                .andThen(new WaitCommand(0.8))
-                                .andThen(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getSecond()).andThen(new InstantCommand(() -> RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(0)))
-                                ),
-                        new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 100).getSecond()),
-                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.8).andThen(RobotMap.Component.intake.c_holdVoltage(0))
-                        ),
-                        new SequentialCommandGroup(
-                            new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?
-                            //4. Drive forward past ramp
-                            getAutonomousCommand(getTrajectory("past_ramp")),
+//                     new ParallelCommandGroup(
+//                         //3. Retract arm
+//                         // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+//                         RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst()
+//                                 .withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond())
+//                                 .andThen(new WaitCommand(0.8))
+//                                 .andThen(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getSecond()).andThen(new InstantCommand(() -> RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(0)))
+//                                 ),
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 100).getSecond()),
+//                             RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.8).andThen(RobotMap.Component.intake.c_holdVoltage(0))
+//                         ),
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?
+//                             //4. Drive forward past ramp
+//                             getAutonomousCommand(getTrajectory("past_ramp")),
         
-                            //5. Drive back to get partially on ramp
-                            getAutonomousCommand(getTrajectory("back_to_ramp"))
-                        )
-                    )
-                //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-                    //6. balance code here
-                );
+//                             //5. Drive back to get partially on ramp
+//                             getAutonomousCommand(getTrajectory("back_to_ramp"))
+//                         )
+//                     )
+//                 //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+//                     //6. balance code here
+//                 );
                 
-                return command;
-                }
+//                 return command;
+//                 }
 
-        // public Command notBalanceAuton(){
-        //     var command = new SequentialCommandGroup(     
-        //             //1. Position arm to place gamepiece
-        //             RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
-        //             ,
-        //         new ParallelCommandGroup(
-        //             //3. Retract arm
-        //             RobotMap.Component.arm.c_posReturnToHomeUp(false),
-        //             new SequentialCommandGroup(
-        //                 new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
-        //                 //4. Drive forward past ramp
-        //                 getAutonomousCommand(getTrajectory("past_ramp"))
-        //             )
-        //         )
-        //     );
+//         // public Command notBalanceAuton(){
+//         //     var command = new SequentialCommandGroup(     
+//         //             //1. Position arm to place gamepiece
+//         //             RobotMap.Component.arm.placeCube(2, true) //TODO: set actual timeout
+//         //             ,
+//         //         new ParallelCommandGroup(
+//         //             //3. Retract arm
+//         //             RobotMap.Component.arm.c_posReturnToHomeUp(false),
+//         //             new SequentialCommandGroup(
+//         //                 new WaitCommand(1), //TODO: set wait time to allow arm to get started before moving?
+//         //                 //4. Drive forward past ramp
+//         //                 getAutonomousCommand(getTrajectory("past_ramp"))
+//         //             )
+//         //         )
+//         //     );
             
-        //     return command;
-        // }
+//         //     return command;
+//         // }
 
-        public Command newAuton() {
-                var command = new SequentialCommandGroup(     
-                        //1. Position arm to place gamepiece
-                        // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+//         public Command newAuton() {
+//                 var command = new SequentialCommandGroup(     
+//                         //1. Position arm to place gamepiece
+//                         // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
         
-                        // implement going over and shooting a cone?
+//                         // implement going over and shooting a cone?
         
-                    new ParallelCommandGroup(
-                        //3. Retract arm
-                        // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
-                        new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
-                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
-                            RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
-                        ),
+//                     new ParallelCommandGroup(
+//                         //3. Retract arm
+//                         // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+//                         RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
+//                             RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+//                             RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+//                         ),
                         
-                        new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()+0.5),
-                            getAutonomousCommand(getTrajectory("to_ramp")),
-                            getAutonomousCommand(getTrajectory("angle_ramp_forward")),
-                            new WaitCommand(2),
-                            getAutonomousCommand(getTrajectory("go_over_ramp")),
-                            getAutonomousCommand(getTrajectory("angle_ramp_backward")),
-                            new WaitCommand(2),
-                            getAutonomousCommand(getTrajectory("go_middle_ramp"))
-                        )
-                    )
-                //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-                    //6. balance code here
-                );
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()+0.5),
+//                             getAutonomousCommand(getTrajectory("to_ramp")),
+//                             getAutonomousCommand(getTrajectory("angle_ramp_forward")),
+//                             new WaitCommand(2),
+//                             getAutonomousCommand(getTrajectory("go_over_ramp")),
+//                             getAutonomousCommand(getTrajectory("angle_ramp_backward")),
+//                             new WaitCommand(2),
+//                             getAutonomousCommand(getTrajectory("go_middle_ramp"))
+//                         )
+//                     )
+//                 //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+//                     //6. balance code here
+//                 );
                 
-                return command;
+//                 return command;
 
-        }
+//         }
 
-        public Command shootCubeAndCross() {
-                var command = new SequentialCommandGroup(     
-                        //1. Position arm to place gamepiece
-                        // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
+//         public Command shootCubeAndCross() {
+//                 var command = new SequentialCommandGroup(     
+//                         //1. Position arm to place gamepiece
+//                         // TODO: options: either place the game picee, or try to flip over, shoot, and then come back so that we are in the same state
         
-                        // implement going over and shooting a cone?
+//                         // implement going over and shooting a cone?
         
-                    new ParallelCommandGroup(
-                        //3. Retract arm
-                        // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst()
-                                .withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond())
-                                .andThen(new WaitCommand(0.8))
-                                .andThen(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getSecond()).andThen(new InstantCommand(() -> RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(0)))
-                                ),
-                        new SequentialCommandGroup(
-                            new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 100).getSecond()),
-                            RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.8).andThen(RobotMap.Component.intake.c_holdVoltage(0))
-                        ),
-                        new SequentialCommandGroup(
-                            new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?
-                            //4. Drive out of the community and stop right in front of the next game piece.
-                            getAutonomousCommand(getTrajectory("go_to_pickup_next"))
+//                     new ParallelCommandGroup(
+//                         //3. Retract arm
+//                         // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+//                         RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst()
+//                                 .withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond())
+//                                 .andThen(new WaitCommand(0.8))
+//                                 .andThen(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getSecond()).andThen(new InstantCommand(() -> RobotMap.Component.arm.armPivotSubsystem.armMotorGroup.setVoltage(0)))
+//                                 ),
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 100).getSecond()),
+//                             RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.8).andThen(RobotMap.Component.intake.c_holdVoltage(0))
+//                         ),
+//                         new SequentialCommandGroup(
+//                             new WaitCommand(2.5), //TODO: set wait time to allow arm to get started before moving?
+//                             //4. Drive out of the community and stop right in front of the next game piece.
+//                             getAutonomousCommand(getTrajectory("go_to_pickup_next"))
 
-                        )
-                    )
-                //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-                    //6. balance code here
-                );
+//                         )
+//                     )
+//                 //     new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+//                     //6. balance code here
+//                 );
                 
-                return command;
-        }
-        public Command shoot2auto(){ //shoot cone, grab cube, shoot cube, doesn't balance
-                var command = new SequentialCommandGroup(
-                        RobotMap.Component.arm.c_shootCones(4),
-                        new ParallelCommandGroup(
-                                RobotMap.Component.arm.c_posReturnToHomeDown(),
-                                getAutonomousCommand(getTrajectory("go_to_pickup_next"))
-                        ),
-                        RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(0.5), //TODO: for picking up cone tune to make sure it works
-                        new ParallelRaceGroup(
-                                RobotMap.Component.intake.c_holdVoltage(-1),
-                                getAutonomousCommand(getTrajectory("from_pickup_to_place"))
-                                ),
-                        new ParallelCommandGroup( // shootign cube
-                                RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
-                                        RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
-                                        RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
-                                ))
-                );
-                return command;
-        }
+//                 return command;
+//         }
+//         public Command shoot2auto(){ //shoot cone, grab cube, shoot cube, doesn't balance
+//                 var command = new SequentialCommandGroup(
+//                         RobotMap.Component.arm.c_shootCones(4),
+//                         new ParallelCommandGroup(
+//                                 RobotMap.Component.arm.c_posReturnToHomeDown(),
+//                                 getAutonomousCommand(getTrajectory("go_to_pickup_next"))
+//                         ),
+//                         RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(0.5), //TODO: for picking up cone tune to make sure it works
+//                         new ParallelRaceGroup(
+//                                 RobotMap.Component.intake.c_holdVoltage(-1),
+//                                 getAutonomousCommand(getTrajectory("from_pickup_to_place"))
+//                                 ),
+//                         new ParallelCommandGroup( // shootign cube
+//                                 RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getFirst(),
+//                                 new SequentialCommandGroup(
+//                                         new WaitCommand(RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(180-15, 150, 200).getSecond()),
+//                                         RobotMap.Component.intake.c_holdVoltage(4.5).withTimeout(0.5),
+//                                         RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(0, 150, 150).getFirst().withTimeout(0.8)
+//                                 ))
+//                 );
+//                 return command;
+//         }
         
 }

@@ -28,8 +28,8 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_EXTENSION = 1;
     public static final double MAX_ACCEL_EXTENSION = 2;
     
-    public static final double MAX_VELOCITY_PIVOT = 150;
-    public static final double MAX_ACCEL_PIVOT = 200;
+    public static final double MAX_VELOCITY_PIVOT = 160;
+    public static final double MAX_ACCEL_PIVOT = 210;
 
     public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
     static {
@@ -59,7 +59,7 @@ public class ArmSubsystem extends SubsystemBase {
     static {
         // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0 in degrees, meters
         otherPositions.put("homeUp", new Pair<>(70., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
-        otherPositions.put("homeDown", new Pair<>(-37., Units.inchesToMeters(0.)));
+        otherPositions.put("homeDown", new Pair<>(-41., -0.1));
         otherPositions.put("intakeShelf", new Pair<>(25., Units.inchesToMeters(20.)));
     }
 
