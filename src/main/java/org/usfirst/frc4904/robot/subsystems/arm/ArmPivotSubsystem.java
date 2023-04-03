@@ -171,7 +171,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             cmd,
             new SequentialCommandGroup(
                 new WaitCommand(profile.totalTime()),
-                new TriggerCommandFactory(onArrivalCommandDealer)
+                new TriggerCommandFactory("arm pivot", onArrivalCommandDealer)
             )
         );
     }

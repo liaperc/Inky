@@ -58,5 +58,4 @@ public class DefaultOperator extends Operator {
 		joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown()));
 		joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp()));
 	}
-	
 }

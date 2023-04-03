@@ -123,7 +123,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             cmd,
             new SequentialCommandGroup(
                 new WaitCommand(profile.totalTime()),
-                new TriggerCommandFactory(onArrivalCommandDealer)
+                new TriggerCommandFactory("arm extension", onArrivalCommandDealer)
             )
         );
     }

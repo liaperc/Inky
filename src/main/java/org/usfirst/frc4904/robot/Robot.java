@@ -127,6 +127,9 @@ public class Robot extends CommandRobotBase {
         //}
         // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
 
+        SmartDashboard.putData(RobotMap.Component.arm.armPivotSubsystem);
+        SmartDashboard.putData(RobotMap.Component.arm.armExtensionSubsystem);
+
 
     }
 
