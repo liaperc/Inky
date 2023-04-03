@@ -98,12 +98,6 @@ public class Robot extends CommandRobotBase {
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
             )
         );
-
-
-        // Intake
-		// FIXME: use nameCommand to make it cleaner with expresions (no varibales) 
-        var cmdnull = RobotMap.Component.intake.c_holdVoltage(0);
-
     }
 
     @Override
