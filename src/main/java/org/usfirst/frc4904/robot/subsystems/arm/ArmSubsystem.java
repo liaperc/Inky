@@ -1,10 +1,13 @@
 package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
+import org.usfirst.frc4904.standard.commands.Noop;
 import org.usfirst.frc4904.standard.custom.Triple;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
@@ -138,34 +141,35 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Supplier<Command> onArrivalCommandDealer) {
-        var cmd = this.runOnce(() -> {
-            Command firstCommand;
-            Command secondCommand;
-            double wait;
-            double secondWait;
+        final Supplier<Command> sanitizedArrivalCommandDealer = onArrivalCommandDealer != null ? onArrivalCommandDealer : () -> new Noop();
 
-            Pair<Command, Double> pivotMovement = armPivotSubsystem.c_holdRotation(degreesFromHorizontal,
-                    MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT);
-            Pair<Command, Double> extensionMovement = armExtensionSubsystem.c_holdExtension(extensionLengthMeters,
-                    MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION);
+        Function<Supplier<Command>, Command> pivotAndThen = (then) -> armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT, then);
+        Function<Supplier<Command>, Command> extendAndThen = (then) -> armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION, then);
 
-            if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
-                firstCommand = pivotMovement.getFirst();
-                wait = pivotMovement.getSecond();
-                secondCommand = extensionMovement.getFirst();
-                secondWait = wait + extensionMovement.getSecond();
-            } else {
-                firstCommand = extensionMovement.getFirst();
-                wait = extensionMovement.getSecond();
-                secondCommand = pivotMovement.getFirst();
-                secondWait = wait + pivotMovement.getSecond();
-            }
+        if (extensionLengthMeters > armExtensionSubsystem.getCurrentExtensionLength()) {
+            return pivotAndThen.apply(() -> extendAndThen.apply(sanitizedArrivalCommandDealer));
+        } else {
+            return extendAndThen.apply(() -> pivotAndThen.apply(sanitizedArrivalCommandDealer));
+        }
 
-            firstCommand.schedule();
-            (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
-            if (onArrivalCommandDealer != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommandDealer.get())).schedule();
-        }); // long story. basically, parallel command group requires it's subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
-        cmd.setName("arm - c_holdArmPose");
-        return cmd;
+        // if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
+        //     firstCommand = pivotMovement.getFirst();
+        //     wait = pivotMovement.getSecond();
+        //     secondCommand = extensionMovement.getFirst();
+        //     secondWait = wait + extensionMovement.getSecond();
+        // } else {
+        //     firstCommand = extensionMovement.getFirst();
+        //     wait = extensionMovement.getSecond();
+        //     secondCommand = pivotMovement.getFirst();
+        //     secondWait = wait + pivotMovement.getSecond();
+        // }
+
+        // firstCommand.schedule();
+        // (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
+        // if (onArrivalCommandDealer != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommandDealer.get())).schedule();
+
+        // }); // long story. basically, parallel command group requires its subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
+        // cmd.setName("arm - c_holdArmPose");
+        // return cmd;
     }
 }

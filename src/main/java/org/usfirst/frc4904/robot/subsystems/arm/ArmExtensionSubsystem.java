@@ -4,8 +4,10 @@
 package org.usfirst.frc4904.robot.subsystems.arm;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.opencv.core.Mat.Tuple2;
+import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M = Units.inchesToMeters(48);
@@ -94,7 +98,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         return cmd;
     }
 
-    public Pair<Command, Double> c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration) {
+    public Command c_holdExtension(double extensionLengthMeters, double maxVelocity, double maxAcceleration, Supplier<Command> onArrivalCommandDealer) {
         ezControl controller = new ezControl(
             kP, kI, kD, 
             (double position, double velocity) -> this.feedforward.calculate(
@@ -111,9 +115,11 @@ public class ArmExtensionSubsystem extends SubsystemBase {
         TrapezoidProfile profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 
                                                         new TrapezoidProfile.State((extensionLengthMeters - 0.0853)/0.968, 0), 
                                                         new TrapezoidProfile.State((getCurrentExtensionLength() - 0.0853)/0.968, 0));
-        var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
+        var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, () -> (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
         cmd.setName("arm - c_holdExtension");
-        return new Pair<Command, Double>(cmd, profile.totalTime());
+        return onArrivalCommandDealer == null ? cmd :
+            cmd.alongWith((new WaitCommand(profile.totalTime()).andThen(
+            new TriggerCommandFactory(onArrivalCommandDealer))));
     }
 }
 

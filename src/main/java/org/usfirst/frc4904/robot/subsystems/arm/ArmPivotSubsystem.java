@@ -1,8 +1,12 @@
 package org.usfirst.frc4904.robot.subsystems.arm;
 
+import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.opencv.core.Mat.Tuple2;
+import org.usfirst.frc4904.standard.commands.Noop;
+import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
@@ -14,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class ArmPivotSubsystem extends SubsystemBase {
     public static final double HARD_STOP_ARM_ANGLE = -38;
@@ -116,7 +121,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
         return cmd;
     }
 
-    public Pair<Command, Double> c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare) {
+    public Command c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare, Supplier<Command> onArrivalCommandDealer) {
         ezControl controller = new ezControl(
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
@@ -133,6 +138,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             @Override
             public void updateSetpoint(double setpoint, double setpoint_dt) {
                 super.updateSetpoint(setpoint * 0.911 - 6.3, setpoint_dt);
+            }
         };
 
         TrapezoidProfile profile = new TrapezoidProfile(
@@ -140,6 +146,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             new TrapezoidProfile.State((degreesFromHorizontal + 6.3)/0.911, 0),
             new TrapezoidProfile.State((getCurrentAngleDegrees() + 6.3)/0.911, 0)
         );
+
         var cmd = new ezMotion(
             controller,
             () -> this.getCurrentAngleDegrees(),
@@ -158,7 +165,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
         cmd.setName("arm - c_holdRotation");
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
-        return new Pair<Command,Double>(
-            cmd, profile.totalTime());
+        return onArrivalCommandDealer == null ? cmd :
+            cmd.alongWith((new WaitCommand(profile.totalTime()))
+            .andThen(new TriggerCommandFactory(onArrivalCommandDealer)));
     }
 }
