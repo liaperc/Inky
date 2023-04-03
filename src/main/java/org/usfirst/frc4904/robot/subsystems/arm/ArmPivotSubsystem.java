@@ -59,8 +59,8 @@ public class ArmPivotSubsystem extends SubsystemBase {
     public static final double kG_extended = 0.6;
 
     // TODO: tune
-    public static final double kP = 0;//0.04; //extended: .36915 retracted: .01464
-    public static final double kI = 0;//0.01;
+    public static final double kP = 0.06;//;//0.04; //extended: .36915 retracted: .01464
+    public static final double kI = 0.02;//0.01;
     public static final double kD = 0;
 
     public final TalonMotorSubsystem armMotorGroup;

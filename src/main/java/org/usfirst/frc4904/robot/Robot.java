@@ -121,6 +121,7 @@ public class Robot extends CommandRobotBase {
         // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
+        SmartDashboard.putNumber("zeroing", RobotMap.Component.arm.armExtensionSubsystem.motor.getSensorPositionRotations());
         SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
 
         // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
