@@ -119,7 +119,7 @@ public class Robot extends CommandRobotBase {
         
 
         // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
-        // if (RobotMap.HumanInput.Operator.joystick.getPOV()) {
+        // if (RobotMap.HumanInput.Operator.joystick.getPOV() != 0) {
         SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
         SmartDashboard.putNumber("arm extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
         SmartDashboard.putNumber("zeroing", RobotMap.Component.arm.armExtensionSubsystem.motor.getSensorPositionRotations());
