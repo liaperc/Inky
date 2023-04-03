@@ -38,6 +38,10 @@ public class Robot extends CommandRobotBase {
     private final Driver driver = new NathanGain();
     private final org.usfirst.frc4904.standard.humaninput.Operator operator = new DefaultOperator();
 
+    protected double scaleGain(double input, double gain, double exp) {
+		return Math.pow(Math.abs(input), exp) * gain * Math.signum(input);
+	}
+
     @Override
     public void initialize() {
     }
@@ -93,7 +97,7 @@ public class Robot extends CommandRobotBase {
         //     RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         // ));
 
-        final DoubleSupplier pivot_getter = () -> RobotMap.HumanInput.Operator.joystick.getAxis(1) * 50;  
+        final DoubleSupplier pivot_getter = () -> scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(1), 60, 3);  
         (new Trigger(() -> pivot_getter.getAsDouble() != 0)).onTrue(
             nameCommand("arm - teleop - armPivot operator override",
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)
