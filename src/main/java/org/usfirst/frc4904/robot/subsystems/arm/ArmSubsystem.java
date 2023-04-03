@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.standard.commands.Noop;
@@ -111,11 +112,10 @@ public class ArmSubsystem extends SubsystemBase {
         var voltage = cones.get(shelf).getThird();
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-            () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
-            .andThen(new ParallelCommandGroup(
-                RobotMap.Component.intake.c_holdVoltage(0),
-                c_posReturnToHomeUp()
-            ))
+            () -> new SequentialCommandGroup(
+                RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
+                RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp()
+            ) 
         );
     }
    
@@ -132,11 +132,10 @@ public class ArmSubsystem extends SubsystemBase {
         var voltage = cubes.get(shelf).getThird();
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-            () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
-            .andThen(new ParallelCommandGroup(
-                RobotMap.Component.intake.c_holdVoltage(0),
-                c_posReturnToHomeUp()
-            ))
+            () -> new SequentialCommandGroup(
+                    RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
+                    RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp()
+            )
         );
     }
 
