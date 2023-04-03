@@ -26,6 +26,12 @@ public class Intake extends SubsystemBase {
         leftMotors.setPower(power);
         rightMotors.setPower(-power);
     }
+    public Command c_neutralOutput() {
+        return Commands.runOnce(() -> {
+            leftMotors.neutralOutput();
+            rightMotors.neutralOutput();
+        }, leftMotors, rightMotors);
+    }
     public Command c_holdVoltage(double voltage) {
         return Commands.run(() -> {
             setVoltage(voltage);

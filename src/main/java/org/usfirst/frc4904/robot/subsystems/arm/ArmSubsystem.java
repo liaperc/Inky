@@ -71,13 +71,16 @@ public class ArmSubsystem extends SubsystemBase {
         this.armExtensionSubsystem = armExtensionSubsystem;
     }
 
-    public Command c_posReturnToHomeUp() {
-        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeUp")));
+    public Command c_posReturnToHomeUp() { return c_posReturnToHomeUp(null); }
+    public Command c_posReturnToHomeUp(Supplier<Command> onArrivalCommandDealer) {
+        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeUp"), onArrivalCommandDealer));
         cmd.setName("arm position - home (up)");
         return cmd;
     }
-    public Command c_posReturnToHomeDown() {
-        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeDown")));
+
+    public Command c_posReturnToHomeDown() { return c_posReturnToHomeDown(null); }
+    public Command c_posReturnToHomeDown(Supplier<Command> onArrivalCommandDealer) {
+        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeDown"), onArrivalCommandDealer));
         cmd.setName("arm position - home (down)");
         return cmd;
     }
