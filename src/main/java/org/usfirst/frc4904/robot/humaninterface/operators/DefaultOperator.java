@@ -2,6 +2,7 @@ package org.usfirst.frc4904.robot.humaninterface.operators;
 
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
+import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.humaninput.Operator;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,20 +43,20 @@ public class DefaultOperator extends Operator {
 
 
 		// position + place cube
-		joystick.button7.onTrue(RobotMap.Component.arm.c_shootCubes(3));
-		joystick.button9.onTrue(RobotMap.Component.arm.c_shootCubes(2));
+		joystick.button7 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(3)));
+		joystick.button9 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(2)));
 
 		// position cone
-		joystick.button8.onTrue(RobotMap.Component.arm.c_shootCones(3));
-		joystick.button10.onTrue(RobotMap.Component.arm.c_shootCones(2));
+		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3)));
+		joystick.button10.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(2)));
 
 		// intake positions
-		joystick.button6.onTrue(RobotMap.Component.arm.c_posIntakeShelf());
-		joystick.button4.onTrue(RobotMap.Component.arm.c_posIntakeFloor());
+		joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf()));
+		joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor()));
 
 		// stow positions
-		joystick.button11.onTrue(RobotMap.Component.arm.c_posReturnToHomeDown());
-		joystick.button12.onTrue(RobotMap.Component.arm.c_posReturnToHomeUp());
+		joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown()));
+		joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp()));
 	}
 	
 }
