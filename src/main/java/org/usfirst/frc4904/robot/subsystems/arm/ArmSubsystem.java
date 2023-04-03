@@ -15,7 +15,7 @@ import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -31,16 +31,18 @@ public class ArmSubsystem extends SubsystemBase {
     public static final double MAX_VELOCITY_PIVOT = 160;
     public static final double MAX_ACCEL_PIVOT = 210;
 
+    // SHELF CONES
     public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
-    static {
+    static { // SHELF CONES
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         shelfCones.put(2, new Triple<>(29., Units.inchesToMeters(16), 3.));
         shelfCones.put(3, new Triple<>(41., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
         shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 4.));
     }
     
+    // FLOOR CONES
     public static final HashMap<Integer, Triple<Double, Double, Double>> floorCones = new HashMap<>(); //in degrees, meters
-    static {
+    static { // FLOOR CONES
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         floorCones.put(2, new Triple<>(29., Units.inchesToMeters(14), 3.));
         floorCones.put(3, new Triple<>(29., ArmExtensionSubsystem.MAX_EXTENSION_M-0.02, 3.));
@@ -58,7 +60,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
     static {
         // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0 in degrees, meters
-        otherPositions.put("homeUp", new Pair<>(70., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
+        otherPositions.put("homeUp", new Pair<>(65., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
         otherPositions.put("homeDown", new Pair<>(-41., -0.1));
         otherPositions.put("intakeShelf", new Pair<>(25., Units.inchesToMeters(20.)));
     }
@@ -81,7 +83,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
     public Command c_posIntakeShelf() {
         // TODO: back up 14 inches -- remember to always use meters
-        cones = floorCones;
+        cones = shelfCones;
         var cmd = c_holdArmPose(otherPositions.get("intakeShelf"));
         cmd.setName("arm position - pre shelf intake");
         return cmd;
@@ -107,8 +109,10 @@ public class ArmSubsystem extends SubsystemBase {
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
-            .andThen(RobotMap.Component.intake.c_holdVoltage(0))
-            .andThen(c_posReturnToHomeUp())
+            .andThen(new ParallelCommandGroup(
+                RobotMap.Component.intake.c_holdVoltage(0),
+                c_posReturnToHomeUp()
+            ))
         );
     }
    
@@ -126,8 +130,10 @@ public class ArmSubsystem extends SubsystemBase {
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
-            .andThen(RobotMap.Component.intake.c_holdVoltage(0))
-            .andThen(c_posReturnToHomeUp())
+            .andThen(new ParallelCommandGroup(
+                RobotMap.Component.intake.c_holdVoltage(0),
+                c_posReturnToHomeUp()
+            ))
         );
     }
 
