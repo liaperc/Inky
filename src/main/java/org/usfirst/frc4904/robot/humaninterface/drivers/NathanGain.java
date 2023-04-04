@@ -16,7 +16,7 @@ public class NathanGain extends Driver {
 
 
 	public static final double NORMAL_SPEED_GAIN = 0.5; // TODO TUNE
-	public static final double NORMAL_TURN_GAIN = 0.3;
+	public static final double NORMAL_TURN_GAIN = 0.25;
 
 	public static final double PRECISE_SPEED_SCALE = 0.2;	
 	public static final double PRECISE_TURN_SCALE = 0.1;

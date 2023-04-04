@@ -97,7 +97,7 @@ public class Robot extends CommandRobotBase {
         //     RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
         // ));
 
-        final DoubleSupplier pivot_getter = () -> scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(1), 60, 3);  
+        final DoubleSupplier pivot_getter = () -> scaleGain(RobotMap.HumanInput.Operator.joystick.getAxis(1),60, 1);  
         (new Trigger(() -> pivot_getter.getAsDouble() != 0)).onTrue(
             nameCommand("arm - teleop - armPivot operator override",
                 RobotMap.Component.arm.armPivotSubsystem.c_controlAngularVelocity(pivot_getter::getAsDouble)

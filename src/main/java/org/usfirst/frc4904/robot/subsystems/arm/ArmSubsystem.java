@@ -36,9 +36,9 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
     static { // SHELF CONES
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
-        shelfCones.put(2, new Triple<>(29., Units.inchesToMeters(16), 3.));
+        shelfCones.put(2, new Triple<>(29., Units.inchesToMeters(15), 3.));
         shelfCones.put(3, new Triple<>(41., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
-        shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 4.));
+        shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
     
     // FLOOR CONES
