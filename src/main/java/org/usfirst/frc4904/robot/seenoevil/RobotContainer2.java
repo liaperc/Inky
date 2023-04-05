@@ -133,13 +133,13 @@ public class RobotContainer2 {
                 entry("straight_forward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(),//List.of(new Translation2d(2, 0)),
-                        new Pose2d(2, 0, new Rotation2d(Math.PI/4)),
+                        new Pose2d(2, 0, new Rotation2d(0)),
                         trajectoryConfig
                 )),
                 entry("straight_backward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(Math.PI)),
                         List.of(new Translation2d(1, 0)),
-                        new Pose2d(6, 0, new Rotation2d(Math.PI)),
+                        new Pose2d(2, 0, new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
                 )),
                 entry("turn_right", TrajectoryGenerator.generateTrajectory(
@@ -440,6 +440,23 @@ public class RobotContainer2 {
                     getAutonomousCommand(getTrajectory("from_cube_place_to_ramp_edge")),
                     new WaitCommand(1.5), //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
                     getAutonomousCommand(getTrajectory("onto_ramp"))
+            ));
+        return cmd;
+    }
+
+    public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
+        var cmd = RobotMap.Component.arm.c_shootCubes(4, // shoot cone
+            () -> new SequentialCommandGroup(
+                    new ParallelCommandGroup( // then, in parallel
+                        getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
+                        (new WaitCommand(1)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                    ),
+                    new TriggerCommandFactory( // then, as a separated parallel schedule,
+                            (Supplier<Command>)() -> RobotMap.Component.intake.c_holdItem(), // hold the game piece in
+                            () -> getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+                    ),
+                    RobotMap.Component.arm.c_shootCubes(5), // finally, shoot the cube we just picked up and stow
+                    getAutonomousCommand(getTrajectory("straight_forward"))
             ));
         return cmd;
     }
