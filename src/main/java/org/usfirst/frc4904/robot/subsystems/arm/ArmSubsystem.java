@@ -56,6 +56,8 @@ public class ArmSubsystem extends SubsystemBase {
         // cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
         cubes.put(2, new Triple<>(15., Units.inchesToMeters(0), 4.5));
         cubes.put(3, new Triple<>(20., Units.inchesToMeters(0), 4.5));
+        cubes.put(4, new Triple<>(180.-20, Units.inchesToMeters(0), 4.5));
+        cubes.put(5, new Triple<>(180.-15, Units.inchesToMeters(0), 4.5));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
@@ -106,7 +108,8 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
     }
 
-    public Command c_shootCones(int shelf) {
+    public Command c_shootCones(int shelf) { return c_shootCones(shelf, null); }
+    public Command c_shootCones(int shelf, Supplier<Command> onArrivalCommandDealer) {
         var degreesFromHorizontal = cones.get(shelf).getFirst();
         var extensionLengthMeters = cones.get(shelf).getSecond();
         var voltage = cones.get(shelf).getThird();
@@ -114,7 +117,7 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> new SequentialCommandGroup(
                 RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
-                RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp()
+                RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp(onArrivalCommandDealer)
             ) 
         );
     }
@@ -126,7 +129,8 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, null);
     }
 
-    public Command c_shootCubes(int shelf) {
+    public Command c_shootCubes(int shelf) { return c_shootCubes(shelf, null); }
+    public Command c_shootCubes(int shelf, Supplier<Command> onArrivalCommandDealer) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
         var extensionLengthMeters = cubes.get(shelf).getSecond();
         var voltage = cubes.get(shelf).getThird();
@@ -134,7 +138,7 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> new SequentialCommandGroup(
                     RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
-                    RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp()
+                    RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp(onArrivalCommandDealer)
             )
         );
     }
