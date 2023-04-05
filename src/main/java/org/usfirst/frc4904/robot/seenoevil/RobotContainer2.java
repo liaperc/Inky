@@ -183,16 +183,29 @@ public class RobotContainer2 {
                 List.of(),
                 new Pose2d(Units.inchesToMeters(53.5), 0, new Rotation2d(Math.PI)),
                 trajectoryConfigReversed)),
-        entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory(
+        entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
-                new Pose2d(4.44, 0, new Rotation2d(0)),
+                new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
                 trajectoryConfig)),
-        entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                List.of(),
-                new Pose2d(4.44, 0, new Rotation2d(Math.PI)),
-                trajectoryConfigReversed)));
+        entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+                new Pose2d(0, 0, new Rotation2d(Math.PI)), 
+                List.of(),//same x as last time, little extra is to straighten out, could be tuned
+                new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                trajectoryConfigReversed)),
+        entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
+            new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
+            List.of(),
+            new Pose2d(0.503+0.4, 0.95, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            trajectoryConfig)),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+        entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
+            new Pose2d(0, 0, new Rotation2d(0)), 
+            List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
+            new Pose2d(0.61+0.2, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
+            trajectoryConfig)));
+
+
+
 
     public static class Component {
         public static WPI_TalonFX leftATalonFX;
@@ -394,6 +407,24 @@ public class RobotContainer2 {
                             () -> getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
                     ),
                     RobotMap.Component.arm.c_shootCubes(4) // finally, shoot the cube we just picked up and stow
+            ));
+        return cmd;
+    }
+    public Command twoPieceBalanceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
+        var cmd = RobotMap.Component.arm.c_shootCones(4, // shoot cone
+            () -> new SequentialCommandGroup(
+                    new ParallelCommandGroup( // then, in parallel
+                        getAutonomousCommand(getTrajectory("go_to_pickup_next")), // go to pickup location
+                        (new WaitCommand(2.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                    ),
+                    new TriggerCommandFactory( // then, as a separated parallel schedule,
+                            () -> RobotMap.Component.intake.c_holdVoltage(-1), // hold the game piece in
+                            () -> getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
+                    ),
+                    RobotMap.Component.arm.c_shootCubes(4), // finally, shoot the cube we just picked up and stow
+                    getAutonomousCommand(getTrajectory("from_cube_place_to_ramp_edge")),
+                    new WaitCommand(1.5), //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
+                    getAutonomousCommand(getTrajectory("onto_ramp"))
             ));
         return cmd;
     }
