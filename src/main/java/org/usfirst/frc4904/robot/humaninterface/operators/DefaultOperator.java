@@ -20,22 +20,20 @@ public class DefaultOperator extends Operator {
 	public void bindCommands() {
 		var joystick = RobotMap.HumanInput.Operator.joystick;
 		
-        joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.3));
+		// manual extension and retraction
+        joystick.button3.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> -0.45));
         joystick.button3.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
-
-        joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.3));
+        joystick.button5.onTrue(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0.45));
 		joystick.button5.onFalse(RobotMap.Component.arm.armExtensionSubsystem.c_controlVelocity(() -> 0));
 
 		// Intake
 		// FIXME: use nameCommand to make it cleaner with expresions (no varibales)
 		var zeroIntake = RobotMap.Component.intake.c_holdVoltage(0);
-		var holdPiece = RobotMap.Component.intake.c_holdVoltage(-2).withTimeout(0.5).andThen(RobotMap.Component.intake.c_holdVoltage(-1.6));
-		var runIntake = RobotMap.Component.intake.c_holdVoltage(-8);
 		var runOuttake = RobotMap.Component.intake.c_holdVoltage(3);
 
 		// intake
-		joystick.button2.onTrue(runIntake);
-		joystick.button2.onFalse(holdPiece);
+		joystick.button2.onTrue(RobotMap.Component.intake.c_startIntake());
+		joystick.button2.onFalse(RobotMap.Component.intake.c_holdItem());
 
 		// outtake
 		joystick.button1.onTrue(runOuttake);
@@ -50,12 +48,22 @@ public class DefaultOperator extends Operator {
 		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3)));
 		joystick.button10.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(2)));
 
+
 		// intake positions
-		joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf()));
-		joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor()));
+		joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf(null)));
+		joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(null)));
 
 		// stow positions
-		joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown()));
-		joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp()));
+		joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown(null)));
+		joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)));
+
+
+		// // intake positions
+		// joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf(() -> RobotMap.Component.intake.c_startIntake())));
+		// joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_startIntake())));
+
+		// // stow positions
+		// joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown(() -> RobotMap.Component.intake.c_holdItem())));
+		// joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(() -> RobotMap.Component.intake.c_holdItem())));
 	}
 }

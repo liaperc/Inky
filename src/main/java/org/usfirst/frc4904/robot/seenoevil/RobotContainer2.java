@@ -117,44 +117,48 @@ public class RobotContainer2 {
             10))
         .setReversed(true);
 
-
-    private static Map<String, Trajectory> trajectories = Map.ofEntries(
-        entry("sickle", TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
-                // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist,
-                // -.15*dist)),
-                List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
-
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, 0, new Rotation2d(0)),
-                trajectoryConfig)),
-        entry("straight_forward", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(new Translation2d(1, 0)),
-                new Pose2d(6, 0, new Rotation2d(0)),
-                trajectoryConfig)),
-        entry("straight_backward", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                List.of(new Translation2d(1, 0)),
-                new Pose2d(6, 0, new Rotation2d(Math.PI)),
-                trajectoryConfigReversed)),
-        entry("turn_right", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(1, -1, new Rotation2d(-Math.PI / 2)),
-                trajectoryConfig)),
-        entry("past_ramp", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(4, 0, new Rotation2d(0)),
-                trajectoryConfig)),
-        entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                List.of(),
-                new Pose2d(1, 0, new Rotation2d(Math.PI)),
-                trajectoryConfigReversed)),
+        private static Map<String, Trajectory> trajectories = Map.ofEntries(
+                entry("sickle", TrajectoryGenerator.generateTrajectory(
+                        // Start at the origin facing the +X direction
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        // Pass through these two interior waypoints, making an 's' curve path
+                        // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist, -.15*dist)),
+                        List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
+        
+                        // End 3 meters straight ahead of where we started, facing forward
+                        new Pose2d(3, 0, new Rotation2d(0)),
+                        trajectoryConfig)
+                ),
+                entry("straight_forward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),//List.of(new Translation2d(2, 0)),
+                        new Pose2d(2, 0, new Rotation2d(Math.PI/4)),
+                        trajectoryConfig
+                )),
+                entry("straight_backward", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
+                        List.of(new Translation2d(1, 0)),
+                        new Pose2d(6, 0, new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
+                )),
+                entry("turn_right", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
+                        trajectoryConfig
+                )),
+                entry("past_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(0)),
+                        List.of(),
+                        new Pose2d(4, 0, new Rotation2d(0)),
+                        trajectoryConfig
+                )),
+                entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
+                        List.of(),
+                        new Pose2d(1, 0, new Rotation2d(Math.PI)),
+                        trajectoryConfigReversed
+                )),
 
         // new auton
         entry("to_ramp", TrajectoryGenerator.generateTrajectory(
@@ -278,19 +282,29 @@ public class RobotContainer2 {
             m_robotDrive::tankDriveVolts,
             m_robotDrive
         );
+	
+		// Reset odometry to the starting pose of the trajectory.
+		// Pose2d initialPose = trajectory.getInitialPose();
+		// SmartDashboard.putString("initial pose", initialPose.toString());
+		// return new Gaming(m_robotDrive);
+		// Run path following command, then stop at the end.
+		// return Commands.run(() -> m_robotDrive.tankDriveVolts(1, 1), m_robotDrive);
+		//return Commands.runOnce(() -> m_robotDrive.arcadeDrive(0.5, 0), m_robotDrive);
+		//return Commands.runOnce(() -> Component.testTalon.setVoltage(6));
+                // m_robotDrive.resetOdometry(trajectory.getInitialPose());
+		// return Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose())
+                //                 ) .andThen(                ramseteCommand)
+		// 	.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
 
-        // Reset odometry to the starting pose of the trajectory.
-        // Pose2d initialPose = trajectory.getInitialPose();
-        // SmartDashboard.putString("initial pose", initialPose.toString());
-        // return new Gaming(m_robotDrive);
-        // Run path following command, then stop at the end.
-        // return Commands.run(() -> m_robotDrive.tankDriveVolts(1, 1), m_robotDrive);
-        // return Commands.runOnce(() -> m_robotDrive.arcadeDrive(0.5, 0),
-        // m_robotDrive);
-        // return Commands.runOnce(() -> Component.testTalon.setVoltage(6));
-        return Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose())).andThen(ramseteCommand)
-                .andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-    }
+                var cmd = new SequentialCommandGroup(
+                        Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose())),
+                        ramseteCommand,
+                        Commands.runOnce(() -> m_robotDrive.tankDriveVolts(0, 0)),
+                        Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose()))
+                );
+                cmd.addRequirements(m_robotDrive);
+                return cmd;
+	}
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

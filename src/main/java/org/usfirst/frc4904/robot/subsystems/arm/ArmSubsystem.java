@@ -26,8 +26,8 @@ public class ArmSubsystem extends SubsystemBase {
     public final ArmPivotSubsystem armPivotSubsystem;
     public final ArmExtensionSubsystem armExtensionSubsystem;
 
-    public static final double MAX_VELOCITY_EXTENSION = 1;
-    public static final double MAX_ACCEL_EXTENSION = 2;
+    public static final double MAX_VELOCITY_EXTENSION = 1.5;
+    public static final double MAX_ACCEL_EXTENSION = 3;
     
     public static final double MAX_VELOCITY_PIVOT = 160;
     public static final double MAX_ACCEL_PIVOT = 210;
@@ -36,7 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<Integer, Triple<Double, Double, Double>> shelfCones = new HashMap<>(); //in degrees, meters
     static { // SHELF CONES
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
-        shelfCones.put(2, new Triple<>(29., Units.inchesToMeters(15), 3.));
+        shelfCones.put(2, new Triple<>(29.5, Units.inchesToMeters(18), 3.));
         shelfCones.put(3, new Triple<>(41., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
         shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
@@ -87,16 +87,16 @@ public class ArmSubsystem extends SubsystemBase {
         cmd.setName("arm position - home (down)");
         return cmd;
     }
-    public Command c_posIntakeShelf() {
+    public Command c_posIntakeShelf(Supplier<Command> onArrivalCommandDealer) {
         // TODO: back up 14 inches -- remember to always use meters
         cones = shelfCones;
-        var cmd = c_holdArmPose(otherPositions.get("intakeShelf"));
+        var cmd = c_holdArmPose(otherPositions.get("intakeShelf"), onArrivalCommandDealer);
         cmd.setName("arm position - pre shelf intake");
         return cmd;
     }
-    public Command c_posIntakeFloor() {
+    public Command c_posIntakeFloor(Supplier<Command> onArrivalCommandDealer) {
         cones = floorCones;
-        var cmd = c_holdArmPose(otherPositions.get("homeDown"));
+        var cmd = c_holdArmPose(otherPositions.get("homeDown"), onArrivalCommandDealer);
         cmd.setName("arm position - pre floor intake");
         return cmd;
     }
@@ -113,6 +113,11 @@ public class ArmSubsystem extends SubsystemBase {
         var degreesFromHorizontal = cones.get(shelf).getFirst();
         var extensionLengthMeters = cones.get(shelf).getSecond();
         var voltage = cones.get(shelf).getThird();
+
+
+        if (cones == shelfCones) {
+            return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+        }
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> new SequentialCommandGroup(

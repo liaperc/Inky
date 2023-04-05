@@ -88,8 +88,8 @@ public class RobotMap {
         // // 2023-robot constants
         public static class Chassis {
             public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
-            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5 + 1/8);
-            public static final double TRACK_WIDTH_METERS = .533; // +/- 0.5 inches
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5.12);
+            public static final double TRACK_WIDTH_METERS = .8713; // +/- 0.5 inches
             public static final double CHASSIS_LENGTH = Units.inchesToMeters(37); // +/- 0.5 inches
 
         }
