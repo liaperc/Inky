@@ -164,7 +164,7 @@ public class Robot extends CommandRobotBase {
         // SATURDAY MORNING TEST: is the cube shooter auton gonna work
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
-        var commnand = donttouchme.getAutonomousCommand(donttouchme.getTrajectory("straight_forward"));
+        var commnand = donttouchme.hallwayPracticeAuton();
         commnand.schedule();
     }
 
@@ -185,6 +185,10 @@ public class Robot extends CommandRobotBase {
 
         SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
         
+        SmartDashboard.putData(RobotMap.Component.arm.armPivotSubsystem);
+        SmartDashboard.putData(RobotMap.Component.arm.armExtensionSubsystem);
+        SmartDashboard.putData(RobotMap.Component.arm);
+        SmartDashboard.putData(donttouchme.m_robotDrive);
     }
 
     @Override

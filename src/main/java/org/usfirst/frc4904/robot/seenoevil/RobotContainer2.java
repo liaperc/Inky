@@ -265,7 +265,7 @@ public class RobotContainer2 {
     public Command getAutonomousCommand(Trajectory trajectory) {
         // RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
         RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-        EEEE.setEnabled(false);
+        EEEE.setEnabled(true);
         RamseteCommand ramseteCommand = new RamseteCommand(
             trajectory,
             m_robotDrive::getPose,
@@ -449,11 +449,11 @@ public class RobotContainer2 {
             () -> new SequentialCommandGroup(
                     new ParallelCommandGroup( // then, in parallel
                         getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
-                        (new WaitCommand(1)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                        RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(5).andThen(RobotMap.Component.intake.c_holdItem()))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
                     ),
-                    new TriggerCommandFactory( // then, as a separated parallel schedule,
-                            (Supplier<Command>)() -> RobotMap.Component.intake.c_holdItem(), // hold the game piece in
-                            () -> getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+                    new ParallelCommandGroup( // then, as a separated parallel schedule,
+                        getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+                        // RobotMap.Component.intake.c_holdItem() // hold the game piece in
                     ),
                     RobotMap.Component.arm.c_shootCubes(5), // finally, shoot the cube we just picked up and stow
                     getAutonomousCommand(getTrajectory("straight_forward"))
