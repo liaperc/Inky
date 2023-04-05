@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WrapperCommand;
+import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double MAXIMUM_HORIZONTAL_SAFE_EXTENSION_M = Units.inchesToMeters(48);
@@ -119,12 +120,12 @@ public class ArmExtensionSubsystem extends SubsystemBase {
                                                         new TrapezoidProfile.State((getCurrentExtensionLength() - 0.0853)/0.968, 0));
         var cmd = new ezMotion(controller, this::getCurrentExtensionLength, motor::setVoltage, () -> (double t) -> new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this, motor);
         cmd.setName("arm - c_holdExtension");
-        return onArrivalCommandDealer == null ? cmd : new ParallelCommandGroup(
+        return onArrivalCommandDealer == null ? cmd : nameCommand("extension w/ onArrival", new ParallelCommandGroup(
             cmd,
             new SequentialCommandGroup(
                 new WaitCommand(profile.totalTime()),
                 new TriggerCommandFactory("arm extension", onArrivalCommandDealer)
-            )
+            ))
         );
     }
 }

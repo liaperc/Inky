@@ -138,7 +138,7 @@ public class RobotContainer2 {
                 )),
                 entry("straight_backward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                        List.of(new Translation2d(1, 0)),
+                        List.of(),
                         new Pose2d(2, 0, new Rotation2d(Math.PI)),
                         trajectoryConfigReversed
                 )),
@@ -445,19 +445,35 @@ public class RobotContainer2 {
     }
 
     public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
-        var cmd = RobotMap.Component.arm.c_shootCubes(4, // shoot cone
-            () -> new SequentialCommandGroup(
-                    new ParallelCommandGroup( // then, in parallel
-                        getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
-                        RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(5).andThen(RobotMap.Component.intake.c_holdItem()))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
-                    ),
-                    new ParallelCommandGroup( // then, as a separated parallel schedule,
-                        getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
-                        // RobotMap.Component.intake.c_holdItem() // hold the game piece in
-                    ),
-                    RobotMap.Component.arm.c_shootCubes(5), // finally, shoot the cube we just picked up and stow
+        // var onArrivalCommand = getAutonomousCommand(getTrajectory("straight_forward")); // go to pickup location
+        var onArrivalCommand = new SequentialCommandGroup(
+                    getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
+                    getAutonomousCommand(getTrajectory("straight_backward")), // return to the next placement location
                     getAutonomousCommand(getTrajectory("straight_forward"))
-            ));
-        return cmd;
+                    );
+        // var onArrivalCommand = new SequentialCommandGroup(
+        //             new ParallelDeadlineGroup( // then, in parallel
+        //                 (new WaitCommand(1)).andThen(getAutonomousCommand(getTrajectory("straight_forward"))) // go to pickup location
+        //                 //, new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(5).andThen(RobotMap.Component.intake.c_holdItem())))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+        //                 //, new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8.)))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+        //             ),
+        //             new ParallelDeadlineGroup( // then, as a separated parallel schedule,
+        //                 getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+        //                 // , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem()) // hold the game piece in
+        //             ),
+        //             // new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(5, () -> getAutonomousCommand(getTrajectory("straight_forward")))) // finally, shoot the cube we just picked up and stow
+        //             getAutonomousCommand(getTrajectory("straight_forward"))
+        //     );
+
+        // var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> onArrivalCommand);
+        var cmd = RobotMap.Component.arm.c_shootCubes(4);
+        SmartDashboard.putString("auton reqs", onArrivalCommand.getRequirements().toString());
+
+        var total_parallel = new ParallelCommandGroup(
+            new TriggerCommandFactory(() -> cmd),
+            new TriggerCommandFactory(() -> (new WaitCommand(2.5)).andThen(onArrivalCommand))
+        );
+        // return cmd;
+        return onArrivalCommand;
     }
 }
