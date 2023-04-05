@@ -442,4 +442,21 @@ public class RobotContainer2 {
             ));
         return cmd;
     }
+
+    public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
+        var cmd = RobotMap.Component.arm.c_shootCubes(4, // shoot cone
+            () -> new SequentialCommandGroup(
+                    new ParallelCommandGroup( // then, in parallel
+                        getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
+                        (new WaitCommand(1)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                    ),
+                    new TriggerCommandFactory( // then, as a separated parallel schedule,
+                            (Supplier<Command>)() -> RobotMap.Component.intake.c_holdItem(), // hold the game piece in
+                            () -> getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+                    ),
+                    RobotMap.Component.arm.c_shootCubes(5), // finally, shoot the cube we just picked up and stow
+                    getAutonomousCommand(getTrajectory("straight_forward"))
+            ));
+        return cmd;
+    }
 }
