@@ -390,15 +390,17 @@ public class RobotContainer2 {
     }
 
 
+    public final double ARM_PIVOT_SPEED = 180;  // 160 in teleop
+    public final double ARM_PIVOT_ACCEL = 230;  // 210 in teleop
 
     // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 200, 250, onArrivalCommandDealer));
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotCubeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 200, 250, onArrivalCommandDealer));
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
 
     public final BiFunction<Integer, Supplier<Command>, Command> autonShootCube = (shelf, onArrivalCommandDealer) -> {
