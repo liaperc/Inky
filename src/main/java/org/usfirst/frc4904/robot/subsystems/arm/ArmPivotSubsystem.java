@@ -160,7 +160,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
                 for (var m : this.armMotorGroup.followMotors) m.setVoltage(volts);
             },
             (double t) -> {
-                SmartDashboard.putNumber("deg setpoint", profile.calculate(t).position);
+                SmartDashboard.putNumber("deg setpoint", profile.calculate(t).velocity);
                 return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
             },
         this, armMotorGroup);

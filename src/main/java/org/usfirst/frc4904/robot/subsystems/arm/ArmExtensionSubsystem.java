@@ -123,7 +123,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             this::getCurrentExtensionLength,
             motor::setVoltage,
             () -> (double t) -> {
-                SmartDashboard.putNumber("extension setpoint", profile.calculate(t).position*100);
+                SmartDashboard.putNumber("extension setpoint", profile.calculate(t).velocity*100);
                 return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
             },
             this, motor);

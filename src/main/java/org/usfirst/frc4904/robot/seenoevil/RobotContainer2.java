@@ -217,16 +217,18 @@ public class RobotContainer2 {
                 List.of(),
                 new Pose2d(Units.inchesToMeters(53.5), 0, new Rotation2d(Math.PI)),
                 revTrajectoryConfig.apply(speed, accel))),
+
+
         entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
                 new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
-                fwdTrajectoryConfig.apply(4., 3.))),
+                fwdTrajectoryConfig.apply(5., 3.))),
         entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
                 new Pose2d(0, 0, new Rotation2d(Math.PI)), 
                 List.of(),//same x as last time, little extra is to straighten out, could be tuned
                 new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
-                revTrajectoryConfig.apply(4., 3.))),
+                revTrajectoryConfig.apply(5., 3.))),
         entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
             new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
             List.of(),
@@ -304,8 +306,9 @@ public class RobotContainer2 {
             new SimpleMotorFeedforward(
                 DriveConstants.ksVolts,
                 DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
+                DriveConstants.kaVoltSecondsSquaredPerMeter)
+                { @Override public double calculate(double vel, double acc) { SmartDashboard.putNumber("spline vel", vel*50); return ks * Math.signum(vel) + kv * vel + ka * acc; } }
+            , DriveConstants.kDriveKinematics,
             m_robotDrive::getWheelSpeeds,
             // new PIDController(DriveConstants.kPDriveVel, 0, 0), new
             // PIDController(DriveConstants.kPDriveVel, 0, 0),
@@ -449,7 +452,7 @@ public class RobotContainer2 {
         // assumes we're already at the desired angle
         var voltage = ArmSubsystem.cubes.get(shelf + 3).getThird();
         return new TriggerCommandFactory(() -> new SequentialCommandGroup(
-            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.4)
             , RobotMap.Component.intake.c_neutralOutput()
             , new TriggerCommandFactory(onArrivalCommandDealer)
         ));
@@ -463,7 +466,7 @@ public class RobotContainer2 {
 
                 return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
-                        RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+                        RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.3)
                                                .andThen(RobotMap.Component.intake.c_neutralOutput()),
                         new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
                     ) 
