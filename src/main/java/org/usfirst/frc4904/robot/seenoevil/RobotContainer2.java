@@ -41,10 +41,13 @@ import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
+import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
 import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.robot.Robot;
@@ -386,40 +389,67 @@ public class RobotContainer2 {
         return cmd;
     }
 
-    public Command twoPieceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
-        var cmd = RobotMap.Component.arm.c_shootCones(4, // shoot cone
+
+
+    // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
+    public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
+        var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf).getFirst();
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 250, 180, onArrivalCommandDealer));
+    };
+    public final BiFunction<Integer, Supplier<Command>, Command> autonPivotCubeFlippy = (shelf, onArrivalCommandDealer) -> {
+        var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf).getFirst();
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 250, 180, onArrivalCommandDealer));
+    };
+
+    public final BiFunction<Integer, Supplier<Command>, Command> autonShootCube = (shelf, onArrivalCommandDealer) -> {
+        var voltage = ArmSubsystem.cubes.get(shelf + 3).getThird();
+        return new SequentialCommandGroup(
+            RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
+            , RobotMap.Component.intake.c_neutralOutput()
+            , new TriggerCommandFactory(onArrivalCommandDealer)
+        );
+    };
+    public final BiFunction<Integer, Supplier<Command>, Command> autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
+                () -> RobotMap.Component.arm.c_shootCones(shelf + 3, onArrivalCommandDealer));
+
+
+    public final Supplier<Command> posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
+        new ParallelRaceGroup(  // go to pickup location, while pivoting arm down and running intake
+            getAutonomousCommand(getTrajectory("go_to_pickup_next"))
+            , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
+        ),
+        new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
+            getAutonomousCommand(getTrajectory("from_pickup_to_place"))
+            , autonPivotCubeFlippy.apply(3, null)
+            , RobotMap.Component.intake.c_holdItem()
+        )
+    );
+    public final Supplier<Command> posAB_TO_BALANCE = () -> new SequentialCommandGroup(
+        new SequentialCommandGroup(
+            getAutonomousCommand(getTrajectory("from_cube_place_to_ramp_edge"))
+            , new WaitCommand(1.5)  //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
+            , getAutonomousCommand(getTrajectory("onto_ramp"))
+        )
+    );
+
+    public Command twoPieceAuton() { // shoot cone, grab cube, shoot cube
+        var cmd = autonShootCone.apply(3, // shoot cone
             () -> new SequentialCommandGroup(
-                    new ParallelRaceGroup( // then, in parallel
-                        getAutonomousCommand(getTrajectory("go_to_pickup_next")) // go to pickup location
-                        , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
-                    ),
-                    new ParallelDeadlineGroup(
-                        getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
-                        , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
-                    ),
-                    new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(4)) // finally, shoot the cube we just picked up and stow
-            ));
+                posAA_TO_AB_getPiece1.get(),
+                autonShootCube.apply(3, RobotMap.Component.arm::c_posReturnToHomeUp)
+                )
+            );
         return cmd;
     }
     public Command twoPieceBalanceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
-        var cmd = RobotMap.Component.arm.c_shootCones(4, // shoot cone
+        var cmd = autonShootCone.apply(3, 
             () -> new SequentialCommandGroup(
-                    new ParallelRaceGroup( // then, in parallel
-                        getAutonomousCommand(getTrajectory("go_to_pickup_next")) // go to pickup location
-                        , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
-                    ),
-                    new ParallelDeadlineGroup(
-                        getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
-                        , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
-                    ),
-                    new TriggerCommandFactory(
-                        () -> RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
-                            getAutonomousCommand(getTrajectory("from_cube_place_to_ramp_edge"))
-                            , new WaitCommand(1.5)  //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
-                            , getAutonomousCommand(getTrajectory("onto_ramp"))
-                        ))
-                    )
-            ));
+                posAA_TO_AB_getPiece1.get(),
+                autonShootCube.apply(3,
+                    posAB_TO_BALANCE
+                )
+            )
+        );
         return cmd;
     }
 
