@@ -164,7 +164,10 @@ public class Robot extends CommandRobotBase {
         // SATURDAY MORNING TEST: is the cube shooter auton gonna work
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
-        var commnand = donttouchme.twoPieceBalanceAuton();
+        
+        // var commnand = donttouchme.twoPieceBalanceAuton();
+        var commnand = donttouchme.practiceFieldAuton();
+
         commnand.schedule();
     }
 

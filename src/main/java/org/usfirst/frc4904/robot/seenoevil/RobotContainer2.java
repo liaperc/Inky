@@ -234,6 +234,11 @@ public class RobotContainer2 {
             List.of(),
             new Pose2d(0.503+0.4, 0.95, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
             fwdTrajectoryConfig.apply(speed, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+        entry("from_cube_place_to_ramp_edge_withmidpoint", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
+            new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
+            List.of(new Translation2d(0.2, 0.65)),
+            new Pose2d(0.503+0.4, 0.9, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            fwdTrajectoryConfig.apply(speed, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
             new Pose2d(0, 0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
@@ -370,55 +375,55 @@ public class RobotContainer2 {
         return trajectories.get(trajectoryName);
     }
 
-    public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts) {
-        var command = new SequentialCommandGroup(
-            // 1. Position arm to place gamepiece
-            // TODO: options: either place the game picee, or try to flip over, shoot, and
-            // then come back so that we are in the same state
+    // public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts) {
+    //     var command = new SequentialCommandGroup(
+    //         // 1. Position arm to place gamepiece
+    //         // TODO: options: either place the game picee, or try to flip over, shoot, and
+    //         // then come back so that we are in the same state
 
-            // implement going over and shooting a cone?
+    //         // implement going over and shooting a cone?
 
-            new ParallelCommandGroup(
-                // 3. Retract arm
-                // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-                new SequentialCommandGroup(
-                    new WaitCommand(1), // TODO: set wait time to allow arm to get started before moving?
-                    // 4. Drive forward past ramp
-                    getAutonomousCommand("past_ramp"),
+    //         new ParallelCommandGroup(
+    //             // 3. Retract arm
+    //             // RobotMap.Component.arm.c_posReturnToHomeDown(false),
+    //             new SequentialCommandGroup(
+    //                 new WaitCommand(1), // TODO: set wait time to allow arm to get started before moving?
+    //                 // 4. Drive forward past ramp
+    //                 getAutonomousCommand("past_ramp"),
 
-                    // 5. Drive back to get partially on ramp
-                    getAutonomousCommand("back_to_ramp")
-                )
-            )
-            // new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-            // 6. balance code here
-        );
+    //                 // 5. Drive back to get partially on ramp
+    //                 getAutonomousCommand("back_to_ramp")
+    //             )
+    //         )
+    //         // new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
+    //         // 6. balance code here
+    //     );
 
-        return command;
-    }
+    //     return command;
+    // }
 
-    public Command balanceAutonAndShootCube() {
-        var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
-            getAutonomousCommand("past_ramp"),
-            getAutonomousCommand("back_to_ramp")
-        )); // high shelf flippy
+    // public Command balanceAutonAndShootCube() {
+    //     var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
+    //         getAutonomousCommand("past_ramp"),
+    //         getAutonomousCommand("back_to_ramp")
+    //     )); // high shelf flippy
 
-        return cmd;
-    }
+    //     return cmd;
+    // }
 
-    public Command newAuton() {
-        var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
-            getAutonomousCommand("to_ramp"),
-            getAutonomousCommand("angle_ramp_forward"),
-            new WaitCommand(1),
-            getAutonomousCommand("go_over_ramp"),
-            getAutonomousCommand("angle_ramp_backward"),
-            new WaitCommand(1),
-            getAutonomousCommand("go_middle_ramp")
-        ));
+    // public Command newAuton() {
+    //     var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
+    //         getAutonomousCommand("to_ramp"),
+    //         getAutonomousCommand("angle_ramp_forward"),
+    //         new WaitCommand(1),
+    //         getAutonomousCommand("go_over_ramp"),
+    //         getAutonomousCommand("angle_ramp_backward"),
+    //         new WaitCommand(1),
+    //         getAutonomousCommand("go_middle_ramp")
+    //     ));
 
-        return cmd;
-    }
+    //     return cmd;
+    // }
 
 
 
@@ -489,7 +494,8 @@ public class RobotContainer2 {
         )
     );
     public final Supplier<Command> posAB_TO_BALANCE = () -> nameCommand("AB to Balance", new SequentialCommandGroup(
-        getAutonomousCommand("from_cube_place_to_ramp_edge")
+        // getAutonomousCommand("from_cube_place_to_ramp_edge")    // 4.3 secs
+        getAutonomousCommand("from_cube_place_to_ramp_edge_withmidpoint")    // 4.6 secs
         , new WaitCommand(0.7)  //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
         , getAutonomousCommand("onto_ramp")
     ));
@@ -533,6 +539,10 @@ public class RobotContainer2 {
         );
 
         return total_parallel;
+    }
+
+    public Command practiceFieldAuton() {   // just do the last part of the real auton, to practice balancing
+        return autonShootCube.apply(3, posAB_TO_BALANCE);
     }
 
     public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
