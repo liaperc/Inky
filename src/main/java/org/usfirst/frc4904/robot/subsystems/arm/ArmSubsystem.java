@@ -118,8 +118,7 @@ public class ArmSubsystem extends SubsystemBase {
         var extensionLengthMeters = cones.get(shelf).getSecond();
         var voltage = cones.get(shelf).getThird();
 
-
-        if (cones == shelfCones) {
+        if (cones == shelfCones || (shelf == 3 || shelf == 6)) {
             return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
         }
 
