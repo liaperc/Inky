@@ -464,13 +464,16 @@ public class RobotContainer2 {
                 var extensionLengthMeters = ArmSubsystem.floorCones.get(shelf+3).getSecond();
                 var voltage = ArmSubsystem.floorCones.get(shelf+3).getThird();
 
-                return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+                // return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+                return new TriggerCommandFactory(
+                    () -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, true,
+                    () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2, 3,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
                         RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.3)
                                                .andThen(RobotMap.Component.intake.c_neutralOutput()),
                         new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
                     ) 
-                )));
+                ))));
             });
 
 
@@ -501,7 +504,7 @@ public class RobotContainer2 {
 
         var total_parallel = new ParallelCommandGroup(
             coneShot,
-            (new WaitCommand(5).andThen(afterConeShot))
+            (new WaitCommand(3).andThen(afterConeShot))
         );
 
         return total_parallel;
@@ -526,7 +529,7 @@ public class RobotContainer2 {
         var coneShot = autonShootCone.apply(3, null);
         var total_parallel = new ParallelCommandGroup(
             coneShot,
-            (new WaitCommand(5).andThen(afterConeShot))
+            (new WaitCommand(3).andThen(afterConeShot))
         );
 
         return total_parallel;

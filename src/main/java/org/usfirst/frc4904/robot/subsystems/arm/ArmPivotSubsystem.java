@@ -125,6 +125,9 @@ public class ArmPivotSubsystem extends SubsystemBase {
     }
 
     public Command c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare, Supplier<Command> onArrivalCommandDealer) {
+        return c_holdRotation(degreesFromHorizontal, maxVelDegPerSec, maxAccelDegPerSecSquare, false, onArrivalCommandDealer); 
+    }
+    public Command c_holdRotation(double degreesFromHorizontal, double maxVelDegPerSec, double maxAccelDegPerSecSquare, boolean rush, Supplier<Command> onArrivalCommandDealer) {
         ezControl controller = new ezControl(
             kP, kI, kD,
             (position, velocityDegPerSec) -> { 
@@ -170,7 +173,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
         return onArrivalCommandDealer == null ? cmd : nameCommand("pivot w/ onArrival: " + cmd.getName(), new ParallelCommandGroup(
             cmd,
             new SequentialCommandGroup(
-                new WaitCommand(profile.totalTime()),
+                new WaitCommand(profile.totalTime() * (rush ? 0.75 : 1)),
                 new TriggerCommandFactory("arm pivot", onArrivalCommandDealer)
             ))
         );
