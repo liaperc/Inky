@@ -72,57 +72,12 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class RobotContainer2 {
     private static final double placeholderconstant = 0; //TODO: add value
-    // private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond,
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-    //     // Add kinematics to ensure max speed is actually obeyed
-    //     .setKinematics(DriveConstants.kDriveKinematics)
-    //     // Apply the voltage constraint
-    //     .addConstraint(new DifferentialDriveVoltageConstraint(
-    //         new SimpleMotorFeedforward(
-    //             DriveConstants.ksVolts,
-    //             DriveConstants.kvVoltSecondsPerMeter,
-    //             DriveConstants.kaVoltSecondsSquaredPerMeter
-    //         ),
-    //         DriveConstants.kDriveKinematics,
-    //         10
-    //     ));
-    // private static TrajectoryConfig trajectoryConfigReversed = new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond,
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-    //     .setKinematics(DriveConstants.kDriveKinematics)
-    //     .addConstraint(new DifferentialDriveVoltageConstraint(
-    //         new SimpleMotorFeedforward(
-    //             DriveConstants.ksVolts,
-    //             DriveConstants.kvVoltSecondsPerMeter,
-    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
-    //         DriveConstants.kDriveKinematics,
-    //         10))
-    //     .setReversed(true);
-    // private static TrajectoryConfig trajectoryConfigSlow = new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond / 3,
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
-    //     .setKinematics(DriveConstants.kDriveKinematics)
-    //     .addConstraint(new DifferentialDriveVoltageConstraint(
-    //         new SimpleMotorFeedforward(
-    //             DriveConstants.ksVolts,
-    //             DriveConstants.kvVoltSecondsPerMeter,
-    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
-    //         DriveConstants.kDriveKinematics,
-    //         10))
-    //     .setReversed(false);
-    // private static TrajectoryConfig trajectoryConfigSlowReversed = new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond / 3,
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
-    //     .setKinematics(DriveConstants.kDriveKinematics)
-    //     .addConstraint(new DifferentialDriveVoltageConstraint(
-    //         new SimpleMotorFeedforward(
-    //             DriveConstants.ksVolts,
-    //             DriveConstants.kvVoltSecondsPerMeter,
-    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
-    //         DriveConstants.kDriveKinematics,
-    //         10))
-    //     .setReversed(true);
+   
+
+    private static double speed = AutoConstants.kMaxSpeedMetersPerSecond;
+    private static double accel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
+    private static final boolean RED = !false;
+    private static final boolean SMOOTH = false;
 
     private static BiFunction<Double, Double, TrajectoryConfig> fwdTrajectoryConfig = (speed, accel) -> new TrajectoryConfig(speed, accel)
         .setKinematics(DriveConstants.kDriveKinematics)
@@ -144,122 +99,71 @@ public class RobotContainer2 {
         DriveConstants.kDriveKinematics,
         10)).setReversed(true);
 
-    private static double speed = AutoConstants.kMaxSpeedMetersPerSecond;
-    private static double accel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
+    
 
         private static Map<String, Trajectory> trajectories = Map.ofEntries(
-                entry("sickle", TrajectoryGenerator.generateTrajectory(
-                        // Start at the origin facing the +X direction
-                        new Pose2d(0, 0, new Rotation2d(0)),
-                        // Pass through these two interior waypoints, making an 's' curve path
-                        // List.of(new Translation2d(0.33*dist, .15*dist), new Translation2d(0.66*dist, -.15*dist)),
-                        List.of(new Translation2d(1, -1), new Translation2d(2, -1)),
-        
-                        // End 3 meters straight ahead of where we started, facing forward
-                        new Pose2d(3, 0, new Rotation2d(0)),
-                        fwdTrajectoryConfig.apply(speed, accel))
-                ),
-                entry("straight_forward", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(0)),
-                        List.of(),//List.of(new Translation2d(2, 0)),
-                        new Pose2d(2, 0, new Rotation2d(0)),
-                        fwdTrajectoryConfig.apply(speed, accel)
-                )),
-                entry("straight_backward", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                        List.of(),
-                        new Pose2d(2, 0, new Rotation2d(Math.PI)),
-                        revTrajectoryConfig.apply(speed, accel)
-                )),
-                entry("turn_right", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(0)),
-                        List.of(),
-                        new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
-                        fwdTrajectoryConfig.apply(speed, accel)
-                )),
-                entry("past_ramp", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(0)),
-                        List.of(),
-                        new Pose2d(4, 0, new Rotation2d(0)),
-                        fwdTrajectoryConfig.apply(speed, accel)
-                )),
-                entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
-                        new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                        List.of(),
-                        new Pose2d(1, 0, new Rotation2d(Math.PI)),
-                        revTrajectoryConfig.apply(speed, accel)
-                )),
-
-        // new auton
-        entry("to_ramp", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(Units.inchesToMeters(24.19 - .5), 0, new Rotation2d(0)),
-                fwdTrajectoryConfig.apply(speed, accel))),
-
-        entry("go_over_ramp", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(Units.inchesToMeters(118.02 - .5) + placeholderconstant, 0, new Rotation2d(0)),
-                fwdTrajectoryConfig.apply(speed, accel))),
-        entry("ramp_start", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(Units.inchesToMeters(5.001) + placeholderconstant, 0, new Rotation2d(0)),
-                fwdTrajectoryConfig.apply(speed/3, accel/2))),
-        entry("angle_ramp_backward", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                List.of(),
-                new Pose2d(Units.inchesToMeters(5.001) + placeholderconstant, 0, new Rotation2d(Math.PI)),
-                revTrajectoryConfig.apply(speed/3, accel/2))),
-        entry("go_middle_ramp", TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0, 0, new Rotation2d(Math.PI)),
-                List.of(),
-                new Pose2d(Units.inchesToMeters(53.5), 0, new Rotation2d(Math.PI)),
-                revTrajectoryConfig.apply(speed, accel))),
-
-
         entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
-                new Pose2d(0, 0, new Rotation2d(0)),
+                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),
                 List.of(),
-                new Pose2d(5.0925, 0.53585, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+                new Pose2d(5.0925, (SMOOTH?1:-1)*(RED?1:-1)*0.53585, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
                 fwdTrajectoryConfig.apply(5., 3.))),
-        entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
-                new Pose2d(0, .68, new Rotation2d(Math.PI)), 
-                List.of(),//same x as last time, little extra is to straighten out, could be tuned
-                new Pose2d(4.9425+0.07, 0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
-                revTrajectoryConfig.apply(5., 3.))),
-        entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
-            new Pose2d(0, 0, new Rotation2d(-Math.PI/4)), //y is 15 cm to get to the cube node
+        
+        entry("go_to_pickup_next_FIRST_HALF", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
+            new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),
             List.of(),
-            new Pose2d(0.503+0.9, 3.8, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
-            fwdTrajectoryConfig.apply(speed-1, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+            new Pose2d(5.0925 * 0.4, 0, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+            fwdTrajectoryConfig.apply(5., 3.))),
+        entry("go_to_pickup_next_SECOND_HALF", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
+            new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),
+            List.of(),
+            new Pose2d(5.0925 * 0.6, (SMOOTH?1:-1)*(RED?1:-1)*0.53585, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+            fwdTrajectoryConfig.apply(5., 3.))),
+
+        
+        entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*.68, new Rotation2d(Math.PI)), 
+                List.of(),//same x as last time, little extra is to straighten out, could be tuned
+                new Pose2d(4.9425+0.07, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                revTrajectoryConfig.apply(5., 3.))),
+
+        entry("from_pickup_to_place_FIRST_HALF", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)), 
+                List.of(),//same x as last time, little extra is to straighten out, could be tuned
+                new Pose2d((4.9425+0.07)*0.6, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                revTrajectoryConfig.apply(5., 3.))),
+        
+        entry("from_pickup_to_place_SECOND_HALF", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*.68, new Rotation2d(Math.PI)), 
+                List.of(),//same x as last time, little extra is to straighten out, could be tuned
+                new Pose2d((4.9425+0.07)*0.4, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                revTrajectoryConfig.apply(5., 3.))),
+
         entry("from_cube_place_to_ramp_edge_withmidpoint", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
-            new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
+            new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)), //y is 15 cm to get to the cube node
             List.of(new Translation2d(0.2, 0.75)),
-            new Pose2d(0.503+0.507, 1.3, new Rotation2d(-Math.PI/12)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            new Pose2d(0.503+0.507, (SMOOTH?1:-1)*(RED?1:-1)*1.3, new Rotation2d((SMOOTH?1:-1)*(RED?1:-1)*-Math.PI/12)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
             fwdTrajectoryConfig.apply(speed-1.3, accel-0.6))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
-            new Pose2d(0, 0, new Rotation2d(0)), 
+            new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
-            new Pose2d(0.61+0.55, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
-            fwdTrajectoryConfig.apply(speed, accel))),
+            new Pose2d(0.61+0.55, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
+            fwdTrajectoryConfig.apply(speed, accel)))
             
             
             
             
             
             
-        entry("SLOW_go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(),
-                new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
-                fwdTrajectoryConfig.apply(3., 2.))),
-        entry("SLOW_from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
-                new Pose2d(0, 0, new Rotation2d(Math.PI)), 
-                List.of(),//same x as last time, little extra is to straighten out, could be tuned
-                new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
-                revTrajectoryConfig.apply(3., 2.)))
+        // entry("SLOW_go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
+        //         new Pose2d(0, 0, new Rotation2d(0)),
+        //         List.of(),
+        //         new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+        //         fwdTrajectoryConfig.apply(3., 2.))),
+        // entry("SLOW_from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+        //         new Pose2d(0, 0, new Rotation2d(Math.PI)), 
+        //         List.of(),//same x as last time, little extra is to straighten out, could be tuned
+        //         new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+        //         revTrajectoryConfig.apply(3., 2.)))
         );
 
 
@@ -392,70 +296,6 @@ public class RobotContainer2 {
         return trajectories.get(trajectoryName);
     }
 
-    // public Command balanceAuton(Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds, BiConsumer<Double, Double> outputVolts) {
-    //     var command = new SequentialCommandGroup(
-    //         // 1. Position arm to place gamepiece
-    //         // TODO: options: either place the game picee, or try to flip over, shoot, and
-    //         // then come back so that we are in the same state
-
-    //         // implement going over and shooting a cone?
-
-    //         new ParallelCommandGroup(
-    //             // 3. Retract arm
-    //             // RobotMap.Component.arm.c_posReturnToHomeDown(false),
-    //             new SequentialCommandGroup(
-    //                 new WaitCommand(1), // TODO: set wait time to allow arm to get started before moving?
-    //                 // 4. Drive forward past ramp
-    //                 getAutonomousCommand("past_ramp"),
-
-    //                 // 5. Drive back to get partially on ramp
-    //                 getAutonomousCommand("back_to_ramp")
-    //             )
-    //         )
-    //         // new Balance(RobotMap.Component.navx, wheelSpeeds, outputVolts, 1, -0.1)
-    //         // 6. balance code here
-    //     );
-
-    //     return command;
-    // }
-
-    // public Command balanceAutonAndShootCube() {
-    //     var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
-    //         getAutonomousCommand("past_ramp"),
-    //         getAutonomousCommand("back_to_ramp")
-    //     )); // high shelf flippy
-
-    //     return cmd;
-    // }
-
-    // public Command newAuton() {
-    //     var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> new SequentialCommandGroup(
-    //         getAutonomousCommand("to_ramp"),
-    //         getAutonomousCommand("angle_ramp_forward"),
-    //         new WaitCommand(1),
-    //         getAutonomousCommand("go_over_ramp"),
-    //         getAutonomousCommand("angle_ramp_backward"),
-    //         new WaitCommand(1),
-    //         getAutonomousCommand("go_middle_ramp")
-    //     ));
-
-    //     return cmd;
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public final double ARM_PIVOT_SPEED = 200;  // 160 in teleop
     public final double ARM_PIVOT_ACCEL = 240;  // 210 in teleop
@@ -501,12 +341,17 @@ public class RobotContainer2 {
 
     public final Supplier<Command> posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
         new ParallelDeadlineGroup(  // go to pickup location, while pivoting arm down and running intake
-            (new WaitCommand(0.5)).andThen(getAutonomousCommand("go_to_pickup_next"))
+            (new WaitCommand(0.5)).andThen(
+                SMOOTH ? getAutonomousCommand("go_to_pickup_next") :
+                new SequentialCommandGroup(getAutonomousCommand("go_to_pickup_next_FIRST_HALF"), getAutonomousCommand(("go_to_pickup_next_SECOND_HALF")))
+            )
             , new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(-41, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL+20, null))
             , new TriggerCommandFactory(() -> (new WaitCommand(0.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)))
         ),
         new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
-            getAutonomousCommand("from_pickup_to_place")
+            SMOOTH ? getAutonomousCommand("from_pickup_to_place") :
+            new SequentialCommandGroup(getAutonomousCommand("from_pickup_to_place_FIRST_HALF"), getAutonomousCommand("from_pickup_to_place_SECOND_HALF"))
+
             , autonPivotCubeFlippy.apply(3, null)
             , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
         )
@@ -622,25 +467,25 @@ public class RobotContainer2 {
         return autonShootCube.apply(3, posAB_TO_BALANCE);
     }
 
-    public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
-        var onArrivalCommand = new BasedSequential(
-            new BasedDeadline( // then, in parallel
-                (new WaitCommand(1)).andThen(getAutonomousCommand("straight_forward")) // go to pickup location
-                , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8.)))// start intaking when we get close
-            ),
-            new BasedDeadline( // then, as a separated parallel schedule,
-                getAutonomousCommand("straight_backward") // return to the next placement location
-                , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem()) // hold the game piece in
-            ),
-            new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(5, () -> getAutonomousCommand("straight_forward"))) // finally, shoot the cube we just picked up and stow
-        );
+    // public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
+    //     var onArrivalCommand = new BasedSequential(
+    //         new BasedDeadline( // then, in parallel
+    //             (new WaitCommand(1)).andThen(getAutonomousCommand("straight_forward")) // go to pickup location
+    //             , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8.)))// start intaking when we get close
+    //         ),
+    //         new BasedDeadline( // then, as a separated parallel schedule,
+    //             getAutonomousCommand("straight_backward") // return to the next placement location
+    //             , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem()) // hold the game piece in
+    //         ),
+    //         new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(5, () -> getAutonomousCommand("straight_forward"))) // finally, shoot the cube we just picked up and stow
+    //     );
 
-        var shootFirstCube = RobotMap.Component.arm.c_shootCubes(4);
+    //     var shootFirstCube = RobotMap.Component.arm.c_shootCubes(4);
 
-        var total_parallel = new ParallelCommandGroup(
-            new TriggerCommandFactory(() -> shootFirstCube),
-            new TriggerCommandFactory(() -> (new WaitCommand(2.5)).andThen(onArrivalCommand))
-        );
-        return total_parallel;
-    }
+    //     var total_parallel = new ParallelCommandGroup(
+    //         new TriggerCommandFactory(() -> shootFirstCube),
+    //         new TriggerCommandFactory(() -> (new WaitCommand(2.5)).andThen(onArrivalCommand))
+    //     );
+    //     return total_parallel;
+    // }
 }
