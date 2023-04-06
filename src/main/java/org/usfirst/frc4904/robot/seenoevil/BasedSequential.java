@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 @SuppressWarnings("removal")
+@Deprecated // broken because it both registers composed AND does not require
 public class BasedSequential extends CommandGroupBase {
   private final List<Command> m_commands = new ArrayList<>();
   private int m_currentCommandIndex = -1;

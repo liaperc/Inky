@@ -21,6 +21,7 @@ import java.util.Map;
  * <p>This class is provided by the NewCommands VendorDep
  */
 @SuppressWarnings("removal")
+@Deprecated // broken because it both registers composed AND does not require
 public class BasedDeadline extends CommandGroupBase {
   // maps commands in this composition to whether they are still running
   private final Map<Command, Boolean> m_commands = new HashMap<>();
