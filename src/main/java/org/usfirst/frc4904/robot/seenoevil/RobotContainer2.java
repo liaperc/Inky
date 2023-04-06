@@ -243,7 +243,24 @@ public class RobotContainer2 {
             new Pose2d(0, 0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
             new Pose2d(0.61+0.2, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
-            fwdTrajectoryConfig.apply(speed, accel))));
+            fwdTrajectoryConfig.apply(speed, accel))),
+            
+            
+            
+            
+            
+            
+        entry("SLOW_go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
+                new Pose2d(0, 0, new Rotation2d(0)),
+                List.of(),
+                new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+                fwdTrajectoryConfig.apply(3., 2.))),
+        entry("SLOW_from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
+                new Pose2d(0, 0, new Rotation2d(Math.PI)), 
+                List.of(),//same x as last time, little extra is to straighten out, could be tuned
+                new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                revTrajectoryConfig.apply(3., 2.)))
+        );
 
 
 
@@ -440,8 +457,8 @@ public class RobotContainer2 {
 
 
 
-    public final double ARM_PIVOT_SPEED = 180;  // 160 in teleop
-    public final double ARM_PIVOT_ACCEL = 230;  // 210 in teleop
+    public final double ARM_PIVOT_SPEED = 160;  // 160 in teleop
+    public final double ARM_PIVOT_ACCEL = 210;  // 210 in teleop
 
     // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
@@ -500,13 +517,53 @@ public class RobotContainer2 {
         , getAutonomousCommand("onto_ramp")
     ));
 
+
+
+
+
+
+    final BiFunction<Integer, Supplier<Command>, Command> SLOW_autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
+            // holdArmPose, shoot, then retract (but does not pivot to save time)
+            () -> {
+                var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
+                var extensionLengthMeters = ArmSubsystem.floorCones.get(shelf+3).getSecond();
+                var voltage = ArmSubsystem.floorCones.get(shelf+3).getThird();
+
+                // return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+                return new TriggerCommandFactory(
+                    () -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, false,
+                    () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2, 3,
+                    () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
+                        RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.4)
+                                               .andThen(RobotMap.Component.intake.c_neutralOutput()),
+                        new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
+                    ) 
+                ))));
+            });
+
+
+    public final Supplier<Command> SLOW_posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
+        new ParallelDeadlineGroup(  // go to pickup location, while pivoting arm down and running intake
+            getAutonomousCommand("go_to_pickup_next")
+            , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
+        ),
+        new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
+            getAutonomousCommand("from_pickup_to_place")
+            , autonPivotCubeFlippy.apply(3, null)
+            , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
+        )
+    );
+
+
+
+
     public Command twoPieceAuton() { // shoot cone, grab cube, shoot cube
 
         var afterConeShot = new SequentialCommandGroup(
-            posAA_TO_AB_getPiece1.get(),
+            SLOW_posAA_TO_AB_getPiece1.get(),
             autonShootCube.apply(3, RobotMap.Component.arm::c_posReturnToHomeUp)
             );
-        var coneShot = autonShootCone.apply(3, null);
+        var coneShot = SLOW_autonShootCone.apply(3, null);
 
         var total_parallel = new ParallelCommandGroup(
             coneShot,
