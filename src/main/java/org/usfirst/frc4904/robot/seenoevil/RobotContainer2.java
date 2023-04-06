@@ -227,7 +227,7 @@ public class RobotContainer2 {
         entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
                 new Pose2d(0, .68, new Rotation2d(Math.PI)), 
                 List.of(),//same x as last time, little extra is to straighten out, could be tuned
-                new Pose2d(4.9425+0.1, 0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                new Pose2d(4.9425+0.07, 0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
                 revTrajectoryConfig.apply(5., 3.))),
         entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
             new Pose2d(0, 0, new Rotation2d(-Math.PI/4)), //y is 15 cm to get to the cube node
@@ -237,12 +237,12 @@ public class RobotContainer2 {
         entry("from_cube_place_to_ramp_edge_withmidpoint", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
             new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
             List.of(new Translation2d(0.2, 0.75)),
-            new Pose2d(0.503+0.49, 1.3, new Rotation2d(-Math.PI/6)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
-            fwdTrajectoryConfig.apply(speed-1.3, accel-0.5))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+            new Pose2d(0.503+0.507, 1.3, new Rotation2d(-Math.PI/12)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            fwdTrajectoryConfig.apply(speed-1.3, accel-0.6))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
             new Pose2d(0, 0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
-            new Pose2d(0.61+0.4, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
+            new Pose2d(0.61+0.55, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
             fwdTrajectoryConfig.apply(speed, accel))),
             
             
