@@ -38,7 +38,8 @@ public class ArmSubsystem extends SubsystemBase {
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         shelfCones.put(2, new Triple<>(29.5, Units.inchesToMeters(18), 3.));
         shelfCones.put(3, new Triple<>(41., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
-        shelfCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
+
+        shelfCones.put(6, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
     
     // FLOOR CONES
@@ -47,7 +48,8 @@ public class ArmSubsystem extends SubsystemBase {
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         floorCones.put(2, new Triple<>(29., Units.inchesToMeters(14), 3.));
         floorCones.put(3, new Triple<>(29., ArmExtensionSubsystem.MAX_EXTENSION_M-0.02, 3.));
-        floorCones.put(4, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
+
+        floorCones.put(6, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
 
     public static HashMap<Integer, Triple<Double, Double, Double>> cones = floorCones;
@@ -57,8 +59,9 @@ public class ArmSubsystem extends SubsystemBase {
         // cubes.put(1, new Triple<>(-33., Units.inchesToMeters(0), 3.));
         cubes.put(2, new Triple<>(15., Units.inchesToMeters(0), 4.5));
         cubes.put(3, new Triple<>(20., Units.inchesToMeters(0), 4.5));
-        cubes.put(4, new Triple<>(180.-35, Units.inchesToMeters(0), 4.5));
+
         cubes.put(5, new Triple<>(180.-25, Units.inchesToMeters(0), 4.5));
+        cubes.put(6, new Triple<>(180.-40, Units.inchesToMeters(0), 4.5));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
@@ -136,8 +139,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_shootCubes(int shelf) { return c_shootCubes(shelf, null); }
-    public Command 
-    c_shootCubes(int shelf, Supplier<Command> onArrivalCommandDealer) {
+    public Command c_shootCubes(int shelf, Supplier<Command> onArrivalCommandDealer) {
         var degreesFromHorizontal = cubes.get(shelf).getFirst();
         var extensionLengthMeters = cubes.get(shelf).getSecond();
         var voltage = cubes.get(shelf).getThird();
