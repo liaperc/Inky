@@ -265,7 +265,7 @@ public class RobotContainer2 {
     public Command getAutonomousCommand(Trajectory trajectory) {
         // RamseteCommandDebug ramseteCommand = new RamseteCommandDebug(
         RamseteController EEEE = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
-        EEEE.setEnabled(true);
+        EEEE.setEnabled(false);
         RamseteCommand ramseteCommand = new RamseteCommand(
             trajectory,
             m_robotDrive::getPose,
@@ -297,12 +297,22 @@ public class RobotContainer2 {
                 //                 ) .andThen(                ramseteCommand)
 		// 	.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
 
+        
                 var cmd = new SequentialCommandGroup(
-                        Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose())),
+                        Commands.runOnce(() -> { 
+                            Pose2d init = trajectory.getInitialPose();
+                            m_robotDrive.resetOdometry(new Pose2d(init.getX(), init.getY(), new Rotation2d(0)));
+                            SmartDashboard.putString("Trajg", init.toString());
+                        }),
                         ramseteCommand,
                         Commands.runOnce(() -> m_robotDrive.tankDriveVolts(0, 0)),
-                        Commands.runOnce(() -> m_robotDrive.resetOdometry(trajectory.getInitialPose()))
-                );
+                        Commands.runOnce(() -> { 
+                            Pose2d init = trajectory.getInitialPose();
+                            // m_robotDrive.resetOdometry(init);
+                            m_robotDrive.resetOdometry(new Pose2d(init.getX(), init.getY(), new Rotation2d(0)));
+
+                            SmartDashboard.putString("Trajg2", init.toString());
+                        })                );
                 cmd.addRequirements(m_robotDrive);
                 return cmd;
 	}
@@ -428,15 +438,15 @@ public class RobotContainer2 {
     public Command twoPieceBalanceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
         var cmd = RobotMap.Component.arm.c_shootCones(4, // shoot cone
             () -> new SequentialCommandGroup(
-                    new ParallelCommandGroup( // then, in parallel
-                        getAutonomousCommand(getTrajectory("go_to_pickup_next")), // go to pickup location
-                        (new WaitCommand(2.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
-                    ),
-                    new TriggerCommandFactory( // then, as a separated parallel schedule,
-                            () -> RobotMap.Component.intake.c_holdVoltage(-1), // hold the game piece in
-                            () -> getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
-                    ),
-                    RobotMap.Component.arm.c_shootCubes(4), // finally, shoot the cube we just picked up and stow
+                    // new ParallelCommandGroup( // then, in parallel
+                    //     getAutonomousCommand(getTrajectory("go_to_pickup_next")), // go to pickup location
+                    //     (new WaitCommand(2.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)) // start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                    // ),
+                    // new TriggerCommandFactory( // then, as a separated parallel schedule,
+                    //         () -> RobotMap.Component.intake.c_holdVoltage(-1), // hold the game piece in
+                    //         () -> getAutonomousCommand(getTrajectory("from_pickup_to_place")) // return to the next placement location
+                    // ),
+                    // RobotMap.Component.arm.c_shootCubes(4), // finally, shoot the cube we just picked up and stow
                     getAutonomousCommand(getTrajectory("from_cube_place_to_ramp_edge")),
                     new WaitCommand(1.5), //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
                     getAutonomousCommand(getTrajectory("onto_ramp"))
@@ -446,34 +456,35 @@ public class RobotContainer2 {
 
     public Command hallwayPracticeAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
         // var onArrivalCommand = getAutonomousCommand(getTrajectory("straight_forward")); // go to pickup location
-        var onArrivalCommand = new SequentialCommandGroup(
-                    getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
-                    getAutonomousCommand(getTrajectory("straight_backward")), // return to the next placement location
-                    getAutonomousCommand(getTrajectory("straight_forward"))
-                    );
         // var onArrivalCommand = new SequentialCommandGroup(
-        //             new ParallelDeadlineGroup( // then, in parallel
-        //                 (new WaitCommand(1)).andThen(getAutonomousCommand(getTrajectory("straight_forward"))) // go to pickup location
-        //                 //, new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(5).andThen(RobotMap.Component.intake.c_holdItem())))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
-        //                 //, new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8.)))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
-        //             ),
-        //             new ParallelDeadlineGroup( // then, as a separated parallel schedule,
-        //                 getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
-        //                 // , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem()) // hold the game piece in
-        //             ),
-        //             // new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(5, () -> getAutonomousCommand(getTrajectory("straight_forward")))) // finally, shoot the cube we just picked up and stow
-        //             getAutonomousCommand(getTrajectory("straight_forward"))
-        //     );
+        //             getAutonomousCommand(getTrajectory("straight_forward")), // go to pickup location
+        //             getAutonomousCommand(getTrajectory("straight_backward"))//, // return to the next placement location
+        //             // getAutonomousCommand(getTrajectory("straight_forward"))
+        //             );
+        // SmartDashboard.putString("funnyboi", getTrajectory("straight_backward").getInitialPose().toString());
+        var onArrivalCommand = new SequentialCommandGroup(
+                    new ParallelDeadlineGroup( // then, in parallel
+                        (new WaitCommand(1)).andThen(getAutonomousCommand(getTrajectory("straight_forward"))) // go to pickup location
+                        //, new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8).withTimeout(5).andThen(RobotMap.Component.intake.c_holdItem())))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                        , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8.)))// start intaking when we get close TODO: tune 2.5 sec wait (should be ~.5sec less than time to run spline above, but aim low to be safe)
+                    ),
+                    new ParallelDeadlineGroup( // then, as a separated parallel schedule,
+                        getAutonomousCommand(getTrajectory("straight_backward")) // return to the next placement location
+                        , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem()) // hold the game piece in
+                    ),
+                    new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(5, () -> getAutonomousCommand(getTrajectory("straight_forward")))) // finally, shoot the cube we just picked up and stow
+                    // getAutonomousCommand(getTrajectory("straight_forward"))
+            );
 
         // var cmd = RobotMap.Component.arm.c_shootCubes(4, () -> onArrivalCommand);
         var cmd = RobotMap.Component.arm.c_shootCubes(4);
-        SmartDashboard.putString("auton reqs", onArrivalCommand.getRequirements().toString());
+        // SmartDashboard.putString("auton reqs", onArrivalCommand.getRequirements().toString());
 
         var total_parallel = new ParallelCommandGroup(
             new TriggerCommandFactory(() -> cmd),
             new TriggerCommandFactory(() -> (new WaitCommand(2.5)).andThen(onArrivalCommand))
         );
         // return cmd;
-        return onArrivalCommand;
+        return total_parallel;
     }
 }

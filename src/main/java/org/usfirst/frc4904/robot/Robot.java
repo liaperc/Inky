@@ -164,7 +164,7 @@ public class Robot extends CommandRobotBase {
         // SATURDAY MORNING TEST: is the cube shooter auton gonna work
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
-        var commnand = donttouchme.hallwayPracticeAuton();
+        var commnand = donttouchme.twoPieceBalanceAuton();
         commnand.schedule();
     }
 
@@ -174,21 +174,21 @@ public class Robot extends CommandRobotBase {
         
 
         // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);
-        // SmartDashboard.putString("pose string", donttouchme.m_robotDrive.getPose().toString());
-        // SmartDashboard.putNumber("pose x", donttouchme.m_robotDrive.getPose().getX());
-        // SmartDashboard.putNumber("pose y", donttouchme.m_robotDrive.getPose().getY());
-        // SmartDashboard.putNumber("pose heading", donttouchme.m_robotDrive.getPose().getRotation().getDegrees());
+        SmartDashboard.putString("pose string", donttouchme.m_robotDrive.getPose().toString());
+        SmartDashboard.putNumber("pose x", donttouchme.m_robotDrive.getPose().getX());
+        SmartDashboard.putNumber("pose y", donttouchme.m_robotDrive.getPose().getY());
+        SmartDashboard.putNumber("pose heading", donttouchme.m_robotDrive.getPose().getRotation().getDegrees());
 
-        // SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
-        // SmartDashboard.putNumber("armV extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
-        // SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
+        SmartDashboard.putNumber("gyroooo", RobotMap.Component.navx.getAngle());
+        SmartDashboard.putNumber("armV extension length", RobotMap.Component.arm.armExtensionSubsystem.getCurrentExtensionLength());
+        SmartDashboard.putNumber("arm pivot angle", RobotMap.Component.arm.armPivotSubsystem.getCurrentAngleDegrees());
 
         // SmartDashboard.putNumber("Falcon temp",  RobotContainer2.Component.leftATalonFX.getTemperature());
         
-        SmartDashboard.putData(RobotMap.Component.arm.armPivotSubsystem);
-        SmartDashboard.putData(RobotMap.Component.arm.armExtensionSubsystem);
-        SmartDashboard.putData(RobotMap.Component.arm);
-        SmartDashboard.putData(donttouchme.m_robotDrive);
+        // SmartDashboard.putData(RobotMap.Component.arm.armPivotSubsystem);
+        // SmartDashboard.putData(RobotMap.Component.arm.armExtensionSubsystem);
+        // SmartDashboard.putData(RobotMap.Component.arm);
+        // SmartDashboard.putData(donttouchme.m_robotDrive);
     }
 
     @Override
@@ -228,8 +228,6 @@ public class Robot extends CommandRobotBase {
     @Override
     public void testExecute() {
         RobotMap.Component.arm.armExtensionSubsystem.initializeEncoderPositions(0);
-
-
        
     }
 
