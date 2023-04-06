@@ -72,24 +72,59 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class RobotContainer2 {
     private static final double placeholderconstant = 0; //TODO: add value
-    private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics)
-        // Apply the voltage constraint
-        .addConstraint(new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter
-            ),
-            DriveConstants.kDriveKinematics,
-            10
-        ));
-    private static TrajectoryConfig trajectoryConfigReversed = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    // private static TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //     // Add kinematics to ensure max speed is actually obeyed
+    //     .setKinematics(DriveConstants.kDriveKinematics)
+    //     // Apply the voltage constraint
+    //     .addConstraint(new DifferentialDriveVoltageConstraint(
+    //         new SimpleMotorFeedforward(
+    //             DriveConstants.ksVolts,
+    //             DriveConstants.kvVoltSecondsPerMeter,
+    //             DriveConstants.kaVoltSecondsSquaredPerMeter
+    //         ),
+    //         DriveConstants.kDriveKinematics,
+    //         10
+    //     ));
+    // private static TrajectoryConfig trajectoryConfigReversed = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //     .setKinematics(DriveConstants.kDriveKinematics)
+    //     .addConstraint(new DifferentialDriveVoltageConstraint(
+    //         new SimpleMotorFeedforward(
+    //             DriveConstants.ksVolts,
+    //             DriveConstants.kvVoltSecondsPerMeter,
+    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
+    //         DriveConstants.kDriveKinematics,
+    //         10))
+    //     .setReversed(true);
+    // private static TrajectoryConfig trajectoryConfigSlow = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond / 3,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
+    //     .setKinematics(DriveConstants.kDriveKinematics)
+    //     .addConstraint(new DifferentialDriveVoltageConstraint(
+    //         new SimpleMotorFeedforward(
+    //             DriveConstants.ksVolts,
+    //             DriveConstants.kvVoltSecondsPerMeter,
+    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
+    //         DriveConstants.kDriveKinematics,
+    //         10))
+    //     .setReversed(false);
+    // private static TrajectoryConfig trajectoryConfigSlowReversed = new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond / 3,
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
+    //     .setKinematics(DriveConstants.kDriveKinematics)
+    //     .addConstraint(new DifferentialDriveVoltageConstraint(
+    //         new SimpleMotorFeedforward(
+    //             DriveConstants.ksVolts,
+    //             DriveConstants.kvVoltSecondsPerMeter,
+    //             DriveConstants.kaVoltSecondsSquaredPerMeter),
+    //         DriveConstants.kDriveKinematics,
+    //         10))
+    //     .setReversed(true);
+
+    private static BiFunction<Double, Double, TrajectoryConfig> fwdTrajectoryConfig = (speed, accel) -> new TrajectoryConfig(speed, accel)
         .setKinematics(DriveConstants.kDriveKinematics)
         .addConstraint(new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(
@@ -97,32 +132,20 @@ public class RobotContainer2 {
                 DriveConstants.kvVoltSecondsPerMeter,
                 DriveConstants.kaVoltSecondsSquaredPerMeter),
             DriveConstants.kDriveKinematics,
-            10))
-        .setReversed(true);
-    private static TrajectoryConfig trajectoryConfigSlow = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond / 3,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
-        .setKinematics(DriveConstants.kDriveKinematics)
-        .addConstraint(new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
-            10))
-        .setReversed(false);
-    private static TrajectoryConfig trajectoryConfigSlowReversed = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond / 3,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2)
-        .setKinematics(DriveConstants.kDriveKinematics)
-        .addConstraint(new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                DriveConstants.ksVolts,
-                DriveConstants.kvVoltSecondsPerMeter,
-                DriveConstants.kaVoltSecondsSquaredPerMeter),
-            DriveConstants.kDriveKinematics,
-            10))
-        .setReversed(true);
+            10));
+
+    private static BiFunction<Double, Double, TrajectoryConfig> revTrajectoryConfig = (speed, accel) -> new TrajectoryConfig(speed, accel)
+    .setKinematics(DriveConstants.kDriveKinematics)
+    .addConstraint(new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(
+            DriveConstants.ksVolts,
+            DriveConstants.kvVoltSecondsPerMeter,
+            DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveConstants.kDriveKinematics,
+        10)).setReversed(true);
+
+    private static double speed = AutoConstants.kMaxSpeedMetersPerSecond;
+    private static double accel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
 
         private static Map<String, Trajectory> trajectories = Map.ofEntries(
                 entry("sickle", TrajectoryGenerator.generateTrajectory(
@@ -134,37 +157,37 @@ public class RobotContainer2 {
         
                         // End 3 meters straight ahead of where we started, facing forward
                         new Pose2d(3, 0, new Rotation2d(0)),
-                        trajectoryConfig)
+                        fwdTrajectoryConfig.apply(speed, accel))
                 ),
                 entry("straight_forward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(),//List.of(new Translation2d(2, 0)),
                         new Pose2d(2, 0, new Rotation2d(0)),
-                        trajectoryConfig
+                        fwdTrajectoryConfig.apply(speed, accel)
                 )),
                 entry("straight_backward", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(Math.PI)),
                         List.of(),
                         new Pose2d(2, 0, new Rotation2d(Math.PI)),
-                        trajectoryConfigReversed
+                        revTrajectoryConfig.apply(speed, accel)
                 )),
                 entry("turn_right", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(),
                         new Pose2d(1, -1, new Rotation2d(-Math.PI/2)),
-                        trajectoryConfig
+                        fwdTrajectoryConfig.apply(speed, accel)
                 )),
                 entry("past_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(0)),
                         List.of(),
                         new Pose2d(4, 0, new Rotation2d(0)),
-                        trajectoryConfig
+                        fwdTrajectoryConfig.apply(speed, accel)
                 )),
                 entry("back_to_ramp", TrajectoryGenerator.generateTrajectory(
                         new Pose2d(0, 0, new Rotation2d(Math.PI)),
                         List.of(),
                         new Pose2d(1, 0, new Rotation2d(Math.PI)),
-                        trajectoryConfigReversed
+                        revTrajectoryConfig.apply(speed, accel)
                 )),
 
         // new auton
@@ -172,48 +195,48 @@ public class RobotContainer2 {
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(24.19 - .5), 0, new Rotation2d(0)),
-                trajectoryConfig)),
+                fwdTrajectoryConfig.apply(speed, accel))),
 
         entry("go_over_ramp", TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(118.02 - .5) + placeholderconstant, 0, new Rotation2d(0)),
-                trajectoryConfig)),
+                fwdTrajectoryConfig.apply(speed, accel))),
         entry("ramp_start", TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(5.001) + placeholderconstant, 0, new Rotation2d(0)),
-                trajectoryConfigSlow)),
+                fwdTrajectoryConfig.apply(speed/3, accel/2))),
         entry("angle_ramp_backward", TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(Math.PI)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(5.001) + placeholderconstant, 0, new Rotation2d(Math.PI)),
-                trajectoryConfigSlowReversed)),
+                revTrajectoryConfig.apply(speed/3, accel/2))),
         entry("go_middle_ramp", TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(Math.PI)),
                 List.of(),
                 new Pose2d(Units.inchesToMeters(53.5), 0, new Rotation2d(Math.PI)),
-                trajectoryConfigReversed)),
+                revTrajectoryConfig.apply(speed, accel))),
         entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
                 new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
-                trajectoryConfig)),
+                fwdTrajectoryConfig.apply(4., 3.))),
         entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
                 new Pose2d(0, 0, new Rotation2d(Math.PI)), 
                 List.of(),//same x as last time, little extra is to straighten out, could be tuned
                 new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
-                trajectoryConfigReversed)),
+                revTrajectoryConfig.apply(4., 3.))),
         entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
             new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
             List.of(),
             new Pose2d(0.503+0.4, 0.95, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
-            trajectoryConfig)),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+            fwdTrajectoryConfig.apply(speed, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
             new Pose2d(0, 0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
             new Pose2d(0.61+0.2, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
-            trajectoryConfig)));
+            fwdTrajectoryConfig.apply(speed, accel))));
 
 
 
@@ -434,9 +457,9 @@ public class RobotContainer2 {
     public final BiFunction<Integer, Supplier<Command>, Command> autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
             // holdArmPose, shoot, then retract (but does not pivot to save time)
             () -> {
-                var degreesFromHorizontal = ArmSubsystem.cones.get(shelf+3).getFirst();
-                var extensionLengthMeters = ArmSubsystem.cones.get(shelf+3).getSecond();
-                var voltage = ArmSubsystem.cones.get(shelf+3).getThird();
+                var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
+                var extensionLengthMeters = ArmSubsystem.floorCones.get(shelf+3).getSecond();
+                var voltage = ArmSubsystem.floorCones.get(shelf+3).getThird();
 
                 return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
@@ -466,13 +489,19 @@ public class RobotContainer2 {
     ));
 
     public Command twoPieceAuton() { // shoot cone, grab cube, shoot cube
-        var cmd = autonShootCone.apply(3, // shoot cone
-            () -> new SequentialCommandGroup(
-                posAA_TO_AB_getPiece1.get(),
-                autonShootCube.apply(3, RobotMap.Component.arm::c_posReturnToHomeUp)
-                )
+
+        var afterConeShot = new SequentialCommandGroup(
+            posAA_TO_AB_getPiece1.get(),
+            autonShootCube.apply(3, RobotMap.Component.arm::c_posReturnToHomeUp)
             );
-        return cmd;
+        var coneShot = autonShootCone.apply(3, null);
+
+        var total_parallel = new ParallelCommandGroup(
+            coneShot,
+            (new WaitCommand(5).andThen(afterConeShot))
+        );
+
+        return total_parallel;
     }
     public Command twoPieceBalanceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
         // var cmd = autonShootCone.apply(3, 
