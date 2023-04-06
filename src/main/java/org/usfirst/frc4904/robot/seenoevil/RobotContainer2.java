@@ -222,27 +222,27 @@ public class RobotContainer2 {
         entry("go_to_pickup_next", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(),
-                new Pose2d(4.7625, 0.45085, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+                new Pose2d(5.0925, 0.53585, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
                 fwdTrajectoryConfig.apply(5., 3.))),
         entry("from_pickup_to_place", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
-                new Pose2d(0, 0, new Rotation2d(Math.PI)), 
+                new Pose2d(0, .68, new Rotation2d(Math.PI)), 
                 List.of(),//same x as last time, little extra is to straighten out, could be tuned
-                new Pose2d(4.7625+0.1, 0.15, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                new Pose2d(4.9425+0.1, 0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
                 revTrajectoryConfig.apply(5., 3.))),
         entry("from_cube_place_to_ramp_edge", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
-            new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
+            new Pose2d(0, 0, new Rotation2d(-Math.PI/4)), //y is 15 cm to get to the cube node
             List.of(),
-            new Pose2d(0.503+0.4, 0.95, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
-            fwdTrajectoryConfig.apply(speed, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+            new Pose2d(0.503+0.9, 3.8, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            fwdTrajectoryConfig.apply(speed-1, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("from_cube_place_to_ramp_edge_withmidpoint", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough
             new Pose2d(0, 0, new Rotation2d(0)), //y is 15 cm to get to the cube node
-            List.of(new Translation2d(0.2, 0.65)),
-            new Pose2d(0.503+0.4, 0.9, new Rotation2d(0)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
-            fwdTrajectoryConfig.apply(speed, accel))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
+            List.of(new Translation2d(0.2, 0.75)),
+            new Pose2d(0.503+0.49, 1.3, new Rotation2d(-Math.PI/6)),//TODO: 0.4 is extra to get onto ramp, both needs tuning and we need to now how far we get onto ramp before stalling out 
+            fwdTrajectoryConfig.apply(speed-1.3, accel-0.5))),//I chose 0.4 bc its the length of the first section of the ramp, but other values might be better
         entry("onto_ramp", TrajectoryGenerator.generateTrajectory( //balancing on ramp, NEEDS TUNING
             new Pose2d(0, 0, new Rotation2d(0)), 
             List.of(), //chargestation has 2 parts, ramp and platform. 0.61 to balance form robot center at platform start
-            new Pose2d(0.61+0.2, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
+            new Pose2d(0.61+0.4, 0, new Rotation2d(0)),//TODO: 0.2 is extra depending on how far onto the ramp we get stuck -- NEEDS TUNING    
             fwdTrajectoryConfig.apply(speed, accel))),
             
             
@@ -457,16 +457,16 @@ public class RobotContainer2 {
 
 
 
-    public final double ARM_PIVOT_SPEED = 160;  // 160 in teleop
-    public final double ARM_PIVOT_ACCEL = 210;  // 210 in teleop
+    public final double ARM_PIVOT_SPEED = 200;  // 160 in teleop
+    public final double ARM_PIVOT_ACCEL = 240;  // 210 in teleop
 
     // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
-        var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf).getFirst();
+        var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
         return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotCubeFlippy = (shelf, onArrivalCommandDealer) -> {
-        var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf).getFirst();
+        var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf+3).getFirst();
         return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
 
@@ -489,11 +489,11 @@ public class RobotContainer2 {
                 // return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
                 return new TriggerCommandFactory(
                     () -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, true,
-                    () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2, 3,
+                    () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2.5, 4.2,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
                         RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.3)
                                                .andThen(RobotMap.Component.intake.c_neutralOutput()),
-                        new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
+                        new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(-0.09, 3, 4.2, onArrivalCommandDealer))
                     ) 
                 ))));
             });
@@ -501,8 +501,9 @@ public class RobotContainer2 {
 
     public final Supplier<Command> posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
         new ParallelDeadlineGroup(  // go to pickup location, while pivoting arm down and running intake
-            getAutonomousCommand("go_to_pickup_next")
-            , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
+            (new WaitCommand(0.5)).andThen(getAutonomousCommand("go_to_pickup_next"))
+            , new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(-41, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL+20, null))
+            , new TriggerCommandFactory(() -> (new WaitCommand(0.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)))
         ),
         new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
             getAutonomousCommand("from_pickup_to_place")
@@ -510,11 +511,14 @@ public class RobotContainer2 {
             , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
         )
     );
-    public final Supplier<Command> posAB_TO_BALANCE = () -> nameCommand("AB to Balance", new SequentialCommandGroup(
-        // getAutonomousCommand("from_cube_place_to_ramp_edge")    // 4.3 secs
-        getAutonomousCommand("from_cube_place_to_ramp_edge_withmidpoint")    // 4.6 secs
-        , new WaitCommand(0.7)  //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
-        , getAutonomousCommand("onto_ramp")
+    public final Supplier<Command> posAB_TO_BALANCE = () -> nameCommand("AB to Balance", new ParallelCommandGroup(
+        new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)),
+        new SequentialCommandGroup(
+            // getAutonomousCommand("from_cube_place_to_ramp_edge")    // 4.3 secs
+            getAutonomousCommand("from_cube_place_to_ramp_edge_withmidpoint")    // 4.6 secs
+            , new WaitCommand(0.7)  //wait for ramp to lower,  TODO: needs tuning -- lower it as much as you can
+            , getAutonomousCommand("onto_ramp")
+        )
     ));
 
 
@@ -557,7 +561,7 @@ public class RobotContainer2 {
 
 
 
-    public Command twoPieceAuton() { // shoot cone, grab cube, shoot cube
+    public Command SLOW_twoPieceAuton() { // shoot cone, grab cube, shoot cube
 
         var afterConeShot = new SequentialCommandGroup(
             SLOW_posAA_TO_AB_getPiece1.get(),
@@ -572,6 +576,22 @@ public class RobotContainer2 {
 
         return total_parallel;
     }
+
+    public Command aggressiveTwoPiece() {
+        var afterConeShot = new SequentialCommandGroup(
+            posAA_TO_AB_getPiece1.get(),
+            autonShootCube.apply(3, RobotMap.Component.arm::c_posReturnToHomeUp)
+            );
+        var coneShot = autonShootCone.apply(3, null);
+
+        var total_parallel = new ParallelCommandGroup(
+            coneShot,
+            (new WaitCommand(3).andThen(afterConeShot))
+        );
+
+        return total_parallel;
+    }
+
     public Command twoPieceBalanceAuton() { // shoot cone, grab cube, shoot cube, doesn't balance
         // var cmd = autonShootCone.apply(3, 
         //     () -> new SequentialCommandGroup(
@@ -592,7 +612,7 @@ public class RobotContainer2 {
         var coneShot = autonShootCone.apply(3, null);
         var total_parallel = new ParallelCommandGroup(
             coneShot,
-            (new WaitCommand(3).andThen(afterConeShot))
+            (new WaitCommand(2.75).andThen(afterConeShot))
         );
 
         return total_parallel;

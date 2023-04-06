@@ -61,7 +61,7 @@ public class ArmSubsystem extends SubsystemBase {
         cubes.put(3, new Triple<>(20., Units.inchesToMeters(0), 4.5));
 
         cubes.put(5, new Triple<>(180.-25, Units.inchesToMeters(0), 4.5));
-        cubes.put(6, new Triple<>(180.-40, Units.inchesToMeters(0), 4.5));
+        cubes.put(6, new Triple<>(180.-40, Units.inchesToMeters(0), 5.));
     }
 
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();

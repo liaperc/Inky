@@ -165,8 +165,10 @@ public class Robot extends CommandRobotBase {
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         
-        // var commnand = donttouchme.twoPieceBalanceAuton();
-        var commnand = donttouchme.practiceFieldAuton();
+        // var commnand = donttouchme.SLOW_twoPieceAuton();
+        // var commnand = donttouchme.aggressiveTwoPiece();
+        var commnand = donttouchme.twoPieceBalanceAuton();
+        // var commnand = donttouchme.practiceFieldAuton();
 
         commnand.schedule();
     }
