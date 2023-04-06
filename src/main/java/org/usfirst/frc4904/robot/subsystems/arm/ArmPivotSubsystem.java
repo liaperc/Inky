@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 public class ArmPivotSubsystem extends SubsystemBase {
     public static final double HARD_STOP_ARM_ANGLE = -38;
@@ -167,12 +168,12 @@ public class ArmPivotSubsystem extends SubsystemBase {
         cmd.setName("arm - c_holdRotation");
         // return new Pair<Command,Double>(new ezMotion(controller, () -> this.getCurrentAngleDegrees() * Math.PI / 180, armMotorGroup::setVoltage,
         //         (double t) ->  new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity), this), profile.totalTime());
-        return onArrivalCommandDealer == null ? cmd : new ParallelCommandGroup(
+        return onArrivalCommandDealer == null ? cmd : nameCommand("pivot w/ onArrival: " + cmd.getName(), new ParallelCommandGroup(
             cmd,
             new SequentialCommandGroup(
                 new WaitCommand(profile.totalTime()),
                 new TriggerCommandFactory("arm pivot", onArrivalCommandDealer)
-            )
+            ))
         );
     }
 }
