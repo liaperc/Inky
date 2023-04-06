@@ -394,14 +394,15 @@ public class RobotContainer2 {
     // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 250, 180, onArrivalCommandDealer));
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 200, 250, onArrivalCommandDealer));
     };
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotCubeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 250, 180, onArrivalCommandDealer));
+        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, 200, 250, onArrivalCommandDealer));
     };
 
     public final BiFunction<Integer, Supplier<Command>, Command> autonShootCube = (shelf, onArrivalCommandDealer) -> {
+        // assumes we're already at the desired angle
         var voltage = ArmSubsystem.cubes.get(shelf + 3).getThird();
         return new SequentialCommandGroup(
             RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5)
@@ -410,7 +411,20 @@ public class RobotContainer2 {
         );
     };
     public final BiFunction<Integer, Supplier<Command>, Command> autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
-                () -> RobotMap.Component.arm.c_shootCones(shelf + 3, onArrivalCommandDealer));
+            // holdArmPose, shoot, then retract (but does not pivot to save time)
+            () -> {
+                var degreesFromHorizontal = ArmSubsystem.cones.get(shelf+3).getFirst();
+                var extensionLengthMeters = ArmSubsystem.cones.get(shelf+3).getSecond();
+                var voltage = ArmSubsystem.cones.get(shelf+3).getThird();
+
+                return RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
+                    () -> new SequentialCommandGroup(
+                        RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
+                        RobotMap.Component.intake.c_neutralOutput(),
+                        RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer)
+                    ) 
+                );
+            });
 
 
     public final Supplier<Command> posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
