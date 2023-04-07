@@ -76,7 +76,7 @@ public class RobotContainer2 {
 
     private static double speed = AutoConstants.kMaxSpeedMetersPerSecond;
     private static double accel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
-    private static final boolean RED = !false;
+    private static final boolean RED = !true;
     private static final boolean SMOOTH = false;
 
     private static BiFunction<Double, Double, TrajectoryConfig> fwdTrajectoryConfig = (speed, accel) -> new TrajectoryConfig(speed, accel)
@@ -111,12 +111,12 @@ public class RobotContainer2 {
         entry("go_to_pickup_next_FIRST_HALF", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
             new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),
             List.of(),
-            new Pose2d(5.0925 * 0.4, 0, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+            new Pose2d(5.0925 * 0.4, (SMOOTH?1:-1)*(RED?1:-1) * 0.73585 * 0.3, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
             fwdTrajectoryConfig.apply(5., 3.))),
         entry("go_to_pickup_next_SECOND_HALF", TrajectoryGenerator.generateTrajectory( //from cone place to cube pickup
             new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(0)),
             List.of(),
-            new Pose2d(5.0925 * 0.6, (SMOOTH?1:-1)*(RED?1:-1)*0.53585, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
+            new Pose2d(5.0925 * 0.6, (SMOOTH?1:-1)*(RED?1:-1)*0.73585 * 0.7, new Rotation2d(0)), //x is 15 foot 7.5, y is 17.75 inches
             fwdTrajectoryConfig.apply(5., 3.))),
 
         
@@ -133,9 +133,9 @@ public class RobotContainer2 {
                 revTrajectoryConfig.apply(5., 3.))),
         
         entry("from_pickup_to_place_SECOND_HALF", TrajectoryGenerator.generateTrajectory( //from cube pickup to cube node
-                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*.68, new Rotation2d(Math.PI)), 
+                new Pose2d(0, (SMOOTH?1:-1)*(RED?1:-1)*.74, new Rotation2d(Math.PI)), 
                 List.of(),//same x as last time, little extra is to straighten out, could be tuned
-                new Pose2d((4.9425+0.07)*0.4, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
+                new Pose2d((4.9425+0.1)*0.4, (SMOOTH?1:-1)*(RED?1:-1)*0, new Rotation2d(Math.PI)),//y is 15 cm to get to the cube node
                 revTrajectoryConfig.apply(5., 3.))),
 
         entry("from_cube_place_to_ramp_edge_withmidpoint", TrajectoryGenerator.generateTrajectory( //very curvy, might not work if we cant physically turn fast enough

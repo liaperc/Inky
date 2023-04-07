@@ -47,7 +47,7 @@ public class ArmSubsystem extends SubsystemBase {
     static { // FLOOR CONES
         // cones.put(1, new Triple<>(-19., Units.inchesToMeters(0), 3.));
         floorCones.put(2, new Triple<>(29., Units.inchesToMeters(14), 3.));
-        floorCones.put(3, new Triple<>(29., ArmExtensionSubsystem.MAX_EXTENSION_M-0.02, 3.));
+        floorCones.put(3, new Triple<>(29., ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
 
         floorCones.put(6, new Triple<>(180.0-41, ArmExtensionSubsystem.MAX_EXTENSION_M, 3.));
     }
@@ -112,21 +112,25 @@ public class ArmSubsystem extends SubsystemBase {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
     }
 
+    public Command c_shootCones(int shelf, boolean rush) { return c_shootCones(shelf, rush, null); }
     public Command c_shootCones(int shelf) { return c_shootCones(shelf, null); }
     public Command c_shootCones(int shelf, Supplier<Command> onArrivalCommandDealer) {
+        return c_shootCones(shelf, false, onArrivalCommandDealer);
+    }
+    public Command c_shootCones(int shelf, boolean rush, Supplier<Command> onArrivalCommandDealer) {
         var degreesFromHorizontal = cones.get(shelf).getFirst();
         var extensionLengthMeters = cones.get(shelf).getSecond();
         var voltage = cones.get(shelf).getThird();
 
         if (cones == shelfCones || (shelf == 3 || shelf == 6)) {
-            return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters);
+            return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, rush);
         }
 
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
             () -> new SequentialCommandGroup(
                 RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.5),
                 RobotMap.Component.intake.c_neutralOutput(), c_posReturnToHomeUp(onArrivalCommandDealer)
-            ) 
+            ) , true
         );
     }
    
@@ -152,19 +156,28 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_holdArmPose(Pair<Double, Double> emacs) {
-        return c_holdArmPose(emacs.getFirst(), emacs.getSecond());
+        return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), false);
+    }
+    public Command c_holdArmPose(double degrees, double extension) {
+        return c_holdArmPose(degrees, extension, false);
+    }
+    public Command c_holdArmPose(Pair<Double, Double> emacs, boolean rush) {
+        return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), rush);
     }
     public Command c_holdArmPose(Pair<Double, Double> emacs, Supplier<Command> onArrivalCommandDealer) {
         return c_holdArmPose(emacs.getFirst(), emacs.getSecond(), onArrivalCommandDealer);
     }
-    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters) {
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, boolean rush) {
         return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, null);
     }
-
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Supplier<Command> onArrivalCommandDealer) {
+        return c_holdArmPose(degreesFromHorizontal, extensionLengthMeters, onArrivalCommandDealer, false);
+    }
+
+    public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Supplier<Command> onArrivalCommandDealer, boolean rush) {
         final Supplier<Command> sanitizedArrivalCommandDealer = onArrivalCommandDealer != null ? onArrivalCommandDealer : () -> new Noop();
 
-        Function<Supplier<Command>, Command> pivotAndThen = (then) -> armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT, then);
+        Function<Supplier<Command>, Command> pivotAndThen = (then) -> armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT, rush, then); // FIXME: rush will cause bug if we extend before pivot (if target extension is less than current extension)
         Function<Supplier<Command>, Command> extendAndThen = (then) -> armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION, then);
 
         if (extensionLengthMeters > armExtensionSubsystem.getCurrentExtensionLength()) {

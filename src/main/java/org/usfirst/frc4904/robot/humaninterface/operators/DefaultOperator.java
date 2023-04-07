@@ -8,6 +8,8 @@ import org.usfirst.frc4904.standard.humaninput.Operator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class DefaultOperator extends Operator {
+	private boolean justHeldHighCone = false;
+
 	public DefaultOperator() {
 		super("DefaultOperator");
 	}
@@ -37,7 +39,7 @@ public class DefaultOperator extends Operator {
 
 		// outtake
 		joystick.button1.onTrue(runOuttake);
-		joystick.button1.onFalse(zeroIntake);
+		joystick.button1.onFalse(justHeldHighCone ? zeroIntake.andThen(new TriggerCommandFactory(RobotMap.Component.arm::c_posReturnToHomeUp)).andThen(() -> justHeldHighCone = false) : zeroIntake);
 
 
 		// position + place cube
@@ -45,7 +47,7 @@ public class DefaultOperator extends Operator {
 		joystick.button9 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(2)));
 
 		// position cone
-		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3)));
+		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3, true).andThen(() -> { justHeldHighCone = true; })));
 		joystick.button10.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(2)));
 
 
