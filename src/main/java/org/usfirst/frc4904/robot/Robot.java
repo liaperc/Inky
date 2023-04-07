@@ -8,6 +8,7 @@ package org.usfirst.frc4904.robot;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
@@ -15,6 +16,7 @@ import org.usfirst.frc4904.robot.seenoevil.DriveSubsystem;
 import org.usfirst.frc4904.robot.seenoevil.RobotContainer2;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.standard.CommandRobotBase;
+import org.usfirst.frc4904.standard.custom.CommandSendableChooser;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -23,7 +25,9 @@ import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,6 +38,7 @@ import static org.usfirst.frc4904.robot.Utils.nameCommand;
 public class Robot extends CommandRobotBase {
     private final RobotMap map = new RobotMap();
     private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.frontLeftWheelTalon, RobotMap.Component.backLeftWheelTalon, RobotMap.Component.frontRightWheelTalon, RobotMap.Component.backRightWheelTalon, RobotMap.Component.navx);
+    private SendableChooser<Supplier<Command>> autonomousCommand = new SendableChooser<Supplier<Command>>();
 
     private final Driver driver = new NathanGain();
     private final org.usfirst.frc4904.standard.humaninput.Operator operator = new DefaultOperator();
@@ -41,6 +46,18 @@ public class Robot extends CommandRobotBase {
     protected double scaleGain(double input, double gain, double exp) {
 		return Math.pow(Math.abs(input), exp) * gain * Math.signum(input);
 	}
+
+    public Robot() {
+        super();
+        autonomousCommand.setDefaultOption("Agressive Two Piece (default)", new Supplier<Command>() {
+            @Override
+            public Command get() {
+                return donttouchme.aggressiveTwoPiece();
+            }
+        });
+
+        autonomousCommand.addOption("Two Piece and Balance", () -> donttouchme.twoPieceBalanceAuton());
+    }
 
     @Override
     public void initialize() {
@@ -166,8 +183,8 @@ public class Robot extends CommandRobotBase {
         // var commnand = donttouchme.balanceAutonAndShootCube(donttouchme.m_robotDrive::getWheelSpeeds, donttouchme.m_robotDrive::tankDriveVolts);
         
         // var commnand = donttouchme.SLOW_twoPieceAuton();
-        var commnand = donttouchme.aggressiveTwoPiece();
-        // var commnand = donttouchme.twoPieceBalanceAuton();
+        // var commnand = donttouchme.aggressiveTwoPiece();
+        var commnand = donttouchme.twoPieceBalanceAuton();
         // var commnand = donttouchme.practiceFieldAuton();
 
         commnand.schedule();

@@ -76,8 +76,8 @@ public class RobotContainer2 {
 
     private static double speed = AutoConstants.kMaxSpeedMetersPerSecond;
     private static double accel = AutoConstants.kMaxAccelerationMetersPerSecondSquared;
-    private static final boolean RED = !true;
-    private static final boolean SMOOTH = false;
+    private static final boolean RED = true;
+    private static final boolean SMOOTH = true;
 
     private static BiFunction<Double, Double, TrajectoryConfig> fwdTrajectoryConfig = (speed, accel) -> new TrajectoryConfig(speed, accel)
         .setKinematics(DriveConstants.kDriveKinematics)

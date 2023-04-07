@@ -39,7 +39,7 @@ public class DefaultOperator extends Operator {
 
 		// outtake
 		joystick.button1.onTrue(runOuttake);
-		joystick.button1.onFalse(justHeldHighCone ? zeroIntake.andThen(new TriggerCommandFactory(RobotMap.Component.arm::c_posReturnToHomeUp)).andThen(() -> justHeldHighCone = false) : zeroIntake);
+		joystick.button1.onFalse(justHeldHighCone ? zeroIntake.andThen(new TriggerCommandFactory(() -> (RobotMap.Component.arm.c_posReturnToHomeUp().andThen(() -> {justHeldHighCone = false;})))) : zeroIntake);
 
 
 		// position + place cube
@@ -48,6 +48,8 @@ public class DefaultOperator extends Operator {
 
 		// position cone
 		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3, true).andThen(() -> { justHeldHighCone = true; })));
+		joystick.button8.onFalse(new InstantCommand(() -> { justHeldHighCone = true; }));
+
 		joystick.button10.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(2)));
 
 
