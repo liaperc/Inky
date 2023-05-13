@@ -7,16 +7,46 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    public static int DEFAULT_INTAKE_SPEED = -1; // TODO: set value
-    public SparkMaxMotorSubsystem motors;
-    public Intake (SparkMaxMotorSubsystem motors){ //motors has leftmotor and rightmotot
-        this.motors = motors;
+    public static int DEFAULT_INTAKE_VOLTS = 3;
+    public SparkMaxMotorSubsystem leftMotors;
+    public SparkMaxMotorSubsystem rightMotors;
+    public Intake (SparkMaxMotorSubsystem leftMotor, SparkMaxMotorSubsystem rightMotor){ //motors has leftmotor and rightmotot
+        leftMotors = leftMotor;
+        rightMotors = rightMotor;
+
+        // FIXME: actual current limits (55 is way high)
+        rightMotors.leadMotor.setSmartCurrentLimit(55);
+        leftMotors.leadMotor.setSmartCurrentLimit(55);
     }
-    public Command setVoltage(double voltage) {
-        return Commands.run(() -> motors.setVoltage(voltage));
+    public void setVoltage(double voltage) {
+        leftMotors.setVoltage(voltage);
+        rightMotors.setVoltage(-voltage);
+    }
+    public void setPower(double power) {
+        leftMotors.setPower(power);
+        rightMotors.setPower(-power);
+    }
+    public Command c_neutralOutput() {
+        return Commands.runOnce(() -> {
+            leftMotors.neutralOutput();
+            rightMotors.neutralOutput();
+        }, leftMotors, rightMotors);
+    }
+    public Command c_holdVoltage(double voltage) {
+        return Commands.run(() -> {
+            setVoltage(voltage);
+        }, leftMotors, rightMotors);
+    }
+    public Command c_startIntake() {
+        return c_holdVoltage(-8);
+    }
+    public Command c_holdItem() {
+        return c_holdVoltage(-2).withTimeout(0.5).andThen(c_holdVoltage(-1.6));
     }
 
-    public Command setVoltageDefault() {
-        return Commands.run(() -> motors.setVoltage(DEFAULT_INTAKE_SPEED));
+    public Command c_holdVoltageDefault() {
+        var cmd = Commands.run(() -> setVoltage(DEFAULT_INTAKE_VOLTS), leftMotors, rightMotors);
+        cmd.setName("Intake - c_holdVoltageDefault");
+        return cmd;
     }
 }

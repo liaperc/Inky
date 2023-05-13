@@ -1,16 +1,16 @@
 package org.usfirst.frc4904.robot;
 
 import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
-
+import org.usfirst.frc4904.standard.custom.controllers.CustomCommandXbox;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.kauailabs.navx.frc.AHRS;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
@@ -21,56 +21,46 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-import org.usfirst.frc4904.standard.LogKitten;
+// import org.usfirst.frc4904.standard.LogKitten;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import org.usfirst.frc4904.standard.custom.sensors.NavX;
-
-import org.usfirst.frc4904.robot.subsystems.net.RobotUDP;
 
 public class RobotMap {
 
     public static class Port {
-        public static class Network {
-            public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
-            public static SocketAddress LOCALIZATION_ADDRESS = new InetSocketAddress("10.49.04.10", 4321);
-        }
+        // public static class Network {
+        //     public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
+        //     public static SocketAddress LOCALIZATION_ADDRESS = new InetSocketAddress("10.49.04.10", 4321);
+        // }
 
         public static class HumanInput {
             public static final int joystick = 0;
             public static final int xboxController = 1;
         }
 
-        // blinky constants
-        // TODO: go to 2023 robot constants for comp
-        public static class CANMotor {
-            public static final int LEFT_DRIVE_A = 3;
-            public static final int RIGHT_DRIVE_A = 2;
-            public static final int LEFT_DRIVE_B = 5;
-            public static final int RIGHT_DRIVE_B = 4;
+        // // blinky constants
 
 
         
-        // // 2023 robot constants
-        // public static class CANMotor {
-        //     public static final int RIGHT_DRIVE_A = 3; // TODO: Check chassis motor IDs
-        //     public static final int RIGHT_DRIVE_B = 4;
-        //     public static final int LEFT_DRIVE_A = 1;
-        //     public static final int LEFT_DRIVE_B = 2;
-        // }
+        // 2023 robot constants
+        public static class CANMotor {
+            public static final int RIGHT_DRIVE_A = 3;
+            public static final int RIGHT_DRIVE_B = 4;
+            public static final int LEFT_DRIVE_A = 1;
+            public static final int LEFT_DRIVE_B = 2;
 
-            public static final int PIVOT_MOTOR_LEFT = -1;
-            public static final int PIVOT_MOTOR_RIGHT = -1;
-            public static final int ARM_EXTENSION_MOTOR = -1;
+            public static final int PIVOT_MOTOR_LEFT = 11;
+            public static final int PIVOT_MOTOR_RIGHT = 12;
+            public static final int ARM_EXTENSION_MOTOR = 14;
 
-            public static final int LEFT_INTAKE = -1; //TODO: fix
-            public static final int RIGHT_INTAKE = -1; //TODO: fix
+            public static final int LEFT_INTAKE = 21;
+            public static final int RIGHT_INTAKE = 22;
         }
 
         public static class PWM {
@@ -89,32 +79,38 @@ public class RobotMap {
 
     public static class Metrics {
         // blinky constants
-        // TODO: go to 2023-robot constants for comp
-        public static class Chassis {
-            public static final double GEAR_RATIO = 69/5;
-            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
-            public static final double TRACK_WIDTH_METERS = 0.59;
-        }
+        // public static class Chassis {
+        //     public static final double GEAR_RATIO = 69/5;
+        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+        //     public static final double TRACK_WIDTH_METERS = 0.59;
+        // }
 
         // // 2023-robot constants
-        // public static class Chassis {
-        //     public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
-        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5);
-        //     public static final double TRACK_WIDTH_METERS = Units.inchesToMeters(19.5); // +/- 0.5 inches
-        // }
+        public static class Chassis {
+            public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
+            public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5.12);
+            public static final double TRACK_WIDTH_METERS = .8713; // +/- 0.5 inches
+            public static final double CHASSIS_LENGTH = Units.inchesToMeters(37); // +/- 0.5 inches
+
+        }
     }
 
     public static class PID {
         public static class Drive {
             // PID constants
-            public static final double kP = 0.1771; // TODO: @zbuster05 why times four??
-            public static final double kI = 0;  // TODO: tune
-            public static final double kD = 0;  // TODO: tune
+            // public static final double kP = 1.5;
+            public static final double kP = 3.3016;
+            public static final double kI = 0;  // FIXME: tune
+            public static final double kD = 0;
             // feedforward constants
-            // these are blinky constants from Blank-Ramsete-Test e809099
-            public static final double kS = 0.0081094; 
-            public static final double kV = 4.7873;
-            public static final double kA = 0.13655;    // these should live in their own subsystem
+            // pre-sfr on-carpet characterization
+            // public static final double kS = 0.025236; 
+            // public static final double kV = 3.0683;
+            // public static final double kA = 0.7358;
+            //post sfr characterization
+            public static final double kS = 0.12507; 
+            public static final double kV = 2.9669;
+            public static final double kA = 0.67699;
         }
 
         public static class Turn {
@@ -122,9 +118,15 @@ public class RobotMap {
     }
 
     public static class Component {
-        public static NavX navx;
+        // expose these for robotcontainer2
+        public static CANTalonFX frontLeftWheelTalon;
+        public static CANTalonFX frontRightWheelTalon;
+        public static CANTalonFX backLeftWheelTalon;
+        public static CANTalonFX backRightWheelTalon;
 
-        public static RobotUDP robotUDP;
+        public static AHRS navx;
+
+        // public static RobotUDP robotUDP;
 
         public static WestCoastDrive chassis;
         public static ArmSubsystem arm;
@@ -153,7 +155,7 @@ public class RobotMap {
 
     public static class HumanInput {
         public static class Driver {
-            public static CommandXboxController xbox;
+            public static CustomCommandXbox xbox;
         }
 
         public static class Operator {
@@ -162,30 +164,35 @@ public class RobotMap {
     }
 
     public RobotMap() {
-        Component.navx = new NavX(SerialPort.Port.kMXP);
+        Component.navx = new AHRS(SerialPort.Port.kMXP);
 
-        HumanInput.Driver.xbox = new CommandXboxController(Port.HumanInput.xboxController);
-		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick);
-        // UDP things
-        try {
-            Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
-        } catch (IOException ex) {
-            LogKitten.f("Failed to initialize UDP subsystem");
-            LogKitten.ex(ex);
-        }
+        HumanInput.Driver.xbox = new CustomCommandXbox(Port.HumanInput.xboxController, 0.01);
+		HumanInput.Operator.joystick = new CustomCommandJoystick(Port.HumanInput.joystick, 0.01);
+        // // UDP things
+        // try {
+        //     Component.robotUDP = new RobotUDP(Port.Network.LOCAL_SOCKET_ADDRESS, Port.Network.LOCALIZATION_ADDRESS);
+        // } catch (IOException ex) {
+        //     LogKitten.f("Failed to initialize UDP subsystem");
+        //     LogKitten.ex(ex);
+        // }
 
 
         /***********************
          * Chassis Subsystem
         *************************/
 
-        CANTalonFX rightWheelATalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
-        CANTalonFX rightWheelBTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.FollowMaster);
-        CANTalonFX leftWheelATalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.InvertMotorOutput);
-        CANTalonFX leftWheelBTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.FollowMaster);
+        Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
+        Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
+        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
+        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
 
-        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0,  leftWheelATalon,  leftWheelBTalon);
-        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, rightWheelATalon, rightWheelBTalon);
+        // Component.backRightWheelTalon.setSafetyEnabled(false);
+        // Component.frontRightWheelTalon.setSafetyEnabled(false);
+        // Component.backLeftWheelTalon.setSafetyEnabled(false);
+        // Component.frontLeftWheelTalon.setSafetyEnabled(false);
+
+        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
+        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
         Component.chassis = new WestCoastDrive(
             Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
             PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
@@ -197,14 +204,21 @@ public class RobotMap {
          * Arm Subsystem
         *************************/
 
-        CANTalonFX leftPivotMotor  = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_LEFT,  InvertType.None);
-        CANTalonFX rightPivotMotor = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_RIGHT, InvertType.OpposeMaster);
+        CANTalonFX leftPivotMotor  = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_LEFT,  InvertType.InvertMotorOutput);
+        CANTalonFX rightPivotMotor = new CANTalonFX(RobotMap.Port.CANMotor.PIVOT_MOTOR_RIGHT, InvertType.None);
         CANTalonFX armExtensionMotor = new CANTalonFX(Port.CANMotor.ARM_EXTENSION_MOTOR, InvertType.None);
 
         TalonMotorSubsystem armRotationMotors = new TalonMotorSubsystem("Arm Pivot Subsystem", NeutralMode.Brake, 0, leftPivotMotor, rightPivotMotor);
         ArmExtensionSubsystem armExtensionSubsystem = new ArmExtensionSubsystem(
             new TalonMotorSubsystem("Arm Extension Subsystem", NeutralMode.Brake, 0, armExtensionMotor),
-            () -> armRotationMotors.getSensorPositionRotations() * Math.PI / 180);
+            () -> ArmPivotSubsystem.motorRevsToAngle(armRotationMotors.getSensorPositionRotations() * 0.911 - 6.3)
+        );
+        // Autonomous.autonCommand = Component.chassis.c_buildPathPlannerAuto(
+        //     PID.Drive.kS, PID.Drive.kV, PID.Drive.kA,
+        //     Autonomous.RAMSETE_B, Autonomous.RAMSETE_ZETA,
+        //     Autonomous.AUTON_NAME, Autonomous.MAX_VEL, Autonomous.MAX_ACCEL,
+        //     Autonomous.autonEventMap
+        // );
 
         ArmPivotSubsystem armPivotSubsystem = new ArmPivotSubsystem(armRotationMotors, armExtensionSubsystem::getCurrentExtensionLength);
 
@@ -214,11 +228,11 @@ public class RobotMap {
          * Intake Subsystem
         *************************/
         
-        CustomCANSparkMax intake_left = new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, null, false);
-        CustomCANSparkMax intake_right = new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, null, true);
-        SparkMaxMotorSubsystem intake_motors = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, intake_left, intake_right);
-        Component.intake = new Intake(intake_motors);
+        SparkMaxMotorSubsystem intake_left  = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, new CustomCANSparkMax(Port.CANMotor.LEFT_INTAKE, MotorType.kBrushless, false));
+        SparkMaxMotorSubsystem intake_right = new SparkMaxMotorSubsystem("intake", IdleMode.kCoast, 0, new CustomCANSparkMax(Port.CANMotor.RIGHT_INTAKE, MotorType.kBrushless, true));
 
+        Component.intake = new Intake(intake_left, intake_right);
+                
         // links we'll need
         // - angles and distances for intake/outtake: https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit?usp=sharing
         // - naive + scuffed ramsete tuning: https://docs.google.com/spreadsheets/d/1BIvwJ6MfLf9ByW9dcmagXFvm7HPaXY78Y4YB1L9TGPA/edit#gid=0
