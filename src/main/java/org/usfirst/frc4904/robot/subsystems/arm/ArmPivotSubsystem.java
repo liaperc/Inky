@@ -4,7 +4,6 @@ import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.opencv.core.Mat.Tuple2;
 import org.usfirst.frc4904.standard.commands.Noop;
 import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
@@ -164,7 +163,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             },
             (double t) -> {
                 SmartDashboard.putNumber("deg setpoint", profile.calculate(t).velocity);
-                return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
+                return new Pair<Double, Double>(profile.calculate(t).position, profile.calculate(t).velocity);
             },
         this, armMotorGroup);
         cmd.setName("arm - c_holdRotation");

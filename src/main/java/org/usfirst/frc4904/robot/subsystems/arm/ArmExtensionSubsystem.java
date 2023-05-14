@@ -6,7 +6,6 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.opencv.core.Mat.Tuple2;
 import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
@@ -124,7 +123,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             motor::setVoltage,
             () -> (double t) -> {
                 SmartDashboard.putNumber("extension setpoint", profile.calculate(t).velocity*100);
-                return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
+                return new Pair<Double, Double>(profile.calculate(t).position, profile.calculate(t).velocity);
             },
             this, motor);
         cmd.setName("arm - c_holdExtension");
