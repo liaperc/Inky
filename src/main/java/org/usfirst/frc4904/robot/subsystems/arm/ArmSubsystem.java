@@ -9,13 +9,14 @@ import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.subsystems.Intake;
 import org.usfirst.frc4904.standard.commands.Noop;
-import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
 import org.usfirst.frc4904.standard.custom.Triple;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -67,7 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
     static {
         // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0 in degrees, meters
-        otherPositions.put("homeUp", new Pair<>(65., Units.inchesToMeters(0.))); // TODO: get number @thomasrimer
+        otherPositions.put("homeUp", new Pair<>(65., Units.inchesToMeters(0.))); 
         otherPositions.put("homeDown", new Pair<>(-41., -0.1));
         otherPositions.put("intakeShelf", new Pair<>(25., Units.inchesToMeters(20.)));
     }
@@ -80,19 +81,18 @@ public class ArmSubsystem extends SubsystemBase {
 
     public Command c_posReturnToHomeUp() { return c_posReturnToHomeUp(null); }
     public Command c_posReturnToHomeUp(Supplier<Command> onArrivalCommandDealer) {
-        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeUp"), onArrivalCommandDealer));
+        var cmd =  c_holdArmPose(otherPositions.get("homeUp"), onArrivalCommandDealer);
         cmd.setName("arm position - home (up)");
         return cmd;
     }
 
     public Command c_posReturnToHomeDown() { return c_posReturnToHomeDown(null); }
     public Command c_posReturnToHomeDown(Supplier<Command> onArrivalCommandDealer) {
-        var cmd = new TriggerCommandFactory(() -> c_holdArmPose(otherPositions.get("homeDown"), onArrivalCommandDealer));
+        var cmd = c_holdArmPose(otherPositions.get("homeDown"), onArrivalCommandDealer);
         cmd.setName("arm position - home (down)");
         return cmd;
     }
     public Command c_posIntakeShelf(Supplier<Command> onArrivalCommandDealer) {
-        // TODO: back up 14 inches -- remember to always use meters
         cones = shelfCones;
         var cmd = c_holdArmPose(otherPositions.get("intakeShelf"), onArrivalCommandDealer);
         cmd.setName("arm position - pre shelf intake");
@@ -175,35 +175,20 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public Command c_holdArmPose(double degreesFromHorizontal, double extensionLengthMeters, Supplier<Command> onArrivalCommandDealer, boolean rush) {
-        final Supplier<Command> sanitizedArrivalCommandDealer = onArrivalCommandDealer != null ? onArrivalCommandDealer : () -> new Noop();
+        return new InstantCommand() {   // FIXME: replace with the new ParentCommandGroup / CommandBased thing
+            @Override
+            public void initialize() {
+                final Supplier<Command> sanitizedArrivalCommandDealer = onArrivalCommandDealer != null ? onArrivalCommandDealer : () -> new Noop();
 
-        Function<Supplier<Command>, Command> pivotAndThen = (then) -> armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT, rush, then); // FIXME: rush will cause bug if we extend before pivot (if target extension is less than current extension)
-        Function<Supplier<Command>, Command> extendAndThen = (then) -> armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION, then);
+                Function<Supplier<Command>, Command> pivotAndThen = (then) -> armPivotSubsystem.c_holdRotation(degreesFromHorizontal, MAX_VELOCITY_PIVOT, MAX_ACCEL_PIVOT, rush, then); // FIXME: rush will cause bug if we extend before pivot (if target extension is less than current extension)
+                Function<Supplier<Command>, Command> extendAndThen = (then) -> armExtensionSubsystem.c_holdExtension(extensionLengthMeters, MAX_VELOCITY_EXTENSION, MAX_ACCEL_EXTENSION, then);
 
-        if (extensionLengthMeters > armExtensionSubsystem.getCurrentExtensionLength()) {
-            return pivotAndThen.apply(() -> extendAndThen.apply(sanitizedArrivalCommandDealer));
-        } else {
-            return extendAndThen.apply(() -> pivotAndThen.apply(sanitizedArrivalCommandDealer));
-        }
-
-        // if ((extensionLengthMeters - armExtensionSubsystem.getCurrentExtensionLength()) > 0) {
-        //     firstCommand = pivotMovement.getFirst();
-        //     wait = pivotMovement.getSecond();
-        //     secondCommand = extensionMovement.getFirst();
-        //     secondWait = wait + extensionMovement.getSecond();
-        // } else {
-        //     firstCommand = extensionMovement.getFirst();
-        //     wait = extensionMovement.getSecond();
-        //     secondCommand = pivotMovement.getFirst();
-        //     secondWait = wait + pivotMovement.getSecond();
-        // }
-
-        // firstCommand.schedule();
-        // (new SequentialCommandGroup(new WaitCommand(wait), secondCommand)).schedule();
-        // if (onArrivalCommandDealer != null) (new SequentialCommandGroup(new WaitCommand(secondWait), onArrivalCommandDealer.get())).schedule();
-
-        // }); // long story. basically, parallel command group requires its subcommands' requirements. however, we want one subcommand to be able to die wihle the other one lives, so we just do this instead and leak commands. it's fine because they'll get cleaned up when their atomic base subsystems gets taken over by new commands
-        // cmd.setName("arm - c_holdArmPose");
-        // return cmd;
+                if (extensionLengthMeters > armExtensionSubsystem.getCurrentExtensionLength()) {
+                    pivotAndThen.apply(() -> extendAndThen.apply(sanitizedArrivalCommandDealer)).schedule();
+                } else {
+                    extendAndThen.apply(() -> pivotAndThen.apply(sanitizedArrivalCommandDealer)).schedule();
+                }
+            }
+        };
     }
 }
