@@ -192,7 +192,6 @@ public class Robot extends CommandRobotBase {
 
     @Override
     public void autonomousExecute() {
-        // TODO remove logging
         
 
         // SmartDashboard.putBoolean("isFlipped - IMPORTANT", NathanGain.isFlippy);

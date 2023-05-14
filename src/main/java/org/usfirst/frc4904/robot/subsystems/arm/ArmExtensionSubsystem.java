@@ -41,7 +41,6 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double kA = 0.45821;
     public static final double kG = 0.18613;
 
-    // TODO: tune
     public static final double kP = 2.2;
     public static final double kI = 0.1;
     public static final double kD = 0;
