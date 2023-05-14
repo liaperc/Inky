@@ -6,7 +6,6 @@ package org.usfirst.frc4904.robot.subsystems.arm;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.opencv.core.Mat.Tuple2;
 import org.usfirst.frc4904.standard.commands.CreateAndDisown;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
@@ -42,7 +41,6 @@ public class ArmExtensionSubsystem extends SubsystemBase {
     public static final double kA = 0.45821;
     public static final double kG = 0.18613;
 
-    // TODO: tune
     public static final double kP = 2.2;
     public static final double kI = 0.1;
     public static final double kD = 0;

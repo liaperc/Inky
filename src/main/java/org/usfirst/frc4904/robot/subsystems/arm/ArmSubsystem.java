@@ -68,7 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
     public static final HashMap<String, Pair<Double, Double>> otherPositions = new HashMap<>();
     static {
         // https://docs.google.com/spreadsheets/d/1B7Ie4efOpuZb4UQsk8lHycGvi6BspnF74DUMLmiKGUM/edit#gid=0 in degrees, meters
-        otherPositions.put("homeUp", new Pair<>(65., Units.inchesToMeters(0.))); 
+        otherPositions.put("homeUp", new Pair<>(65., Units.inchesToMeters(0.)));
         otherPositions.put("homeDown", new Pair<>(-41., -0.1));
         otherPositions.put("intakeShelf", new Pair<>(25., Units.inchesToMeters(20.)));
     }
