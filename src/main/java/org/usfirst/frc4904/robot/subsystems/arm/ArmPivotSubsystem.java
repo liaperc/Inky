@@ -164,7 +164,7 @@ public class ArmPivotSubsystem extends SubsystemBase {
             },
             (double t) -> {
                 SmartDashboard.putNumber("deg setpoint", profile.calculate(t).velocity);
-                return new Tuple2<Double>(profile.calculate(t).position, profile.calculate(t).velocity);
+                return new Pair<Double, Double>(profile.calculate(t).position, profile.calculate(t).velocity);
             },
         this, armMotorGroup);
         cmd.setName("arm - c_holdRotation");
