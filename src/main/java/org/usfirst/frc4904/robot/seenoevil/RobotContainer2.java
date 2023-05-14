@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 import org.usfirst.frc4904.robot.seenoevil.Constants.AutoConstants;
 import org.usfirst.frc4904.robot.seenoevil.Constants.DriveConstants;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
-import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
+import org.usfirst.frc4904.standard.commands.CreateAndDisown;
 import org.usfirst.frc4904.standard.custom.sensors.NavX;
 import org.usfirst.frc4904.robot.Robot;
 import org.usfirst.frc4904.robot.RobotMap;
@@ -303,23 +303,23 @@ public class RobotContainer2 {
     // all auton movements assume retracted arm. use shootCones w/ autostow to ensure arm ends up retracted 
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotConeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
+        return new CreateAndDisown(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
     public final BiFunction<Integer, Supplier<Command>, Command> autonPivotCubeFlippy = (shelf, onArrivalCommandDealer) -> {
         var degreesFromHorizontal = ArmSubsystem.cubes.get(shelf+3).getFirst();
-        return new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
+        return new CreateAndDisown(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, onArrivalCommandDealer));
     };
 
     public final BiFunction<Integer, Supplier<Command>, Command> autonShootCube = (shelf, onArrivalCommandDealer) -> {
         // assumes we're already at the desired angle
         var voltage = ArmSubsystem.cubes.get(shelf + 3).getThird();
-        return new TriggerCommandFactory(() -> new SequentialCommandGroup(
+        return new CreateAndDisown(() -> new SequentialCommandGroup(
             RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.4)
             , RobotMap.Component.intake.c_neutralOutput()
-            , new TriggerCommandFactory(onArrivalCommandDealer)
+            , new CreateAndDisown(onArrivalCommandDealer)
         ));
     };
-    public final BiFunction<Integer, Supplier<Command>, Command> autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
+    public final BiFunction<Integer, Supplier<Command>, Command> autonShootCone = (shelf, onArrivalCommandDealer) -> new CreateAndDisown(
             // holdArmPose, shoot, then retract (but does not pivot to save time)
             () -> {
                 var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
@@ -327,13 +327,13 @@ public class RobotContainer2 {
                 var voltage = ArmSubsystem.floorCones.get(shelf+3).getThird();
 
                 // return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-                return new TriggerCommandFactory(
+                return new CreateAndDisown(
                     () -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, true,
                     () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2.5, 4.2,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
                         RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.3)
                                                .andThen(RobotMap.Component.intake.c_neutralOutput()),
-                        new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(-0.09, 3, 4.2, onArrivalCommandDealer))
+                        new CreateAndDisown(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(-0.09, 3, 4.2, onArrivalCommandDealer))
                     ) 
                 ))));
             });
@@ -345,19 +345,19 @@ public class RobotContainer2 {
                 SMOOTH ? getAutonomousCommand("go_to_pickup_next") :
                 new SequentialCommandGroup(getAutonomousCommand("go_to_pickup_next_FIRST_HALF"), getAutonomousCommand(("go_to_pickup_next_SECOND_HALF")))
             )
-            , new TriggerCommandFactory(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(-41, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL+20, null))
-            , new TriggerCommandFactory(() -> (new WaitCommand(0.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)))
+            , new CreateAndDisown(() -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(-41, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL+20, null))
+            , new CreateAndDisown(() -> (new WaitCommand(0.5)).andThen(RobotMap.Component.intake.c_holdVoltage(-8)))
         ),
         new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
             SMOOTH ? getAutonomousCommand("from_pickup_to_place") :
             new SequentialCommandGroup(getAutonomousCommand("from_pickup_to_place_FIRST_HALF"), getAutonomousCommand("from_pickup_to_place_SECOND_HALF"))
 
             , autonPivotCubeFlippy.apply(3, null)
-            , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
+            , new CreateAndDisown(() -> RobotMap.Component.intake.c_holdItem())
         )
     );
     public final Supplier<Command> posAB_TO_BALANCE = () -> nameCommand("AB to Balance", new ParallelCommandGroup(
-        new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)),
+        new CreateAndDisown(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)),
         new SequentialCommandGroup(
             // getAutonomousCommand("from_cube_place_to_ramp_edge")    // 4.3 secs
             getAutonomousCommand("from_cube_place_to_ramp_edge_withmidpoint")    // 4.6 secs
@@ -371,7 +371,8 @@ public class RobotContainer2 {
 
 
 
-    final BiFunction<Integer, Supplier<Command>, Command> SLOW_autonShootCone = (shelf, onArrivalCommandDealer) -> new TriggerCommandFactory(
+    // NOTE: these are not correct usages of CreateAndDisown. It is not being used to convert factories to initialize-time, rather, it is being used to disown commands. Instead, these should be fixed by CommandBased (or a parallel command group that doesn't recursively require its subcommands' requirements)
+    final BiFunction<Integer, Supplier<Command>, Command> SLOW_autonShootCone = (shelf, onArrivalCommandDealer) -> new CreateAndDisown(
             // holdArmPose, shoot, then retract (but does not pivot to save time)
             () -> {
                 var degreesFromHorizontal = ArmSubsystem.floorCones.get(shelf+3).getFirst();
@@ -379,13 +380,13 @@ public class RobotContainer2 {
                 var voltage = ArmSubsystem.floorCones.get(shelf+3).getThird();
 
                 // return new TriggerCommandFactory(() -> RobotMap.Component.arm.c_holdArmPose(degreesFromHorizontal, extensionLengthMeters,
-                return new TriggerCommandFactory(
+                return new CreateAndDisown(
                     () -> RobotMap.Component.arm.armPivotSubsystem.c_holdRotation(degreesFromHorizontal, ARM_PIVOT_SPEED, ARM_PIVOT_ACCEL, false,
                     () -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(extensionLengthMeters, 2, 3,
                     () -> nameCommand("auton shoot cone", new SequentialCommandGroup(
                         RobotMap.Component.intake.c_holdVoltage(voltage).withTimeout(0.4)
                                                .andThen(RobotMap.Component.intake.c_neutralOutput()),
-                        new TriggerCommandFactory(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
+                        new CreateAndDisown(() -> RobotMap.Component.arm.armExtensionSubsystem.c_holdExtension(0, 2, 3, onArrivalCommandDealer))
                     ) 
                 ))));
             });
@@ -394,12 +395,14 @@ public class RobotContainer2 {
     public final Supplier<Command> SLOW_posAA_TO_AB_getPiece1 = () -> new SequentialCommandGroup(
         new ParallelDeadlineGroup(  // go to pickup location, while pivoting arm down and running intake
             getAutonomousCommand("go_to_pickup_next")
-            , new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
+            // NOTE: these are not correct usages of CreateAndDisown. It is not being used to convert factories to initialize-time, rather, it is being used to disown commands. Instead, these should be fixed by CommandBased (or a parallel command group that doesn't recursively require its subcommands' requirements)
+            , new CreateAndDisown(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_holdVoltage(-8)))
         ),
         new ParallelDeadlineGroup(  // then return to the placement location while pivoting arm back up and holding rotation
             getAutonomousCommand("from_pickup_to_place")
             , autonPivotCubeFlippy.apply(3, null)
-            , new TriggerCommandFactory(() -> RobotMap.Component.intake.c_holdItem())
+            // NOTE: these are not correct usages of CreateAndDisown. It is not being used to convert factories to initialize-time, rather, it is being used to disown commands. Instead, these should be fixed by CommandBased (or a parallel command group that doesn't recursively require its subcommands' requirements)
+            , new CreateAndDisown(() -> RobotMap.Component.intake.c_holdItem())
         )
     );
 

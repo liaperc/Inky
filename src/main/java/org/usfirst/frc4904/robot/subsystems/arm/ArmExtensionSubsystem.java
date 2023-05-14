@@ -7,7 +7,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.opencv.core.Mat.Tuple2;
-import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
+import org.usfirst.frc4904.standard.commands.CreateAndDisown;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezControl;
 import org.usfirst.frc4904.standard.custom.motioncontrollers.ezMotion;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
@@ -132,7 +132,7 @@ public class ArmExtensionSubsystem extends SubsystemBase {
             cmd,
             new SequentialCommandGroup(
                 new WaitCommand(profile.totalTime()),
-                new TriggerCommandFactory("arm extension", onArrivalCommandDealer)
+                new CreateAndDisown("arm extension", onArrivalCommandDealer)
             ))
         );
     }

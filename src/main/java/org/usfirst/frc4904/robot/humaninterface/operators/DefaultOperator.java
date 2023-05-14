@@ -2,7 +2,7 @@ package org.usfirst.frc4904.robot.humaninterface.operators;
 
 import org.usfirst.frc4904.robot.RobotMap;
 import org.usfirst.frc4904.robot.humaninterface.drivers.NathanGain;
-import org.usfirst.frc4904.standard.commands.TriggerCommandFactory;
+import org.usfirst.frc4904.standard.commands.CreateAndDisown;
 import org.usfirst.frc4904.standard.humaninput.Operator;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -39,27 +39,27 @@ public class DefaultOperator extends Operator {
 
 		// outtake
 		joystick.button1.onTrue(runOuttake);
-		joystick.button1.onFalse(justHeldHighCone ? zeroIntake.andThen(new TriggerCommandFactory(() -> (RobotMap.Component.arm.c_posReturnToHomeUp().andThen(() -> {justHeldHighCone = false;})))) : zeroIntake);
+		joystick.button1.onFalse(justHeldHighCone ? zeroIntake.andThen(new CreateAndDisown(() -> (RobotMap.Component.arm.c_posReturnToHomeUp().andThen(() -> {justHeldHighCone = false;})))) : zeroIntake);
 
 
 		// position + place cube
-		joystick.button7 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(3)));
-		joystick.button9 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCubes(2)));
+		joystick.button7 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_shootCubes(3)));
+		joystick.button9 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_shootCubes(2)));
 
 		// position cone
-		joystick.button8 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(3, true).andThen(() -> { justHeldHighCone = true; })));
+		joystick.button8 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_shootCones(3, true).andThen(() -> { justHeldHighCone = true; })));
 		joystick.button8.onFalse(new InstantCommand(() -> { justHeldHighCone = true; }));
 
-		joystick.button10.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_shootCones(2)));
+		joystick.button10.onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_shootCones(2)));
 
 
 		// intake positions
-		joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf(null)));
-		joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(null)));
+		joystick.button6 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posIntakeShelf(null)));
+		joystick.button4 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posIntakeFloor(null)));
 
 		// stow positions
-		joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown(null)));
-		joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)));
+		joystick.button11.onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posReturnToHomeDown(null)));
+		joystick.button12.onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posReturnToHomeUp(null)));
 
 
 		// // intake positions
