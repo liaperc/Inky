@@ -63,11 +63,11 @@ public class DefaultOperator extends Operator {
 
 
 		// // intake positions
-		// joystick.button6 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeShelf(() -> RobotMap.Component.intake.c_startIntake())));
-		// joystick.button4 .onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_startIntake())));
+		// joystick.button6 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posIntakeShelf(() -> RobotMap.Component.intake.c_startIntake())));
+		// joystick.button4 .onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posIntakeFloor(() -> RobotMap.Component.intake.c_startIntake())));
 
 		// // stow positions
-		// joystick.button11.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeDown(() -> RobotMap.Component.intake.c_holdItem())));
-		// joystick.button12.onTrue(new TriggerCommandFactory(() -> RobotMap.Component.arm.c_posReturnToHomeUp(() -> RobotMap.Component.intake.c_holdItem())));
+		// joystick.button11.onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posReturnToHomeDown(() -> RobotMap.Component.intake.c_holdItem())));
+		// joystick.button12.onTrue(new CreateAndDisown(() -> RobotMap.Component.arm.c_posReturnToHomeUp(() -> RobotMap.Component.intake.c_holdItem())));
 	}
 }
