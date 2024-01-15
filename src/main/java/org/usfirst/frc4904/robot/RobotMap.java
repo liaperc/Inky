@@ -7,9 +7,12 @@ import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
 //import com.ctre.phoenix.motorcontrol.NeutralMode; //broken
 import com.kauailabs.navx.frc.AHRS;
 
+//imports for rev robotics neo 550s
+import com.revrobotics.CANSparkMax;
+
 //import com.ctre.phoenix.motorcontrol.InvertType; //broken
 //import com.revrobotics.CANSparkMax.IdleMode; //broken
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -52,12 +55,17 @@ public class RobotMap {
 
 
         
-        // 2023 robot constants // TODO: update ports for serve
+        // 2023 robot constants // TODO: update ports for swerve
         public static class CANMotor {
-            public static final int RIGHT_DRIVE_A = 3;
-            public static final int RIGHT_DRIVE_B = 4;
-            public static final int LEFT_DRIVE_A = 1;
-            public static final int LEFT_DRIVE_B = 2;
+            public static final int FRONT_LEFT_DRIVE = 0;
+            public static final int FRONT_LEFT_TURN = 1;
+            public static final int FRONT_RIGHT_DRIVE = 2;
+            public static final int FRONT_RIGHT_TURN = 3;
+            public static final int BACK_LEFT_DRIVE = 0;
+            public static final int BACK_LEFT_TURN = 1;
+            public static final int BACK_RIGHT_DRIVE = 2;
+            public static final int BACK_RIGHT_TURN = 3;
+
         }
 
         public static class PWM {
@@ -138,13 +146,13 @@ public class RobotMap {
     public static class Component {
         //TODO: turn motors are NOT falcons and so can't use cantalons
         public static CANTalonFX FLdrive;
-        public static CANTalonFX FLturn;
+        public static CustomCANSparkMax FLturn;
         public static CANTalonFX FRdrive;
-        public static CANTalonFX FRturn;
+        public static CustomCANSparkMax FRturn;
         public static CANTalonFX BLdrive;
-        public static CANTalonFX BLturn;
+        public static CustomCANSparkMax BLturn;
         public static CANTalonFX BRdrive;
-        public static CANTalonFX BRturn;
+        public static CustomCANSparkMax BRturn;
 
         //encoders are dutycycle encoders, not standard can encoders
         public static DutyCycleEncoder FLturnEncoder;
@@ -211,10 +219,14 @@ public class RobotMap {
         *************************/
         
         //TODO: fix invert type, talk to anna
-        Component.FLdrive  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A);
-        Component.FLturn = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B);
-        Component.BRdrive   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A);
-        Component.BRturn  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B);
+        Component.FLdrive  = new CANTalonFX(Port.CANMotor.FRONT_LEFT_DRIVE);
+        Component.FLturn = new CustomCANSparkMax(Port.CANMotor.FRONT_LEFT_TURN, MotorType.kBrushless, false);
+        Component.FRdrive  = new CANTalonFX(Port.CANMotor.FRONT_RIGHT_DRIVE);
+        Component.FRturn = new CustomCANSparkMax(Port.CANMotor.FRONT_RIGHT_DRIVE, MotorType.kBrushless, false);
+        Component.BLdrive  = new CANTalonFX(Port.CANMotor.BACK_LEFT_DRIVE);
+        Component.BLturn = new CustomCANSparkMax(Port.CANMotor.BACK_LEFT_TURN, MotorType.kBrushless, false);
+        Component.BRdrive  = new CANTalonFX(Port.CANMotor.BACK_RIGHT_DRIVE);
+        Component.BRturn = new CustomCANSparkMax(Port.CANMotor.BACK_RIGHT_TURN, MotorType.kBrushless, false);
 
 
         // Component.backRightWheelTalon.setSafetyEnabled(false);
