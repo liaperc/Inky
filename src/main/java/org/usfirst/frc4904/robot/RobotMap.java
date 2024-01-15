@@ -11,11 +11,6 @@ import com.kauailabs.navx.frc.AHRS;
 //import com.revrobotics.CANSparkMax.IdleMode; //broken
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.usfirst.frc4904.robot.subsystems.Intake;
-import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
-import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
-import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -162,8 +157,6 @@ public class RobotMap {
         // public static RobotUDP robotUDP;
 
         public static SwerveDrive chassis;
-        public static ArmSubsystem arm;
-        public static Intake intake;
     }
 
     public static class NetworkTables {
@@ -218,10 +211,10 @@ public class RobotMap {
         *************************/
         
         //TODO: fix invert type, talk to anna
-        Component.FLdrive  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
-        Component.FLturn = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
-        Component.BRdrive   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
-        Component.BRturn  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
+        Component.FLdrive  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A);
+        Component.FLturn = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B);
+        Component.BRdrive   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A);
+        Component.BRturn  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B);
 
 
         // Component.backRightWheelTalon.setSafetyEnabled(false);
