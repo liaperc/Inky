@@ -36,7 +36,6 @@ import org.usfirst.frc4904.standard.subsystems.chassis.SwerveModule;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotMap {
 
@@ -154,6 +153,11 @@ public class RobotMap {
         public static CANTalonFX BRdrive;
         public static CustomCANSparkMax BRturn;
 
+        public static SwerveModule FLmodule;
+        public static SwerveModule FRmodule;
+        public static SwerveModule BLmodule;
+        public static SwerveModule BRmodule;
+
         //encoders are dutycycle encoders, not standard can encoders
         public static DutyCycleEncoder FLturnEncoder;
         public static DutyCycleEncoder FRturnEncoder;
@@ -241,11 +245,11 @@ public class RobotMap {
         Translation2d locationBR = new Translation2d(-(Metrics.Chassis.TRACK_LENGTH_METERS / 2), -(Metrics.Chassis.TRACK_WIDTH_METERS / 2));
         SwerveDriveKinematics kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
 
-        SwerveModule FLmodule  = new SwerveModule(Component.FLdrive, Component.FLturn, Component.FLturnEncoder, locationFL);
-        SwerveModule FRmodule = new SwerveModule(Component.FRdrive, Component.FRturn, Component.FRturnEncoder, locationFR);
-        SwerveModule BLmodule   = new SwerveModule(Component.BLdrive, Component.BLturn, Component.BLturnEncoder, locationBL);
-        SwerveModule BRmodule  = new SwerveModule(Component.BRdrive, Component.BRturn, Component.BRturnEncoder, locationBR);
-        SwerveModule[] modules = {FLmodule, FRmodule, BLmodule, BRmodule};
+        Component.FLmodule  = new SwerveModule(Component.FLdrive, Component.FLturn, Component.FLturnEncoder, locationFL);
+        Component.FRmodule = new SwerveModule(Component.FRdrive, Component.FRturn, Component.FRturnEncoder, locationFR);
+        Component.BLmodule   = new SwerveModule(Component.BLdrive, Component.BLturn, Component.BLturnEncoder, locationBL);
+        Component.BRmodule  = new SwerveModule(Component.BRdrive, Component.BRturn, Component.BRturnEncoder, locationBR);
+        SwerveModule[] modules = {Component.FLmodule, Component.FRmodule, Component.BLmodule, Component.BRmodule};
 
                         //TODO: talk to anna about talonmotorsubsystem
 

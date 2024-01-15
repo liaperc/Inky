@@ -18,6 +18,7 @@ import org.usfirst.frc4904.standard.CommandRobotBase;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 // import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static org.usfirst.frc4904.robot.Utils.nameCommand;
+import org.usfirst.frc4904.robot.RobotMap.Component;
 
 public class Robot extends CommandRobotBase {
     // private final RobotMap map = new RobotMap();
@@ -74,6 +76,11 @@ public class Robot extends CommandRobotBase {
     @Override
     public void teleopExecute() {
         //various logging can go here
+        //TODO: getAbsolutePosition() MIGHT NOT WORK OR BE IN RIGHT UNITS!
+        SmartDashboard.putNumber("FL angle", RobotMap.Component.FLturnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("FR angle", RobotMap.Component.FRturnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("BL angle", RobotMap.Component.BLturnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("BR angle", RobotMap.Component.BRturnEncoder.getAbsolutePosition());
     }
 
     @Override
