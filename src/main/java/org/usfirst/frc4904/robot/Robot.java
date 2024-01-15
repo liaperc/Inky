@@ -22,7 +22,7 @@ import org.usfirst.frc4904.standard.humaninput.Driver;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
-
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static org.usfirst.frc4904.robot.Utils.nameCommand;
@@ -37,7 +38,7 @@ import static org.usfirst.frc4904.robot.Utils.nameCommand;
 
 public class Robot extends CommandRobotBase {
     private final RobotMap map = new RobotMap();
-    private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.frontLeftWheelTalon, RobotMap.Component.backLeftWheelTalon, RobotMap.Component.frontRightWheelTalon, RobotMap.Component.backRightWheelTalon, RobotMap.Component.navx);
+    //private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.frontLeftWheelTalon, RobotMap.Component.backLeftWheelTalon, RobotMap.Component.frontRightWheelTalon, RobotMap.Component.backRightWheelTalon, RobotMap.Component.navx);
     private SendableChooser<Supplier<Command>> autonomousCommand = new SendableChooser<Supplier<Command>>();
 
     private final Driver driver = new NathanGain();
@@ -52,11 +53,12 @@ public class Robot extends CommandRobotBase {
         autonomousCommand.setDefaultOption("Agressive Two Piece (default)", new Supplier<Command>() {
             @Override
             public Command get() {
-                return donttouchme.aggressiveTwoPiece();
+                return new InstantCommand(()->{});
+                //return donttouchme.aggressiveTwoPiece();
             }
         });
 
-        autonomousCommand.addOption("Two Piece and Balance", () -> donttouchme.twoPieceBalanceAuton());
+        //autonomousCommand.addOption("Two Piece and Balance", () -> donttouchme.twoPieceBalanceAuton());
     }
 
     @Override
@@ -103,12 +105,12 @@ public class Robot extends CommandRobotBase {
 
         final double TURN_MULTIPLIER = 2;
         RobotMap.Component.chassis.setDefaultCommand(
-            nameCommand("chassis - Teleop_Default - c_controlWheelVoltages", 
-                RobotMap.Component.chassis.c_controlWheelVoltages(
-                    () -> new DifferentialDriveWheelVoltages(
-                        (driver.getY() + TURN_MULTIPLIER * driver.getTurnSpeed()) * 12,
-                        (driver.getY() - TURN_MULTIPLIER * driver.getTurnSpeed()) * 12
-        ))));
+            nameCommand("chassis - Teleop_Default - c_swerveDrive", 
+                RobotMap.Component.chassis.c_drive(
+                    () -> {
+                        return new ChassisSpeeds(driver.getX(), driver.getY(), driver.getTurnSpeed());
+                    }, true)
+                ));
 
         // RobotMap.Component.arm.setDefaultCommand(nameCommand("arm - default command",
         //     RobotMap.Component.arm.c_posReturnToHomeUp(NathanGain.isFlippy)
@@ -184,10 +186,10 @@ public class Robot extends CommandRobotBase {
         
         // var commnand = donttouchme.SLOW_twoPieceAuton();
         // var commnand = donttouchme.aggressiveTwoPiece();
-        var commnand = donttouchme.twoPieceBalanceAuton();
+        //var commnand = donttouchme.twoPieceBalanceAuton();
         // var commnand = donttouchme.practiceFieldAuton();
 
-        commnand.schedule();
+        //commnand.schedule();
     }
 
     @Override
@@ -209,7 +211,7 @@ public class Robot extends CommandRobotBase {
         SmartDashboard.putData(RobotMap.Component.arm.armPivotSubsystem);
         SmartDashboard.putData(RobotMap.Component.arm.armExtensionSubsystem);
         SmartDashboard.putData(RobotMap.Component.arm);
-        SmartDashboard.putData(donttouchme.m_robotDrive);
+        //SmartDashboard.putData(donttouchme.m_robotDrive);
     }
 
     @Override

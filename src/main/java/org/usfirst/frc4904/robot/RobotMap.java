@@ -16,6 +16,11 @@ import org.usfirst.frc4904.robot.subsystems.arm.ArmExtensionSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmPivotSubsystem;
 import org.usfirst.frc4904.robot.subsystems.arm.ArmSubsystem;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -25,8 +30,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
+import org.usfirst.frc4904.standard.subsystems.chassis.SwerveDrive;
+import org.usfirst.frc4904.standard.subsystems.chassis.SwerveModule;
 import org.usfirst.frc4904.standard.subsystems.chassis.WestCoastDrive;
 import org.usfirst.frc4904.standard.subsystems.motor.TalonMotorSubsystem;
+
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -90,9 +99,22 @@ public class RobotMap {
             public static final double GEAR_RATIO = 496/45; // https://www.desmos.com/calculator/llz7giggcf
             public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(5.12);
             public static final double TRACK_WIDTH_METERS = .8713; // +/- 0.5 inches
+            public static final double TRACK_LENGTH_METERS = 1; //TODO: measure this 
             public static final double CHASSIS_LENGTH = Units.inchesToMeters(37); // +/- 0.5 inches
+            public static final Translation2d CENTER_MASS_OFFSET = new Translation2d(0,0); // no offset
+            public static final double EncoderTicksPerRevolution = 2048;
 
+            //TODO: set 2024 swerve module metrics
+            public static final double MAX_SPEED = -1;
+            public static final double MAX_ACCELERATION = -1;
+            public static final double MAX_TRANSLATION_SPEED = -1;
+            public static final double MAX_TURN_SPEED = -1;
+            public static final double MAX_TURN_ACCELERATION = -1;
+            public static final double DRIVE_GEAR_RATIO = -1;
+            public static final double TURN_GEAR_RATIO = -1;
         }
+        
+
     }
 
     public static class PID {
@@ -113,22 +135,41 @@ public class RobotMap {
             public static final double kA = 0.67699;
         }
 
-        public static class Turn {
+        public static class Turn { //TODO: tune
+            // PID constants
+            public static final double kP = 0;
+            public static final double kI = 0;
+            public static final double kD = 0;
+            // feedforward constants
+            public static final double kS = 0;
+            public static final double kV = 0;
+            public static final double kA = 0;
         }
     }
 
     public static class Component {
         // expose these for robotcontainer2
-        public static CANTalonFX frontLeftWheelTalon;
-        public static CANTalonFX frontRightWheelTalon;
-        public static CANTalonFX backLeftWheelTalon;
-        public static CANTalonFX backRightWheelTalon;
+        //currently just frontleft and backright, will add mroe when we have more modules
+        public static CANTalonFX FLdrive;
+        public static CANTalonFX FLturn;
+        public static CANTalonFX FRdrive;
+        public static CANTalonFX FRturn;
+        public static CANTalonFX BLdrive;
+        public static CANTalonFX BLturn;
+        public static CANTalonFX BRdrive;
+        public static CANTalonFX BRturn;
+
+        //encoders are dutycycle encoders, not standard can encoders
+        public static DutyCycleEncoder FLturnEncoder;
+        public static DutyCycleEncoder FRturnEncoder;
+        public static DutyCycleEncoder BLturnEncoder;
+        public static DutyCycleEncoder BRturnEncoder;
 
         public static AHRS navx;
 
         // public static RobotUDP robotUDP;
 
-        public static WestCoastDrive chassis;
+        public static SwerveDrive chassis;
         public static ArmSubsystem arm;
         public static Intake intake;
     }
@@ -156,6 +197,8 @@ public class RobotMap {
     public static class HumanInput {
         public static class Driver {
             public static CustomCommandXbox xbox;
+            public static CustomCommandJoystick xyJoystick;
+            public static CustomCommandJoystick turnJoystick;
         }
 
         public static class Operator {
@@ -181,23 +224,34 @@ public class RobotMap {
          * Chassis Subsystem
         *************************/
 
-        Component.backRightWheelTalon  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
-        Component.frontRightWheelTalon = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
-        Component.backLeftWheelTalon   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
-        Component.frontLeftWheelTalon  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
+        Component.FLdrive  = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_A, InvertType.None);
+        Component.FLturn = new CANTalonFX(Port.CANMotor.RIGHT_DRIVE_B, InvertType.None);
+        Component.BRdrive   = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_A, InvertType.None);
+        Component.BRturn  = new CANTalonFX(Port.CANMotor.LEFT_DRIVE_B, InvertType.None);
+
 
         // Component.backRightWheelTalon.setSafetyEnabled(false);
         // Component.frontRightWheelTalon.setSafetyEnabled(false);
         // Component.backLeftWheelTalon.setSafetyEnabled(false);
         // Component.frontLeftWheelTalon.setSafetyEnabled(false);
 
-        TalonMotorSubsystem leftDriveMotors  = new TalonMotorSubsystem("left drive motors",  NeutralMode.Brake, 0, Component.frontLeftWheelTalon, Component.backLeftWheelTalon);
-        TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
-        Component.chassis = new WestCoastDrive(
-            Metrics.Chassis.TRACK_WIDTH_METERS, Metrics.Chassis.GEAR_RATIO, Metrics.Chassis.WHEEL_DIAMETER_METERS,
-            PID.Drive.kP, PID.Drive.kI, PID.Drive.kD,
-            Component.navx, leftDriveMotors, rightDriveMotors
-        );
+        //TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
+        Translation2d locationFL = new Translation2d(Metrics.Chassis.TRACK_LENGTH_METERS / 2, Metrics.Chassis.TRACK_WIDTH_METERS / 2);
+        Translation2d locationFR = new Translation2d(Metrics.Chassis.TRACK_LENGTH_METERS / 2, -(Metrics.Chassis.TRACK_WIDTH_METERS / 2));
+        Translation2d locationBL = new Translation2d(-(Metrics.Chassis.TRACK_LENGTH_METERS / 2), Metrics.Chassis.TRACK_WIDTH_METERS / 2);
+        Translation2d locationBR = new Translation2d(-(Metrics.Chassis.TRACK_LENGTH_METERS / 2), -(Metrics.Chassis.TRACK_WIDTH_METERS / 2));
+        SwerveDriveKinematics kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
+
+        SwerveModule FLmodule  = new SwerveModule(Component.FLdrive, Component.FLturn, Component.FLturnEncoder, locationFL);
+        SwerveModule FRmodule = new SwerveModule(Component.FRdrive, Component.FRturn, Component.FRturnEncoder, locationFR);
+        SwerveModule BLmodule   = new SwerveModule(Component.BLdrive, Component.BLturn, Component.BLturnEncoder, locationBL);
+        SwerveModule BRmodule  = new SwerveModule(Component.BRdrive, Component.BRturn, Component.BRturnEncoder, locationBR);
+        SwerveModule[] modules = {FLmodule, FRmodule, BLmodule, BRmodule};
+
+
+        //SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
+        Component.chassis = new SwerveDrive(modules, kinematics, Component.navx, Metrics.Chassis.CENTER_MASS_OFFSET, new Pose2d(0,0,new Rotation2d(0)));
+
 
 
         /***********************
