@@ -3,14 +3,14 @@ package org.usfirst.frc4904.robot;
 import org.usfirst.frc4904.standard.custom.controllers.CustomCommandJoystick;
 import org.usfirst.frc4904.standard.custom.controllers.CustomCommandXbox;
 import org.usfirst.frc4904.standard.custom.motorcontrollers.CANTalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
-//import com.ctre.phoenix.motorcontrol.NeutralMode; //broken
 import com.kauailabs.navx.frc.AHRS;
 
 //imports for rev robotics neo 550s
 import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix6.signals.InvertedValue;
 
-//import com.ctre.phoenix.motorcontrol.InvertType; //broken
 //import com.revrobotics.CANSparkMax.IdleMode; //broken
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -40,10 +40,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 public class RobotMap {
 
     public static class Port {
-        // public static class Network {
-        //     public static SocketAddress LOCAL_SOCKET_ADDRESS = new InetSocketAddress(3375);
-        //     public static SocketAddress LOCALIZATION_ADDRESS = new InetSocketAddress("10.49.04.10", 4321);
-        // }
 
         public static class HumanInput {
             public static final int xyJoystickPort = 0;
@@ -82,12 +78,7 @@ public class RobotMap {
        }
 
     public static class Metrics {
-        // blinky constants
-        // public static class Chassis {
-        //     public static final double GEAR_RATIO = 69/5;
-        //     public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
-        //     public static final double TRACK_WIDTH_METERS = 0.59;
-        // }
+
 
         // // 2023-robot constants
         public static class Chassis {
@@ -222,7 +213,6 @@ public class RobotMap {
          * Chassis Subsystem
         *************************/
         
-        //TODO: fix invert type, talk to anna
         Component.FLdrive  = new CANTalonFX(Port.CANMotor.FRONT_LEFT_DRIVE);
         Component.FLturn = new CustomCANSparkMax(Port.CANMotor.FRONT_LEFT_TURN, MotorType.kBrushless, false);
         Component.FRdrive  = new CANTalonFX(Port.CANMotor.FRONT_RIGHT_DRIVE);
@@ -231,12 +221,6 @@ public class RobotMap {
         Component.BLturn = new CustomCANSparkMax(Port.CANMotor.BACK_LEFT_TURN, MotorType.kBrushless, false);
         Component.BRdrive  = new CANTalonFX(Port.CANMotor.BACK_RIGHT_DRIVE);
         Component.BRturn = new CustomCANSparkMax(Port.CANMotor.BACK_RIGHT_TURN, MotorType.kBrushless, false);
-
-
-        // Component.backRightWheelTalon.setSafetyEnabled(false);
-        // Component.frontRightWheelTalon.setSafetyEnabled(false);
-        // Component.backLeftWheelTalon.setSafetyEnabled(false);
-        // Component.frontLeftWheelTalon.setSafetyEnabled(false);
 
         //TalonMotorSubsystem rightDriveMotors = new TalonMotorSubsystem("right drive motors", NeutralMode.Brake, 0, Component.frontRightWheelTalon, Component.backRightWheelTalon);
         Translation2d locationFL = new Translation2d(Metrics.Chassis.TRACK_LENGTH_METERS / 2, Metrics.Chassis.TRACK_WIDTH_METERS / 2);
@@ -250,8 +234,6 @@ public class RobotMap {
         Component.BLmodule   = new SwerveModule(Component.BLdrive, Component.BLturn, Component.BLturnEncoder, locationBL);
         Component.BRmodule  = new SwerveModule(Component.BRdrive, Component.BRturn, Component.BRturnEncoder, locationBR);
         SwerveModule[] modules = {Component.FLmodule, Component.FRmodule, Component.BLmodule, Component.BRmodule};
-
-                        //TODO: talk to anna about talonmotorsubsystem
 
         //SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
         Component.chassis = new SwerveDrive(modules, kinematics, Component.navx, Metrics.Chassis.CENTER_MASS_OFFSET, new Pose2d(0,0,new Rotation2d(0)));

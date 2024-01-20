@@ -13,7 +13,6 @@ package org.usfirst.frc4904.robot;
 import org.usfirst.frc4904.robot.humaninterface.drivers.SwerveGain;
 import org.usfirst.frc4904.robot.humaninterface.operators.DefaultOperator;
 import org.usfirst.frc4904.standard.CommandRobotBase;
-//import org.usfirst.frc4904.standard.CommandRobotBase;
 // import org.usfirst.frc4904.standard.custom.CommandSendableChooser;
 import org.usfirst.frc4904.standard.humaninput.Driver;
 
@@ -37,7 +36,7 @@ import static org.usfirst.frc4904.robot.Utils.nameCommand;
 import org.usfirst.frc4904.robot.RobotMap.Component;
 
 public class Robot extends CommandRobotBase {
-    // private final RobotMap map = new RobotMap();
+    private final RobotMap map = new RobotMap();
     // private final RobotContainer2 donttouchme = new RobotContainer2(RobotMap.Component.frontLeftWheelTalon, RobotMap.Component.backLeftWheelTalon, RobotMap.Component.frontRightWheelTalon, RobotMap.Component.backRightWheelTalon, RobotMap.Component.navx);
     // private SendableChooser<Supplier<Command>> autonomousCommand = new SendableChooser<Supplier<Command>>();
 
@@ -50,7 +49,7 @@ public class Robot extends CommandRobotBase {
 
     public Robot() {
         super();
-        //can set deafault auton command here
+        //can set default auton command here
         }
 
     @Override
