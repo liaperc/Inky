@@ -16,6 +16,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import java.util.Optional;
 
 // inspired by team 5712's implementation: https://github.com/Hemlock5712/2023-Robot/blob/Joe-Test/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java
 // docs are here for anyone else working on this in the near future (anna): https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html
@@ -25,5 +26,14 @@ public class PoseEstimatorSubsystem {
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo); //TODO: get the resource for this
     private final Transform3d robotToPlaceholderCam = new Transform3d(new Translation3d(-1, -1, -1), new Rotation3d(-1,-1,-1)); //TODO: stores the camera position relative to the robot
     private final PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, placeholderCam, robotToPlaceholderCam);
+
+    public PoseEstimatorSubsystem(){
+        //TODO: get odometry data suppliers and make the standard swerve poseestimator
+    }
+
+    public Optional<EstimatedRobotPose> getEstimatedRobotPose(){
+        //this can contain any extra parameters and logic if we want to alter our estimator strategy
+        return photonPoseEstimator.update();
+    }
 
 }
