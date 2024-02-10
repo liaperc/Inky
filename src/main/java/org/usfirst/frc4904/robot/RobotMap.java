@@ -30,6 +30,7 @@ import org.usfirst.frc4904.standard.custom.motorcontrollers.CustomCANSparkMax;
 import org.usfirst.frc4904.standard.subsystems.motor.SparkMaxMotorSubsystem;
 import org.usfirst.frc4904.standard.subsystems.chassis.SwerveDrive;
 import org.usfirst.frc4904.standard.subsystems.chassis.SwerveModule;
+import org.usfirst.frc4904.robot.PoseEstimatorSubsystem;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.SerialPort;
